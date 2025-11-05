@@ -81,11 +81,42 @@ jobs:
       with:
         ndk-version: r25c
 
-    - name: Install Android dependencies
+    - name: Install Android dependencies and build JsonCpp
       if: matrix.platform == 'android'
       run: |
         sudo apt-get update
-        sudo apt-get install -y cmake build-essential libjsoncpp-dev
+        sudo apt-get install -y cmake build-essential git
+        
+        # Build JsonCpp for Android
+        git clone --depth=1 https://github.com/open-source-parsers/jsoncpp.git
+        cd jsoncpp
+        mkdir build
+        cd build
+        
+        # Set up Android NDK toolchain
+        if [ -n "$ANDROID_NDK_HOME" ]; then
+          TOOLCHAIN_FILE="$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake"
+        elif [ -n "$ANDROID_NDK_ROOT" ]; then
+          TOOLCHAIN_FILE="$ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake"
+        else
+          echo "Error: ANDROID_NDK_HOME/ANDROID_NDK_ROOT not set"
+          exit 1
+        fi
+        
+        # Build JsonCpp for Android
+        cmake .. \
+          -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE" \
+          -DANDROID_ABI=${{ matrix.android_abi }} \
+          -DANDROID_PLATFORM=android-21 \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DJSONCPP_WITH_TESTS=OFF \
+          -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF \
+          -DBUILD_SHARED_LIBS=OFF \
+          -DCMAKE_INSTALL_PREFIX=$PWD/../../jsoncpp-android
+        
+        make -j$(nproc)
+        make install
+        cd ../..
 
     - name: Install Kodi addon development headers
       if: matrix.platform == 'android'
@@ -151,14 +182,14 @@ jobs:
           exit 1
         fi
         
-        # Cross-compile for Android with Kodi headers
+        # Cross-compile for Android with Kodi headers and JsonCpp
         cmake .. \
           -DCMAKE_BUILD_TYPE=Release \
           -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE" \
           -DANDROID_ABI=${{ matrix.android_abi }} \
           -DANDROID_PLATFORM=android-21 \
-          -DCMAKE_PREFIX_PATH="$PWD/../kodi-dev" \
-          -DCMAKE_FIND_ROOT_PATH="$PWD/../kodi-dev"
+          -DCMAKE_PREFIX_PATH="$PWD/../kodi-dev;$PWD/../jsoncpp-android" \
+          -DCMAKE_FIND_ROOT_PATH="$PWD/../kodi-dev;$PWD/../jsoncpp-android"
         
         cmake --build . --config Release
 
