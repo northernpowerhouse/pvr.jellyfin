@@ -2,6 +2,8 @@
 
 A Kodi PVR addon that integrates Jellyfin's Live TV functionality into Kodi, allowing you to watch live TV, browse the EPG, and manage recordings from your Jellyfin server.
 
+**🚀 [Quick Start Guide](QUICKSTART.md)** - Get set up in 5 minutes!
+
 ## Features
 
 - **Live TV Channels**: Browse and watch live TV channels from your Jellyfin server
