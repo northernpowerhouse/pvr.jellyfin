@@ -118,9 +118,43 @@ pvr.jellyfin/
 └── CMakeLists.txt            # Build configuration
 ```
 
+## Documentation
+
+Comprehensive documentation is available in the `docs/` directory:
+
+- **[Installation Guide](docs/INSTALLATION.md)** - Detailed setup instructions
+- **[Development Guide](docs/DEVELOPMENT.md)** - For developers contributing to the addon
+- **[API Documentation](docs/API.md)** - Jellyfin API integration details
+- **[Testing Guide](docs/TESTING.md)** - Testing procedures and checklists
+- **[FAQ](docs/FAQ.md)** - Frequently asked questions
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit pull requests or open issues for bugs and feature requests.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on:
+- Setting up development environment
+- Coding standards
+- Testing requirements
+- Pull request process
+
+## Support
+
+If you need help:
+1. Check the [FAQ](docs/FAQ.md)
+2. Read the [Installation Guide](docs/INSTALLATION.md)
+3. Search [existing issues](https://github.com/northernpowerhouse/pvr.jellyfin/issues)
+4. Open a new issue with detailed information
+
+## Roadmap
+
+Future enhancements planned:
+- Series recording support
+- Multiple Jellyfin server support
+- Enhanced EPG search and filtering
+- Additional language translations
+- Performance optimizations
+- Improved error recovery
 
 ## License
 
@@ -131,3 +165,4 @@ This addon is licensed under CC0 1.0 Universal. See the LICENSE file for details
 - Kodi PVR API documentation
 - Jellyfin API documentation
 - The Kodi and Jellyfin communities
+- All contributors to this project
