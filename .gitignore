@@ -1,0 +1,31 @@
+# Build directories
+build/
+*.o
+*.so
+*.dll
+*.dylib
+*.a
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+
+# Generated files
+addon.xml
+*.zip
+
+# Temporary files
+/tmp/
+*.log
+*.tmp

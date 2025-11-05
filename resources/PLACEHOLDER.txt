@@ -1,0 +1,5 @@
+To complete the addon, you need to add:
+1. icon.png (256x256 pixels) - The addon icon
+2. fanart.jpg (1920x1080 pixels) - The addon background image
+
+These should represent the Jellyfin + Kodi integration.

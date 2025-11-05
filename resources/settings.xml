@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+  <category label="30000">
+    <setting id="server_url" type="text" label="30001" default="">
+      <level>0</level>
+    </setting>
+    <setting id="user_id" type="text" label="30002" default="">
+      <level>0</level>
+    </setting>
+    <setting id="api_key" type="text" label="30003" default="" option="hidden">
+      <level>0</level>
+    </setting>
+  </category>
+  <category label="30010">
+    <setting id="enable_epg" type="boolean" label="30011" default="true">
+      <level>0</level>
+    </setting>
+    <setting id="epg_update_interval" type="integer" label="30012" default="120" min="30" max="600">
+      <level>1</level>
+    </setting>
+  </category>
+</settings>

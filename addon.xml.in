@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<addon
+  id="pvr.jellyfin"
+  version="1.0.0"
+  name="Jellyfin PVR Client"
+  provider-name="Northern Powerhouse">
+  <requires>@ADDON_DEPENDS@</requires>
+  <extension
+    point="xbmc.pvrclient"
+    library_@PLATFORM@="@LIBRARY_FILENAME@"/>
+  <extension point="xbmc.addon.metadata">
+    <platform>@PLATFORM@</platform>
+    <license>CC0-1.0</license>
+    <source>https://github.com/northernpowerhouse/pvr.jellyfin</source>
+    <summary lang="en_GB">Kodi PVR addon for Jellyfin Live TV</summary>
+    <description lang="en_GB">This addon allows Kodi to use Jellyfin as a Live TV backend, supporting channels, EPG, and recordings.</description>
+    <news>
+v1.0.0
+- Initial release
+- Channel list support
+- EPG support
+- Live TV streaming
+- Recording management
+    </news>
+    <assets>
+      <icon>resources/icon.png</icon>
+      <fanart>resources/fanart.jpg</fanart>
+    </assets>
+  </extension>
+</addon>
