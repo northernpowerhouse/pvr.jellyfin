@@ -1,0 +1,127 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [ main, master ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux
+            arch: x86_64
+          - os: ubuntu-latest
+            platform: android
+            arch: arm
+          - os: windows-latest
+            platform: windows
+            arch: x86_64
+          - os: macos-latest
+            platform: darwin
+            arch: x86_64
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install dependencies (Ubuntu)
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake build-essential libjsoncpp-dev
+
+    - name: Install dependencies (macOS)
+      if: runner.os == 'macOS'
+      run: |
+        brew install cmake jsoncpp
+
+    - name: Install dependencies (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        choco install cmake
+        vcpkg install jsoncpp:x64-windows
+
+    - name: Setup Android NDK
+      if: matrix.platform == 'android'
+      uses: nttld/setup-ndk@v1
+      with:
+        ndk-version: r25c
+
+    - name: Build addon
+      run: |
+        mkdir -p build
+        cd build
+        cmake .. -DCMAKE_BUILD_TYPE=Release
+        cmake --build . --config Release
+
+    - name: Package addon
+      run: |
+        mkdir -p package/pvr.jellyfin
+        cp -r src package/pvr.jellyfin/
+        cp -r resources package/pvr.jellyfin/
+        cp addon.xml.in package/pvr.jellyfin/addon.xml
+        cp LICENSE package/pvr.jellyfin/
+        cp README.md package/pvr.jellyfin/
+        cd package
+        zip -r ../pvr.jellyfin-${{ matrix.platform }}-${{ matrix.arch }}.zip pvr.jellyfin
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: pvr.jellyfin-${{ matrix.platform }}-${{ matrix.arch }}
+        path: pvr.jellyfin-${{ matrix.platform }}-${{ matrix.arch }}.zip
+
+  create-release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: artifacts/**/*.zip
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  update-repository:
+    needs: create-release
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        ref: repo
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts
+
+    - name: Update repository
+      run: |
+        python3 scripts/update_repo.py
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+        git add .
+        git commit -m "Update repository with version ${GITHUB_REF#refs/tags/}"
+        git push
