@@ -9,16 +9,26 @@ jobs:
   build-and-publish:
     runs-on: ubuntu-latest
     env:
-      NDK_VERSION: r25b
+      app_id: pvr.jellyfin
+      NDK_VERSION: r26d
     steps:
-      - name: Checkout repository
+      - name: Checkout Kodi repo
         uses: actions/checkout@v4
+        with:
+          repository: xbmc/xbmc
+          ref: Omega
+          path: kodi
+
+      - name: Checkout addon repo
+        uses: actions/checkout@v4
+        with:
+          path: ${{ env.app_id }}
 
       - name: Set version
         id: set_version
         run: |
           if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
-            VERSION="${GITHUB_REF#refs/tags/}"
+            VERSION="${GITHUB_REF#refs/tags/v}"
           else
             VERSION="0.0.${GITHUB_RUN_NUMBER}"
           fi
@@ -26,111 +36,96 @@ jobs:
           echo "Selected VERSION=$VERSION"
 
       - name: Install required packages
-        run: sudo apt-get update && sudo apt-get install -y unzip zip cmake build-essential wget
-
-      - name: Install Kodi build dependencies
         run: |
-          set -euo pipefail
-          # Clone Kodi repo to get the CMake modules and build files
-          git clone --depth=1 --branch Omega https://github.com/xbmc/xbmc.git kodi-source
-          # Set up CMake module path for Kodi
-          echo "KODI_SOURCE_DIR=${{ github.workspace }}/kodi-source" >> $GITHUB_ENV
+          sudo apt-get update
+          sudo apt-get install -y \
+            openjdk-11-jdk \
+            unzip zip cmake build-essential wget \
+            autoconf automake libtool pkg-config \
+            git curl
 
       - name: Cache Android NDK
+        id: ndk-cache
         uses: actions/cache@v4
         with:
-          path: ${{ github.workspace }}/.ndk-cache
+          path: ${{ github.workspace }}/android-ndk-${{ env.NDK_VERSION }}
           key: ndk-${{ env.NDK_VERSION }}-${{ runner.os }}
 
       - name: Download Android NDK (if not cached)
+        if: steps.ndk-cache.outputs.cache-hit != 'true'
         run: |
           set -euo pipefail
-          echo "NDK_VERSION=${NDK_VERSION}"
-          # If previously cached to the expected path, use it
-          CACHED_DIR="$HOME/android-ndk-${NDK_VERSION}"
-          if [ -d "$CACHED_DIR" ]; then
-            echo "Using cached NDK at $CACHED_DIR"
-          else
-            echo "Downloading Android NDK ${NDK_VERSION}..."
-            curl -L -o ndk.zip https://dl.google.com/android/repository/android-ndk-${NDK_VERSION}-linux.zip
-            unzip -q ndk.zip -d $HOME
-            echo "Downloaded NDK to $CACHED_DIR"
-          fi
-          echo "ANDROID_NDK=$HOME/android-ndk-${NDK_VERSION}" >> $GITHUB_ENV
+          echo "Downloading Android NDK ${NDK_VERSION}..."
+          curl -L -o ndk.zip https://dl.google.com/android/repository/android-ndk-${NDK_VERSION}-linux.zip
+          unzip -q ndk.zip
+          echo "Downloaded NDK to ${GITHUB_WORKSPACE}/android-ndk-${NDK_VERSION}"
 
-      - name: Configure and build for armeabi-v7a
+      - name: Set NDK path
+        run: echo "ANDROID_NDK_ROOT=${GITHUB_WORKSPACE}/android-ndk-${NDK_VERSION}" >> $GITHUB_ENV
+
+      - name: Prepare Kodi addon build
+        run: |
+          mkdir -p kodi/cmake/addons/addons/${{ env.app_id }}
+          echo "${{ env.app_id }} ${{ github.workspace }}/${{ env.app_id }}" > kodi/cmake/addons/addons/${{ env.app_id }}/${{ env.app_id }}.txt
+
+      - name: Configure addon for Android
         run: |
           set -euo pipefail
-          echo "Using ANDROID_NDK=$ANDROID_NDK"
-          echo "Using KODI_SOURCE_DIR=$KODI_SOURCE_DIR"
-          mkdir -p build && cd build
-          cmake .. \
-            -DCMAKE_TOOLCHAIN_FILE="$ANDROID_NDK/build/cmake/android.toolchain.cmake" \
+          cmake \
+            -B ${{ env.app_id }}/build \
+            -DADDONS_TO_BUILD=${{ env.app_id }} \
+            -DADDON_SRC_PREFIX=${{ github.workspace }} \
+            -DADDONS_DEFINITION_DIR=${{ github.workspace }}/kodi/cmake/addons/addons \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/kodi/addons \
+            -DPACKAGE_ZIP=1 \
+            -DCMAKE_TOOLCHAIN_FILE=${{ env.ANDROID_NDK_ROOT }}/build/cmake/android.toolchain.cmake \
             -DANDROID_ABI=armeabi-v7a \
             -DANDROID_PLATFORM=android-21 \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_MODULE_PATH="$KODI_SOURCE_DIR/cmake/modules" \
-            -DKODI_INCLUDE_DIR="$KODI_SOURCE_DIR/xbmc" \
             -DCORE_SYSTEM_NAME=android \
-            -DANDROID_NATIVE_API_LEVEL=21
-          cmake --build . --config Release -j$(nproc)
+            ${{ github.workspace }}/kodi/cmake/addons
 
-      - name: Locate built library
-        id: findlib
+      - name: Build addon
+        run: |
+          make -C ${{ env.app_id }}/build -j$(nproc)
+
+      - name: Locate and prepare addon package
         run: |
           set -euo pipefail
-          # Try to find the compiled shared object (the name may vary depending on CMake/Kodi macros)
-          LIB=$(find build -type f -name "*pvr*.so" -print -quit || true)
-          if [ -z "$LIB" ]; then
-            echo "No built .so found; listing build/ for debugging:" >&2
-            find build -maxdepth 4 -type f | sed -n '1,200p' >&2
+          # Kodi build system creates the zip in the build directory
+          ADDON_ZIP=$(find ${{ env.app_id }}/build -name "${{ env.app_id }}-*.zip" -print -quit || true)
+          if [ -z "$ADDON_ZIP" ]; then
+            echo "Addon zip not found. Listing build directory:" >&2
+            find ${{ env.app_id }}/build -type f | head -50 >&2
             exit 1
           fi
-          echo "Found built library: $LIB"
-          echo "LIB_PATH=$LIB" >> $GITHUB_ENV
-
-      - name: Create addon package (zip) and include built .so
-        run: |
-          set -euo pipefail
-          VERSION=${VERSION}
-          chmod +x scripts/package.sh
-          ./scripts/package.sh "$VERSION"
-
-          # Ensure package directory exists (script/package.sh leaves package/)
-          if [ ! -d "package/pvr.jellyfin" ]; then
-            echo "Expected package/pvr.jellyfin directory not found" >&2
-            ls -la package || true
-            exit 1
-          fi
-
-          # Copy the compiled .so into the package so the addon zip contains the binary
-          if [ -f "$LIB_PATH" ]; then
-            echo "Copying $LIB_PATH -> package/pvr.jellyfin/pvr.jellyfin.so"
-            cp "$LIB_PATH" package/pvr.jellyfin/pvr.jellyfin.so
-          else
-            echo "Built library $LIB_PATH not found" >&2
-            exit 1
-          fi
-
-          # Recreate the addon zip so it includes the .so
-          rm -f "pvr.jellyfin-$VERSION.zip"
-          cd package
-          zip -r "../pvr.jellyfin-$VERSION.zip" pvr.jellyfin
-          cd ..
-          ls -lh "pvr.jellyfin-$VERSION.zip"
+          echo "Found addon package: $ADDON_ZIP"
+          # Rename to our versioning scheme
+          cp "$ADDON_ZIP" "${{ github.workspace }}/${{ env.app_id }}-${VERSION}.zip"
+          ls -lh "${{ github.workspace }}/${{ env.app_id }}-${VERSION}.zip"
 
       - name: Create repository package
         run: |
           set -euo pipefail
+          cd ${{ env.app_id }}
           chmod +x scripts/package_repo.sh
           ./scripts/package_repo.sh "${VERSION}"
-          ls -lh "repository.jellyfin.pvr-${VERSION}.zip"
+          mv "repository.jellyfin.pvr-${VERSION}.zip" "${{ github.workspace }}/"
+          ls -lh "${{ github.workspace }}/repository.jellyfin.pvr-${VERSION}.zip"
 
       - name: Create release and upload artifacts
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ env.VERSION }}
-          name: Release v${{ env.VERSION }}
+          name: Release v${{ env.VERSION }} (Android armeabi-v7a)
+          body: |
+            Android build for Kodi Omega (armeabi-v7a)
+            
+            **Installation:**
+            1. Install `repository.jellyfin.pvr-${{ env.VERSION }}.zip` in Kodi
+            2. Install the addon from the repository
+            
+            Or install `pvr.jellyfin-${{ env.VERSION }}.zip` directly
           files: |
             pvr.jellyfin-${{ env.VERSION }}.zip
             repository.jellyfin.pvr-${{ env.VERSION }}.zip
