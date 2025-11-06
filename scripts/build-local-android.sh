@@ -87,6 +87,10 @@ update_repo() {
     print_info "Updating repository from GitHub..."
     cd "$PROJECT_DIR"
     
+    # Get current hash of this script before pulling
+    local script_path="$SCRIPT_DIR/$(basename "${BASH_SOURCE[0]}")"
+    local old_hash=$(git hash-object "$script_path" 2>/dev/null || echo "none")
+    
     # Stash any local changes
     if ! git diff-index --quiet HEAD --; then
         print_warning "Local changes detected, stashing..."
@@ -96,6 +100,18 @@ update_repo() {
     # Pull latest changes
     if git pull origin main; then
         print_success "Repository updated successfully"
+        
+        # Check if this script changed
+        local new_hash=$(git hash-object "$script_path" 2>/dev/null || echo "none")
+        
+        if [ "$old_hash" != "$new_hash" ]; then
+            print_warning "Build script was updated!"
+            print_info "Re-executing with new version..."
+            echo ""
+            
+            # Re-execute this script with the same arguments
+            exec "$script_path" "$@"
+        fi
     else
         print_error "Failed to pull latest changes"
         exit 1
@@ -425,8 +441,8 @@ main() {
     # Check prerequisites
     check_docker
     
-    # Update repository
-    update_repo
+    # Update repository (pass arguments for potential re-exec)
+    update_repo "$@"
     
     # Get version
     VERSION=$(get_version)
