@@ -169,13 +169,18 @@ build_docker_image() {
     # Enable BuildKit for better caching
     export DOCKER_BUILDKIT=1
     
-    # Build the image
-    if docker build \
+    # Build the image (capture exit code from docker, not tee)
+    docker build \
         --progress=plain \
         --tag pvr-jellyfin-android-builder:latest \
         --file Dockerfile.android-build \
         --cache-from pvr-jellyfin-android-builder:latest \
-        . 2>&1 | tee -a "$BUILD_LOG"; then
+        . 2>&1 | tee -a "$BUILD_LOG"
+    
+    # Check the actual exit code from docker build (PIPESTATUS[0])
+    local build_result=${PIPESTATUS[0]}
+    
+    if [ $build_result -eq 0 ]; then
         print_success "Docker image built successfully"
         
         # Verify the image created the marker file
@@ -183,7 +188,7 @@ build_docker_image() {
         
         return 0
     else
-        print_error "Docker image build failed"
+        print_error "Docker image build failed with exit code: $build_result"
         
         # Clean potentially corrupted volumes
         clean_corrupted_volumes
@@ -205,7 +210,7 @@ build_addon() {
     # Run the build in Docker container
     print_info "Running addon build in Docker container..."
     
-    if docker run --rm \
+    docker run --rm \
         -v "$PROJECT_DIR:/workspace" \
         -v kodi-source-cache:/opt/kodi \
         -v kodi-depends-cache:/opt/xbmc-depends \
@@ -243,8 +248,12 @@ build_addon() {
             find . -name 'pvr.jellyfin.so' -exec cp {} /workspace/build-output/ \;
             
             echo '=== Build completed successfully ==='
-        " 2>&1 | tee -a "$BUILD_LOG"; then
-        
+        " 2>&1 | tee -a "$BUILD_LOG"
+    
+    # Check the actual exit code from docker run
+    local build_result=${PIPESTATUS[0]}
+    
+    if [ $build_result -eq 0 ]; then
         print_success "Addon built successfully"
         
         # Verify the .so file was created
@@ -256,7 +265,7 @@ build_addon() {
             return 1
         fi
     else
-        print_error "Addon build failed"
+        print_error "Addon build failed with exit code: $build_result"
         return 1
     fi
 }
@@ -277,11 +286,14 @@ package_addon() {
     cp "$PROJECT_DIR/build-output/pvr.jellyfin.so" "$PROJECT_DIR/build-android/"
     
     # Run packaging script
-    if bash "$PROJECT_DIR/scripts/package.sh" "$version" 2>&1 | tee -a "$BUILD_LOG"; then
+    bash "$PROJECT_DIR/scripts/package.sh" "$version" 2>&1 | tee -a "$BUILD_LOG"
+    local package_result=${PIPESTATUS[0]}
+    
+    if [ $package_result -eq 0 ]; then
         print_success "Addon packaged: pvr.jellyfin-${version}.zip"
         return 0
     else
-        print_error "Packaging failed"
+        print_error "Packaging failed with exit code: $package_result"
         return 1
     fi
 }
@@ -293,11 +305,14 @@ package_repository() {
     
     cd "$PROJECT_DIR"
     
-    if bash "$PROJECT_DIR/scripts/package_repo.sh" "$version" 2>&1 | tee -a "$BUILD_LOG"; then
+    bash "$PROJECT_DIR/scripts/package_repo.sh" "$version" 2>&1 | tee -a "$BUILD_LOG"
+    local package_result=${PIPESTATUS[0]}
+    
+    if [ $package_result -eq 0 ]; then
         print_success "Repository packaged: repository.jellyfin.pvr-${version}.zip"
         return 0
     else
-        print_error "Repository packaging failed"
+        print_error "Repository packaging failed with exit code: $package_result"
         return 1
     fi
 }
