@@ -25,6 +25,11 @@ Makefile
 addon.xml
 *.zip
 
+# Build script state
+.last-dockerfile-hash
+last-build-log-url.txt
+build-debug.log
+
 # Temporary files
 /tmp/
 *.log
