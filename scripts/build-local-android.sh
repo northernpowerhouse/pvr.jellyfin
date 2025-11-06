@@ -276,6 +276,7 @@ build_addon() {
     
     set -o pipefail
     docker run --rm \
+        --user "$(id -u):$(id -g)" \
         -v "$PROJECT_DIR:/workspace" \
         -v kodi-source-cache:/opt/kodi \
         -v kodi-depends-cache:/opt/xbmc-depends \
@@ -344,9 +345,6 @@ build_addon() {
             export PLATFORM=android
             export LIBRARY_FILENAME=pvr.jellyfin.so
             bash /workspace/scripts/package.sh \"$version\"
-            
-            # Fix ownership of created files (Docker runs as root)
-            chown -R \$(stat -c '%u:%g' /workspace) /workspace/package /workspace/*.zip 2>/dev/null || true
             
             echo '=== Packaging completed ==='
         " 2>&1 | tee -a "$BUILD_LOG"
