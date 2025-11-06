@@ -125,6 +125,40 @@ get_version() {
     echo "$version"
 }
 
+# Function to check if cached volumes are valid
+check_volume_integrity() {
+    print_info "Checking Docker volume cache integrity..."
+    
+    # Check if dependencies marker file exists
+    local marker_exists=$(docker run --rm \
+        -v kodi-depends-cache:/opt/xbmc-depends \
+        busybox \
+        test -f /opt/xbmc-depends/.dependencies-built && echo "yes" || echo "no")
+    
+    if [ "$marker_exists" = "yes" ]; then
+        print_success "Kodi dependencies cache is valid"
+        return 0
+    else
+        print_warning "Kodi dependencies cache is incomplete or corrupted"
+        print_info "This will be rebuilt during Docker image build"
+        return 1
+    fi
+}
+
+# Function to clean corrupted volumes
+clean_corrupted_volumes() {
+    print_warning "Cleaning potentially corrupted Docker volumes..."
+    
+    # Only clean the depends cache, keep source and SDK
+    if docker volume rm kodi-depends-cache 2>/dev/null; then
+        print_success "Removed corrupted kodi-depends-cache volume"
+    else
+        print_info "No kodi-depends-cache volume to remove"
+    fi
+    
+    print_info "Clean volumes will be rebuilt on next attempt"
+}
+
 # Function to build the Docker image with caching
 build_docker_image() {
     print_info "Building Docker image with Kodi dependencies..."
@@ -143,9 +177,17 @@ build_docker_image() {
         --cache-from pvr-jellyfin-android-builder:latest \
         . 2>&1 | tee -a "$BUILD_LOG"; then
         print_success "Docker image built successfully"
+        
+        # Verify the image created the marker file
+        check_volume_integrity
+        
         return 0
     else
         print_error "Docker image build failed"
+        
+        # Clean potentially corrupted volumes
+        clean_corrupted_volumes
+        
         return 1
     fi
 }
@@ -367,6 +409,12 @@ main() {
     print_info "Building version: $VERSION"
     echo ""
     
+    # Check cache integrity before building
+    if ! check_volume_integrity; then
+        print_warning "Previous build may have failed during dependency compilation"
+        print_info "Corrupted cache will be cleaned automatically if build fails"
+    fi
+    
     # Build Docker image
     print_info "Step 1/5: Building Docker image with dependencies..."
     if ! build_docker_image; then
@@ -378,6 +426,8 @@ main() {
         print_info "Step 2/5: Building addon..."
         if ! build_addon "$VERSION"; then
             BUILD_FAILED=1
+            # Note: Addon build doesn't affect volumes, only Docker image build does
+            print_warning "Addon build failed. Docker volumes are unaffected."
         fi
     fi
     
