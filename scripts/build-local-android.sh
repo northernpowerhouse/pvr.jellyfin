@@ -250,15 +250,17 @@ build_addon() {
             mkdir -p /workspace/build-android
             cd /workspace/build-android
             
-            # Configure with CMake for Android
+            # Configure with CMake for Android - using correct Kodi paths
+            # The Kodi headers are in /opt/kodi/xbmc/addons/kodi-dev-kit/include/kodi
             cmake .. \
                 -DCMAKE_TOOLCHAIN_FILE=\$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake \
                 -DANDROID_ABI=armeabi-v7a \
                 -DANDROID_PLATFORM=android-21 \
                 -DCMAKE_BUILD_TYPE=Release \
-                -DCMAKE_INSTALL_PREFIX=/opt/xbmc-depends \
-                -DKODI_INCLUDE_DIR=/opt/kodi/xbmc \
-                -DSTANDALONE_BUILD=ON
+                -DCMAKE_PREFIX_PATH=\"/opt/xbmc-depends;/opt/kodi/xbmc/addons/kodi-dev-kit\" \
+                -DCMAKE_FIND_ROOT_PATH=\"/opt/xbmc-depends;/opt/kodi\" \
+                -DCORE_SYSTEM_NAME=android \
+                -DSTANDALONE_BUILD=OFF
             
             # Build
             make -j\$(nproc)
