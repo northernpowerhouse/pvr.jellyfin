@@ -71,8 +71,10 @@ set(JELLYFIN_SOURCES
     src/jellyfin/ChannelManager.cpp
     src/jellyfin/EPGManager.cpp
     src/jellyfin/RecordingManager.cpp
+    src/jellyfin/AuthManager.cpp
     src/utilities/Logger.cpp
-    src/utilities/Utilities.cpp)
+    src/utilities/Utilities.cpp
+    src/utilities/LogUploader.cpp)
 
 set(JELLYFIN_HEADERS
     src/client.h
@@ -81,8 +83,10 @@ set(JELLYFIN_HEADERS
     src/jellyfin/ChannelManager.h
     src/jellyfin/EPGManager.h
     src/jellyfin/RecordingManager.h
+    src/jellyfin/AuthManager.h
     src/utilities/Logger.h
-    src/utilities/Utilities.h)
+    src/utilities/Utilities.h
+    src/utilities/LogUploader.h)
 
 if(STANDALONE_BUILD)
   # Standalone build - create shared library directly

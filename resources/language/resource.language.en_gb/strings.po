@@ -42,3 +42,43 @@ msgstr ""
 msgctxt "#30012"
 msgid "EPG Update Interval (minutes)"
 msgstr ""
+
+msgctxt "#30020"
+msgid "Authentication Method"
+msgstr ""
+
+msgctxt "#30021"
+msgid "Username & Password"
+msgstr ""
+
+msgctxt "#30022"
+msgid "Quick Connect"
+msgstr ""
+
+msgctxt "#30023"
+msgid "API Key (Manual)"
+msgstr ""
+
+msgctxt "#30024"
+msgid "Username"
+msgstr ""
+
+msgctxt "#30025"
+msgid "Password"
+msgstr ""
+
+msgctxt "#30026"
+msgid "Access Token"
+msgstr ""
+
+msgctxt "#30030"
+msgid "Developer / Debug"
+msgstr ""
+
+msgctxt "#30031"
+msgid "Enable Debug Logging"
+msgstr ""
+
+msgctxt "#30032"
+msgid "Upload Logs to GitHub"
+msgstr ""
