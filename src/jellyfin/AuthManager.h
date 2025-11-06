@@ -17,7 +17,7 @@ public:
   
   // Quick Connect authentication
   bool StartQuickConnect(std::string& code);
-  bool CheckQuickConnectStatus(const std::string& secret, std::string& userId, std::string& accessToken);
+  bool CheckQuickConnectStatus(std::string& userId, std::string& accessToken);
   
   // Validate existing token
   bool ValidateToken(const std::string& userId, const std::string& token);

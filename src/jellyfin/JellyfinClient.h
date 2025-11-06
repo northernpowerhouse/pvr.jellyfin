@@ -8,12 +8,18 @@ class Connection;
 class ChannelManager;
 class EPGManager;
 class RecordingManager;
+class AuthManager;
 
 class JellyfinClient
 {
 public:
   JellyfinClient(const std::string& serverUrl, const std::string& userId, const std::string& apiKey);
   ~JellyfinClient();
+  
+  // Initialize with authentication
+  bool Initialize();
+  bool AuthenticateWithPassword(const std::string& username, const std::string& password);
+  bool AuthenticateWithQuickConnect();
 
   bool Connect();
   std::string GetServerVersion() const { return m_serverVersion; }
@@ -57,4 +63,7 @@ private:
   std::unique_ptr<ChannelManager> m_channelManager;
   std::unique_ptr<EPGManager> m_epgManager;
   std::unique_ptr<RecordingManager> m_recordingManager;
+  std::unique_ptr<AuthManager> m_authManager;
+  
+  bool m_authenticated;
 };

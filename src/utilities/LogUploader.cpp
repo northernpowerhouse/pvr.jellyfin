@@ -218,19 +218,94 @@ bool LogUploader::PollForToken(const std::string& deviceCode)
 
 std::string LogUploader::GetLogFilePath()
 {
-  // Get Kodi's log folder path
-  std::string logPath = kodi::GetSettingString("__addon_path__");
-  return logPath + "/kodi.log";
+  // Get Kodi's log folder - use the special protocol
+  // On Android: /sdcard/Android/data/org.xbmc.kodi/files/.kodi/temp/kodi.log
+  // On other platforms it varies
+  return "special://logpath/kodi.log";
 }
 
 std::string LogUploader::ReadLogFile()
 {
   Logger::Log(ADDON_LOG_INFO, "Reading log file...");
   
-  // For now, we'll collect recent log messages that were logged through our Logger
-  // In a real implementation, you'd read from Kodi's actual log file
-  // This is a simplified version
-  return "Log file content would be here - implement reading from actual Kodi log";
+  std::string logPath = GetLogFilePath();
+  
+  kodi::vfs::CFile file;
+  if (!file.OpenFile(logPath, 0))
+  {
+    Logger::Log(ADDON_LOG_ERROR, "Could not open log file: %s", logPath.c_str());
+    
+    // Fall back to collecting recent addon logs
+    return CollectAddonLogs();
+  }
+  
+  // Read the entire log file
+  std::string fullLog;
+  char buffer[4096];
+  ssize_t bytesRead;
+  
+  while ((bytesRead = file.Read(buffer, sizeof(buffer))) > 0)
+  {
+    fullLog.append(buffer, bytesRead);
+  }
+  
+  file.Close();
+  
+  // Filter to only include our addon's logs
+  std::string filteredLog = FilterAddonLogs(fullLog);
+  
+  // If filtered log is empty, fall back to collecting recent logs
+  if (filteredLog.empty())
+  {
+    Logger::Log(ADDON_LOG_WARNING, "No addon logs found in log file, using fallback");
+    return CollectAddonLogs();
+  }
+  
+  Logger::Log(ADDON_LOG_INFO, "Successfully read %d bytes of log data", static_cast<int>(filteredLog.size()));
+  return filteredLog;
+}
+
+std::string LogUploader::FilterAddonLogs(const std::string& fullLog)
+{
+  // Filter log lines that contain our addon ID
+  std::ostringstream filtered;
+  std::istringstream logStream(fullLog);
+  std::string line;
+  
+  while (std::getline(logStream, line))
+  {
+    // Look for lines containing "pvr.jellyfin" or "Jellyfin" 
+    if (line.find("pvr.jellyfin") != std::string::npos ||
+        line.find("Jellyfin") != std::string::npos)
+    {
+      filtered << line << "\n";
+    }
+  }
+  
+  return filtered.str();
+}
+
+std::string LogUploader::CollectAddonLogs()
+{
+  // Fallback: Create a log summary with system info and recent activity
+  std::ostringstream log;
+  
+  log << "=== Jellyfin PVR Addon Log ===" << "\n";
+  log << "Timestamp: " << GetCurrentTimestamp() << "\n";
+  log << "Addon Version: 1.0.0\n";
+  log << "Kodi Platform: " << kodi::GetSettingString("__addon_platform__", "unknown") << "\n";
+  log << "\n";
+  log << "=== Configuration ===" << "\n";
+  log << "Server URL: " << kodi::addon::GetSettingString("server_url", "not set") << "\n";
+  log << "User ID: " << kodi::addon::GetSettingString("user_id", "not set") << "\n";
+  log << "Auth Method: " << kodi::addon::GetSettingInt("auth_method", 0) << "\n";
+  log << "EPG Enabled: " << (kodi::addon::GetSettingBoolean("enable_epg", true) ? "yes" : "no") << "\n";
+  log << "\n";
+  log << "=== Note ===" << "\n";
+  log << "Full log file could not be read. This is a summary of addon configuration.\n";
+  log << "For detailed logs, please manually extract kodi.log from your device.\n";
+  
+  return log.str();
 }
 
 bool LogUploader::UploadToGitHub(const std::string& logContent)

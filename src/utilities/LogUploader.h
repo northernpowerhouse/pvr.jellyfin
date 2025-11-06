@@ -22,6 +22,8 @@ private:
   // File operations
   std::string GetLogFilePath();
   std::string ReadLogFile();
+  std::string FilterAddonLogs(const std::string& fullLog);
+  std::string CollectAddonLogs();
   
   // GitHub API
   bool UploadToGitHub(const std::string& logContent);

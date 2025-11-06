@@ -3,19 +3,148 @@
 #include "ChannelManager.h"
 #include "EPGManager.h"
 #include "RecordingManager.h"
+#include "AuthManager.h"
 #include "../utilities/Logger.h"
 #include <json/json.h>
+#include <kodi/gui/dialogs/OK.h>
+#include <kodi/gui/dialogs/Progress.h>
+#include <thread>
+#include <chrono>
 
 JellyfinClient::JellyfinClient(const std::string& serverUrl, const std::string& userId, const std::string& apiKey)
   : m_serverUrl(serverUrl)
   , m_userId(userId)
   , m_apiKey(apiKey)
   , m_serverVersion("Unknown")
+  , m_authenticated(false)
 {
   m_connection = std::make_unique<Connection>(serverUrl, apiKey);
+  m_authManager = std::make_unique<AuthManager>(m_connection.get());
 }
 
 JellyfinClient::~JellyfinClient() = default;
+
+bool JellyfinClient::Initialize()
+{
+  Logger::Log(ADDON_LOG_INFO, "Initializing Jellyfin client...");
+  
+  // If we have a userId and apiKey, try to validate them
+  if (!m_userId.empty() && !m_apiKey.empty())
+  {
+    if (m_authManager->ValidateToken(m_userId, m_apiKey))
+    {
+      Logger::Log(ADDON_LOG_INFO, "Existing credentials are valid");
+      m_authenticated = true;
+      return Connect();
+    }
+    else
+    {
+      Logger::Log(ADDON_LOG_WARNING, "Existing credentials are invalid, need to re-authenticate");
+    }
+  }
+  
+  return false;
+}
+
+bool JellyfinClient::AuthenticateWithPassword(const std::string& username, const std::string& password)
+{
+  Logger::Log(ADDON_LOG_INFO, "Authenticating with username and password...");
+  
+  std::string userId, accessToken;
+  if (!m_authManager->AuthenticateByPassword(username, password, userId, accessToken))
+  {
+    kodi::gui::dialogs::OK::ShowAndGetInput("Authentication Failed", 
+                                            "Could not authenticate with Jellyfin.\nPlease check your username and password.");
+    return false;
+  }
+  
+  // Update credentials
+  m_userId = userId;
+  m_apiKey = accessToken;
+  m_authenticated = true;
+  
+  // Save to settings
+  kodi::SetSettingString("user_id", m_userId);
+  kodi::SetSettingString("access_token", m_apiKey);
+  
+  Logger::Log(ADDON_LOG_INFO, "Authentication successful, user ID: %s", m_userId.c_str());
+  
+  // Reconnect with new credentials
+  m_connection = std::make_unique<Connection>(m_serverUrl, m_apiKey);
+  m_authManager = std::make_unique<AuthManager>(m_connection.get());
+  
+  return Connect();
+}
+
+bool JellyfinClient::AuthenticateWithQuickConnect()
+{
+  Logger::Log(ADDON_LOG_INFO, "Starting Quick Connect authentication...");
+  
+  std::string code;
+  if (!m_authManager->StartQuickConnect(code))
+  {
+    kodi::gui::dialogs::OK::ShowAndGetInput("Quick Connect Failed", 
+                                            "Could not start Quick Connect.\nPlease try again.");
+    return false;
+  }
+  
+  // Show progress dialog with code
+  std::ostringstream message;
+  message << "Go to your Jellyfin server settings\n"
+          << "Navigate to Quick Connect\n\n"
+          << "Enter this code: " << code << "\n\n"
+          << "Waiting for authorization...";
+  
+  kodi::gui::dialogs::CProgress progress;
+  progress.SetHeading("Quick Connect");
+  progress.SetLine(1, message.str());
+  progress.ShowDialog();
+  
+  // Poll for authentication (every 3 seconds for up to 5 minutes)
+  std::string userId, accessToken;
+  for (int i = 0; i < 100; i++)
+  {
+    std::this_thread::sleep_for(std::chrono::seconds(3));
+    
+    if (progress.IsCanceled())
+    {
+      Logger::Log(ADDON_LOG_INFO, "Quick Connect cancelled by user");
+      return false;
+    }
+    
+    progress.SetPercentage((i * 100) / 100);
+    
+    if (m_authManager->CheckQuickConnectStatus(userId, accessToken))
+    {
+      progress.Close();
+      
+      // Update credentials
+      m_userId = userId;
+      m_apiKey = accessToken;
+      m_authenticated = true;
+      
+      // Save to settings
+      kodi::SetSettingString("user_id", m_userId);
+      kodi::SetSettingString("access_token", m_apiKey);
+      
+      Logger::Log(ADDON_LOG_INFO, "Quick Connect successful, user ID: %s", m_userId.c_str());
+      
+      // Reconnect with new credentials
+      m_connection = std::make_unique<Connection>(m_serverUrl, m_apiKey);
+      m_authManager = std::make_unique<AuthManager>(m_connection.get());
+      
+      kodi::gui::dialogs::OK::ShowAndGetInput("Quick Connect Successful", 
+                                              "You are now connected to Jellyfin!");
+      
+      return Connect();
+    }
+  }
+  
+  progress.Close();
+  kodi::gui::dialogs::OK::ShowAndGetInput("Quick Connect Timeout", 
+                                          "Quick Connect timed out.\nPlease try again.");
+  return false;
+}
 
 bool JellyfinClient::Connect()
 {

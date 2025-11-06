@@ -61,10 +61,16 @@ bool AuthManager::StartQuickConnect(std::string& code)
   return true;
 }
 
-bool AuthManager::CheckQuickConnectStatus(const std::string& secret, std::string& userId, std::string& accessToken)
+bool AuthManager::CheckQuickConnectStatus(std::string& userId, std::string& accessToken)
 {
+  if (m_quickConnectSecret.empty())
+  {
+    Logger::Log(ADDON_LOG_ERROR, "Quick Connect secret not initialized");
+    return false;
+  }
+  
   std::ostringstream endpoint;
-  endpoint << "/QuickConnect/Connect?secret=" << secret;
+  endpoint << "/QuickConnect/Connect?secret=" << m_quickConnectSecret;
   
   Json::Value response;
   if (!m_connection->SendRequest(endpoint.str(), response))

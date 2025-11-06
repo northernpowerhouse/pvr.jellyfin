@@ -22,13 +22,69 @@ CJellyfinPVRClient::CJellyfinPVRClient(const kodi::addon::IInstanceInfo& instanc
   if (LoadSettings())
   {
     m_jellyfinClient = std::make_unique<JellyfinClient>(m_serverUrl, m_userId, m_apiKey);
-    if (m_jellyfinClient->Connect())
+    
+    // Try to initialize with existing credentials first
+    if (m_jellyfinClient->Initialize())
     {
       Logger::Log(ADDON_LOG_INFO, "Successfully connected to Jellyfin server");
     }
     else
     {
-      Logger::Log(ADDON_LOG_ERROR, "Failed to connect to Jellyfin server");
+      // Need to authenticate
+      Logger::Log(ADDON_LOG_INFO, "Authentication required");
+      
+      int authMethod = kodi::addon::GetSettingInt("auth_method", 0);
+      
+      if (authMethod == 0) // Username & Password
+      {
+        std::string username = kodi::addon::GetSettingString("username", "");
+        std::string password = kodi::addon::GetSettingString("password", "");
+        
+        if (!username.empty() && !password.empty())
+        {
+          if (m_jellyfinClient->AuthenticateWithPassword(username, password))
+          {
+            Logger::Log(ADDON_LOG_INFO, "Successfully authenticated with password");
+          }
+          else
+          {
+            Logger::Log(ADDON_LOG_ERROR, "Failed to authenticate with password");
+          }
+        }
+        else
+        {
+          Logger::Log(ADDON_LOG_WARNING, "Username or password not configured");
+        }
+      }
+      else if (authMethod == 1) // Quick Connect
+      {
+        if (m_jellyfinClient->AuthenticateWithQuickConnect())
+        {
+          Logger::Log(ADDON_LOG_INFO, "Successfully authenticated with Quick Connect");
+        }
+        else
+        {
+          Logger::Log(ADDON_LOG_ERROR, "Quick Connect authentication failed");
+        }
+      }
+      else // Manual API Key (auth_method == 2)
+      {
+        if (!m_apiKey.empty())
+        {
+          if (m_jellyfinClient->Connect())
+          {
+            Logger::Log(ADDON_LOG_INFO, "Successfully connected with API key");
+          }
+          else
+          {
+            Logger::Log(ADDON_LOG_ERROR, "Failed to connect with API key");
+          }
+        }
+        else
+        {
+          Logger::Log(ADDON_LOG_WARNING, "API key not configured");
+        }
+      }
     }
   }
 }
@@ -42,7 +98,13 @@ bool CJellyfinPVRClient::LoadSettings()
 {
   m_serverUrl = kodi::addon::GetSettingString("server_url", "");
   m_userId = kodi::addon::GetSettingString("user_id", "");
-  m_apiKey = kodi::addon::GetSettingString("api_key", "");
+  
+  // Try to load access token first (from authentication), fall back to API key
+  m_apiKey = kodi::addon::GetSettingString("access_token", "");
+  if (m_apiKey.empty())
+  {
+    m_apiKey = kodi::addon::GetSettingString("api_key", "");
+  }
 
   if (m_serverUrl.empty())
   {
@@ -50,12 +112,7 @@ bool CJellyfinPVRClient::LoadSettings()
     return false;
   }
 
-  if (m_apiKey.empty())
-  {
-    Logger::Log(ADDON_LOG_ERROR, "API Key not configured");
-    return false;
-  }
-
+  // API key/access token is optional at this stage - will be obtained during authentication
   return true;
 }
 
