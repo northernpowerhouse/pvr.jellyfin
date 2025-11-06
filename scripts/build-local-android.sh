@@ -269,14 +269,12 @@ build_addon() {
             # Format: arm-linux-androideabi-21-release (host-api-buildtype)
             export DEPENDS_ROOT=\"/opt/xbmc-depends/arm-linux-androideabi-21-release\"
             
-            # List what's actually in includes
-            echo \"Checking available headers in \$DEPENDS_ROOT/include/...\"
-            ls \$DEPENDS_ROOT/include/ 2>&1 || echo \"No includes\"
+            # jsoncpp is bundled with Kodi's CMake utilities
+            export JSONCPP_INCLUDE=\"\$KODI_SOURCE/tools/depends/native/cmake/x86_64-linux-native/Utilities/cmjsoncpp/include\"
             
-            # Check if jsoncpp is in Kodi source (Kodi often includes it)
-            echo \"Checking for jsoncpp in Kodi source...\"
-            find \$KODI_SOURCE -type d -name 'jsoncpp' 2>/dev/null | head -5
-            find \$KODI_SOURCE -type f -path '*/json/json.h' 2>/dev/null | head -5
+            echo \"Using Kodi headers from: \$KODI_INCLUDE\"
+            echo \"Using dependencies from: \$DEPENDS_ROOT\"
+            echo \"Using jsoncpp from: \$JSONCPP_INCLUDE\"
             
             # Configure with CMake for Android
             cmake .. \
@@ -286,7 +284,7 @@ build_addon() {
                 -DCMAKE_BUILD_TYPE=Release \
                 -DCMAKE_PREFIX_PATH=\"\$DEPENDS_ROOT\" \
                 -DKODI_INCLUDE_DIR=\"\$KODI_INCLUDE\" \
-                -DCMAKE_CXX_FLAGS=\"-I\$KODI_INCLUDE -I\$KODI_SOURCE -I\$DEPENDS_ROOT/include\" \
+                -DCMAKE_CXX_FLAGS=\"-I\$KODI_INCLUDE -I\$KODI_SOURCE -I\$JSONCPP_INCLUDE -I\$DEPENDS_ROOT/include\" \
                 -DCMAKE_C_FLAGS=\"-I\$KODI_SOURCE -I\$DEPENDS_ROOT/include\" \
                 -DCMAKE_FIND_ROOT_PATH=\"\$DEPENDS_ROOT\" \
                 -DPKG_CONFIG_PATH=\"\$DEPENDS_ROOT/lib/pkgconfig\" \

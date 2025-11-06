@@ -18,10 +18,12 @@ if(DEFINED KODI_INCLUDE_DIR AND NOT KODI_FOUND)
   
   if(NOT JSONCPP_FOUND)
     # Try to find jsoncpp manually in common locations
+    # jsoncpp is often bundled with Kodi in the CMake utilities
     find_path(JSONCPP_INCLUDE_DIR json/json.h
       HINTS
         ${CMAKE_PREFIX_PATH}/include
-        /opt/xbmc-depends/include
+        /opt/xbmc-depends/arm-linux-androideabi-21-release/include
+        /opt/kodi/tools/depends/native/cmake/x86_64-linux-native/Utilities/cmjsoncpp/include
         /usr/include
         /usr/local/include
     )
