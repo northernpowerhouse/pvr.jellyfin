@@ -94,10 +94,12 @@ if(STANDALONE_BUILD)
     SUFFIX ".so"
   )
   
-  # Find jsoncpp library
+  # Find jsoncpp library - check multiple possible names and locations
   find_library(JSONCPP_LIBRARY
-    NAMES jsoncpp
-    PATHS ${CMAKE_PREFIX_PATH}/lib
+    NAMES jsoncpp libjsoncpp
+    PATHS 
+      ${CMAKE_PREFIX_PATH}/lib
+      /opt/xbmc-depends/arm-linux-androideabi-21-release/lib
     NO_DEFAULT_PATH
   )
   
@@ -105,6 +107,7 @@ if(STANDALONE_BUILD)
     message(STATUS "Found jsoncpp library: ${JSONCPP_LIBRARY}")
     target_link_libraries(pvr.jellyfin ${JSONCPP_LIBRARY})
   else()
+    message(STATUS "Searching for jsoncpp in: ${CMAKE_PREFIX_PATH}/lib")
     message(WARNING "jsoncpp library not found, linking may fail")
   endif()
   

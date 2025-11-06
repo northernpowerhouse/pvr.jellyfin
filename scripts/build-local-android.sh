@@ -277,9 +277,9 @@ build_addon() {
             echo \"Using jsoncpp from: \$JSONCPP_INCLUDE\"
             
             # Search for jsoncpp library files
-            echo \"Searching for jsoncpp library...\"
-            find /opt/kodi -name '*jsoncpp*' -o -name '*libjson*' 2>/dev/null | grep -E '\\.(a|so)$' | head -10
-            find \$DEPENDS_ROOT -name '*jsoncpp*' -o -name '*libjson*' 2>/dev/null | grep -E '\\.(a|so)$' | head -10
+            echo \"Searching for jsoncpp library in \$DEPENDS_ROOT/lib...\"
+            ls -la \$DEPENDS_ROOT/lib/ 2>&1 | grep -i json || echo \"No json libraries found\"
+            find \$DEPENDS_ROOT/lib -name '*json*' 2>/dev/null || echo \"No json files found in lib\"
             
             # Configure with CMake for Android
             cmake .. \
