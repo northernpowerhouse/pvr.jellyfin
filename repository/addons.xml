@@ -1,5 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addons>
-    <!-- This file will be auto-generated when releases are created -->
-    <!-- For now it's a placeholder -->
+  <!-- pvr.jellyfin addon -->
+  <addon
+    id="pvr.jellyfin"
+    version="0.1.0-test+54.8a8d378"
+    name="Jellyfin PVR Client"
+    provider-name="Northern Powerhouse">
+    <requires><import addon="kodi.binary.global.main" version="2.0.0"/>
+    <import addon="kodi.binary.instance.pvr" version="8.2.0"/></requires>
+    <extension
+      point="xbmc.pvrclient"
+      library_android="pvr.jellyfin.so"/>
+    <extension point="xbmc.addon.metadata">
+      <platform>android</platform>
+      <license>CC0-1.0</license>
+      <source>https://github.com/northernpowerhouse/pvr.jellyfin</source>
+      <summary lang="en_GB">Kodi PVR addon for Jellyfin Live TV</summary>
+      <description lang="en_GB">This addon allows Kodi to use Jellyfin as a Live TV backend, supporting channels, EPG, and recordings.</description>
+      <news>
+  v1.0.0
+  - Initial release
+  - Channel list support
+  - EPG support
+  - Live TV streaming
+  - Recording management
+      </news>
+      <assets>
+        <icon>resources/icon.png</icon>
+        <fanart>resources/fanart.jpg</fanart>
+      </assets>
+    </extension>
+  </addon>
+
+  <!-- repository.jellyfin.pvr addon (self-update) -->
+  <addon id="repository.jellyfin.pvr" name="Jellyfin PVR Repository" version="1.0.0" provider-name="northernpowerhouse">
+      <extension point="xbmc.addon.repository" name="Jellyfin PVR Repository">
+          <dir>
+              <info compressed="false">https://raw.githubusercontent.com/northernpowerhouse/pvr.jellyfin/main/repository/addons.xml</info>
+              <checksum>https://raw.githubusercontent.com/northernpowerhouse/pvr.jellyfin/main/repository/addons.xml.md5</checksum>
+              <datadir zip="true">https://github.com/northernpowerhouse/pvr.jellyfin/releases/download/</datadir>
+          </dir>
+      </extension>
+      <extension point="xbmc.addon.metadata">
+          <summary lang="en_GB">Jellyfin PVR Addon Repository</summary>
+          <description lang="en_GB">Repository for the Jellyfin PVR Client addon. Install this repository to get automatic updates for the Jellyfin PVR addon.</description>
+          <disclaimer></disclaimer>
+          <platform>all</platform>
+          <assets>
+              <icon>icon.png</icon>
+          </assets>
+      </extension>
+  </addon>
+
 </addons>
