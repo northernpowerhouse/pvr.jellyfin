@@ -64,8 +64,8 @@ bool JellyfinClient::AuthenticateWithPassword(const std::string& username, const
   m_authenticated = true;
   
   // Save to settings
-  kodi::SetSettingString("user_id", m_userId);
-  kodi::SetSettingString("access_token", m_apiKey);
+  kodi::addon::SetSettingString("user_id", m_userId);
+  kodi::addon::SetSettingString("access_token", m_apiKey);
   
   Logger::Log(ADDON_LOG_INFO, "Authentication successful, user ID: %s", m_userId.c_str());
   
@@ -95,10 +95,9 @@ bool JellyfinClient::AuthenticateWithQuickConnect()
           << "Enter this code: " << code << "\n\n"
           << "Waiting for authorization...";
   
-  kodi::gui::dialogs::CProgress progress;
-  progress.SetHeading("Quick Connect");
-  progress.SetLine(1, message.str());
-  progress.ShowDialog();
+  kodi::gui::dialogs::CProgress* progress = new kodi::gui::dialogs::CProgress();
+  progress->SetHeading("Quick Connect");
+  progress->SetLine(1, message.str());
   
   // Poll for authentication (every 3 seconds for up to 5 minutes)
   std::string userId, accessToken;
@@ -106,17 +105,18 @@ bool JellyfinClient::AuthenticateWithQuickConnect()
   {
     std::this_thread::sleep_for(std::chrono::seconds(3));
     
-    if (progress.IsCanceled())
+    if (progress->IsCanceled())
     {
       Logger::Log(ADDON_LOG_INFO, "Quick Connect cancelled by user");
+      delete progress;
       return false;
     }
     
-    progress.SetPercentage((i * 100) / 100);
+    progress->SetPercentage((i * 100) / 100);
     
     if (m_authManager->CheckQuickConnectStatus(userId, accessToken))
     {
-      progress.Close();
+      delete progress;
       
       // Update credentials
       m_userId = userId;
@@ -124,8 +124,8 @@ bool JellyfinClient::AuthenticateWithQuickConnect()
       m_authenticated = true;
       
       // Save to settings
-      kodi::SetSettingString("user_id", m_userId);
-      kodi::SetSettingString("access_token", m_apiKey);
+      kodi::addon::SetSettingString("user_id", m_userId);
+      kodi::addon::SetSettingString("access_token", m_apiKey);
       
       Logger::Log(ADDON_LOG_INFO, "Quick Connect successful, user ID: %s", m_userId.c_str());
       
@@ -140,7 +140,7 @@ bool JellyfinClient::AuthenticateWithQuickConnect()
     }
   }
   
-  progress.Close();
+  delete progress;
   kodi::gui::dialogs::OK::ShowAndGetInput("Quick Connect Timeout", 
                                           "Quick Connect timed out.\nPlease try again.");
   return false;

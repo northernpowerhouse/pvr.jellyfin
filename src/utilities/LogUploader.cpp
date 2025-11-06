@@ -72,31 +72,31 @@ bool LogUploader::AuthenticateWithGitHub()
           << "Waiting for authorization...";
   
   // Create progress dialog
-  kodi::gui::dialogs::CProgress progress;
-  progress.SetHeading("GitHub Authentication");
-  progress.SetLine(1, message.str());
-  progress.ShowDialog();
+  kodi::gui::dialogs::CProgress* progress = new kodi::gui::dialogs::CProgress();
+  progress->SetHeading("GitHub Authentication");
+  progress->SetLine(1, message.str());
   
   // Poll for token (5 second intervals for up to 5 minutes)
   for (int i = 0; i < 60; i++)
   {
     std::this_thread::sleep_for(std::chrono::seconds(5));
     
-    if (progress.IsCanceled())
+    if (progress->IsCanceled())
     {
+      delete progress;
       return false;
     }
     
-    progress.SetPercentage((i * 100) / 60);
+    progress->SetPercentage((i * 100) / 60);
     
     if (PollForToken(deviceCode))
     {
-      progress.Close();
+      delete progress;
       return true;
     }
   }
   
-  progress.Close();
+  delete progress;
   return false;
 }
 
@@ -293,7 +293,7 @@ std::string LogUploader::CollectAddonLogs()
   log << "=== Jellyfin PVR Addon Log ===" << "\n";
   log << "Timestamp: " << GetCurrentTimestamp() << "\n";
   log << "Addon Version: 1.0.0\n";
-  log << "Kodi Platform: " << kodi::GetSettingString("__addon_platform__", "unknown") << "\n";
+  log << "Kodi Platform: " << kodi::addon::GetSettingString("__addon_platform__", "unknown") << "\n";
   log << "\n";
   log << "=== Configuration ===" << "\n";
   log << "Server URL: " << kodi::addon::GetSettingString("server_url", "not set") << "\n";
