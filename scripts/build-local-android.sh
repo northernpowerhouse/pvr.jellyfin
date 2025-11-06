@@ -191,6 +191,13 @@ build_docker_image() {
     # Enable BuildKit for better caching
     export DOCKER_BUILDKIT=1
     
+    # Prepare no-cache flag if forced
+    local CACHE_FLAGS="--cache-from pvr-jellyfin-android-builder:latest"
+    if [ "${FORCE_NO_CACHE:-0}" = "1" ]; then
+        print_warning "Building without cache (this will take longer)"
+        CACHE_FLAGS="--no-cache"
+    fi
+    
     # Build the image (capture exit code from docker, not tee)
     # Use set -o pipefail to ensure pipeline failures are caught
     set -o pipefail
@@ -198,7 +205,7 @@ build_docker_image() {
         --progress=plain \
         --tag pvr-jellyfin-android-builder:latest \
         --file Dockerfile.android-build \
-        --cache-from pvr-jellyfin-android-builder:latest \
+        $CACHE_FLAGS \
         . 2>&1 | tee -a "$BUILD_LOG"
     
     # Capture the exit code
@@ -503,8 +510,9 @@ main() {
     fi
     
     if [ "$DOCKERFILE_HASH" != "$LAST_DOCKERFILE_HASH" ]; then
-        print_warning "Dockerfile has changed, forcing Docker image rebuild..."
+        print_warning "Dockerfile has changed, forcing Docker image rebuild with no cache..."
         docker rmi pvr-jellyfin-android-builder:latest 2>/dev/null || true
+        export FORCE_NO_CACHE=1
         echo "$DOCKERFILE_HASH" > "$PROJECT_DIR/.last-dockerfile-hash"
     fi
     
