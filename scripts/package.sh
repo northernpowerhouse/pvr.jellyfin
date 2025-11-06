@@ -39,10 +39,11 @@ else
 fi
 
 # Process addon.xml.in
-echo "Processing addon.xml... (platform=$PLATFORM, library=$LIBRARY_FILENAME)"
+echo "Processing addon.xml... (version=$VERSION, platform=$PLATFORM, library=$LIBRARY_FILENAME)"
 # For Kodi Omega (v21), use the new binary dependencies
-sed "s/@ADDON_DEPENDS@/<import addon=\"kodi.binary.global.main\" version=\"2.0.0\"\/><import addon=\"kodi.binary.instance.pvr\" version=\"8.2.0\"\/>/g" \
+sed "s/@ADDON_VERSION@/${VERSION}/g" \
     "$PROJECT_DIR/addon.xml.in" | \
+sed "s/@ADDON_DEPENDS@/<import addon=\"kodi.binary.global.main\" version=\"2.0.0\"\/><import addon=\"kodi.binary.instance.pvr\" version=\"8.2.0\"\/>/g" | \
 sed "s/@PLATFORM@/${PLATFORM}/g" | \
 sed "s/@LIBRARY_FILENAME@/${LIBRARY_FILENAME}/g" \
     > "$ADDON_DIR/addon.xml"
