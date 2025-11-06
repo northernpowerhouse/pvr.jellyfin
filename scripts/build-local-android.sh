@@ -495,6 +495,19 @@ main() {
         docker rmi pvr-jellyfin-android-builder:latest 2>/dev/null || true
     fi
     
+    # Check if Dockerfile changed since last build
+    DOCKERFILE_HASH=$(git hash-object "$PROJECT_DIR/Dockerfile.android-build" 2>/dev/null || echo "none")
+    LAST_DOCKERFILE_HASH=""
+    if [ -f "$PROJECT_DIR/.last-dockerfile-hash" ]; then
+        LAST_DOCKERFILE_HASH=$(cat "$PROJECT_DIR/.last-dockerfile-hash")
+    fi
+    
+    if [ "$DOCKERFILE_HASH" != "$LAST_DOCKERFILE_HASH" ]; then
+        print_warning "Dockerfile has changed, forcing Docker image rebuild..."
+        docker rmi pvr-jellyfin-android-builder:latest 2>/dev/null || true
+        echo "$DOCKERFILE_HASH" > "$PROJECT_DIR/.last-dockerfile-hash"
+    fi
+    
     # Build Docker image
     print_info "Step 1/5: Building Docker image with dependencies..."
     if ! build_docker_image; then
