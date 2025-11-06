@@ -269,13 +269,14 @@ build_addon() {
             # Format: arm-linux-androideabi-21-release (host-api-buildtype)
             export DEPENDS_ROOT=\"/opt/xbmc-depends/arm-linux-androideabi-21-release\"
             
-            # List available headers for debugging
-            echo \"Checking depends structure at \$DEPENDS_ROOT...\"
-            ls -la \$DEPENDS_ROOT/ 2>&1 | head -30 || echo \"Depends root not found\"
-            echo \"Checking for include directory...\"
-            ls -la \$DEPENDS_ROOT/include/ 2>&1 | head -30 || echo \"No includes directory\"
-            echo \"Searching for jsoncpp...\"
-            find \$DEPENDS_ROOT -type f -name 'json.h' 2>/dev/null | head -5 || echo \"No json.h found\"
+            # List what's actually in includes
+            echo \"Checking available headers in \$DEPENDS_ROOT/include/...\"
+            ls \$DEPENDS_ROOT/include/ 2>&1 || echo \"No includes\"
+            
+            # Check if jsoncpp is in Kodi source (Kodi often includes it)
+            echo \"Checking for jsoncpp in Kodi source...\"
+            find \$KODI_SOURCE -type d -name 'jsoncpp' 2>/dev/null | head -5
+            find \$KODI_SOURCE -type f -path '*/json/json.h' 2>/dev/null | head -5
             
             # Configure with CMake for Android
             cmake .. \
