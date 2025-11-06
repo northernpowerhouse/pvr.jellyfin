@@ -10,9 +10,17 @@ jobs:
     runs-on: ubuntu-latest
     env:
       app_id: pvr.jellyfin
-      NDK_VERSION: r26d
+      ANDROID_ARCH: arm
+      ANDROID_CPU: armeabi-v7a
     steps:
-      - name: Checkout addon repo
+      - name: Checkout Kodi repository
+        uses: actions/checkout@v4
+        with:
+          repository: xbmc/xbmc
+          ref: Omega
+          path: xbmc
+          
+      - name: Checkout addon repository
         uses: actions/checkout@v4
         with:
           path: ${{ env.app_id }}
@@ -28,96 +36,74 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "Selected VERSION=$VERSION"
 
-      - name: Install required packages
+      - name: Install build dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y \
             openjdk-11-jdk \
-            unzip zip cmake build-essential wget \
-            autoconf automake libtool pkg-config \
-            git curl
+            automake autopoint bison build-essential ccache cmake curl default-jdk \
+            gawk gdc gettext git-core gperf groovy libass-dev libasound2-dev \
+            libavahi-client-dev libavahi-common-dev libbluetooth-dev libbluray-dev \
+            libbz2-dev libcdio-dev libcec-dev libp8-platform-dev libcrossguid-dev \
+            libcurl4-openssl-dev libcwiid-dev libdbus-1-dev libegl1-mesa-dev \
+            libenca-dev libflac-dev libfontconfig-dev libfmt-dev libfreetype6-dev \
+            libfribidi-dev libfstrcmp-dev libgcrypt-dev libgif-dev libgles2-mesa-dev \
+            libglew-dev libglu1-mesa-dev libgnutls28-dev libgpg-error-dev \
+            libiso9660-dev libjpeg-dev liblcms2-dev libltdl-dev liblzo2-dev \
+            libmicrohttpd-dev libmariadb-dev libmariadb-dev-compat libnfs-dev \
+            libogg-dev libomxil-bellagio-dev libpcre3-dev libplist-dev libpng-dev \
+            libpulse-dev libshairplay-dev libsmbclient-dev libspdlog-dev \
+            libsqlite3-dev libssl-dev libtag1-dev libtiff5-dev libtinyxml-dev \
+            libtool libudev-dev libunistring-dev libva-dev libvdpau-dev libvorbis-dev \
+            libxkbcommon-dev libxmu-dev libxrandr-dev libxslt1-dev libxt-dev \
+            lsb-release meson nasm ninja-build python3-dev python3-pil python3-minimal \
+            rapidjson-dev swig unzip uuid-dev zip zlib1g-dev
 
-      - name: Cache Android NDK
-        id: ndk-cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ github.workspace }}/android-ndk-${{ env.NDK_VERSION }}
-          key: ndk-${{ env.NDK_VERSION }}-${{ runner.os }}
-
-      - name: Download Android NDK (if not cached)
-        if: steps.ndk-cache.outputs.cache-hit != 'true'
+      - name: Set up Android build environment
         run: |
-          set -euo pipefail
-          echo "Downloading Android NDK ${NDK_VERSION}..."
-          curl -L -o ndk.zip https://dl.google.com/android/repository/android-ndk-${NDK_VERSION}-linux.zip
-          unzip -q ndk.zip
-          echo "Downloaded NDK to ${GITHUB_WORKSPACE}/android-ndk-${NDK_VERSION}"
+          cd xbmc/tools/depends
+          ./bootstrap
+          ./configure --host=${{ env.ANDROID_ARCH }}-linux-androideabi \
+            --with-platform=android-${{ env.ANDROID_ARCH }} \
+            --prefix=$(pwd)/android-${{ env.ANDROID_ARCH }}
 
-      - name: Set NDK path
-        run: echo "ANDROID_NDK_ROOT=${GITHUB_WORKSPACE}/android-ndk-${NDK_VERSION}" >> $GITHUB_ENV
-
-      - name: Install JsonCpp
+      - name: Build Kodi dependencies for Android
         run: |
-          sudo apt-get install -y libjsoncpp-dev
-          
-      - name: Checkout Kodi headers (shallow)
-        run: |
-          # Clone Kodi dev-kit headers we need - sparse checkout for speed
-          git clone --depth=1 --filter=blob:none --sparse https://github.com/xbmc/xbmc.git kodi
-          cd kodi
-          git sparse-checkout set xbmc/addons/kodi-dev-kit
-
-      - name: Process addon.xml template
-        run: |
-          cd ${{ env.app_id }}
-          # Create addon.xml from template
-          sed "s/@ADDON_DEPENDS@/<import addon=\"xbmc.pvr\" version=\"8.2.0\"\/>/g" addon.xml.in | \
-          sed "s/@PLATFORM@/android/g" | \
-          sed "s/@LIBRARY_FILENAME@/pvr.jellyfin.so/g" > addon.xml
-
-      - name: Configure addon directly for Android
-        run: |
-          set -euo pipefail
-          cd ${{ env.app_id }}
-          mkdir -p build
-          cd build
-          
-          # Get JsonCpp include paths from host pkg-config
-          JSONCPP_CFLAGS=$(pkg-config --cflags jsoncpp || echo "-I/usr/include/jsoncpp")
-          
-          cmake .. \
-            -DCMAKE_TOOLCHAIN_FILE=${{ env.ANDROID_NDK_ROOT }}/build/cmake/android.toolchain.cmake \
-            -DANDROID_ABI=armeabi-v7a \
-            -DANDROID_PLATFORM=android-21 \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DKODI_INCLUDE_DIR=${{ github.workspace }}/kodi/xbmc/addons/kodi-dev-kit/include \
-            -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install \
-            -DCMAKE_CXX_FLAGS="${JSONCPP_CFLAGS}"
-
-      - name: Build addon
-        run: |
-          cd ${{ env.app_id }}/build
+          cd xbmc/tools/depends
           make -j$(nproc)
 
-      - name: Install and package addon
+      - name: Prepare addon for Kodi build system
+        run: |
+          mkdir -p xbmc/cmake/addons/addons/${{ env.app_id }}
+          echo "${{ env.app_id }} file://$(pwd)/${{ env.app_id }}" > xbmc/cmake/addons/addons/${{ env.app_id }}/${{ env.app_id }}.txt
+
+      - name: Build addon using Kodi build system
+        run: |
+          cd xbmc/cmake/addons
+          mkdir -p build
+          cd build
+          cmake .. \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DADDONS_TO_BUILD=${{ env.app_id }} \
+            -DADDON_SRC_PREFIX=$(pwd)/../../../.. \
+            -DCMAKE_TOOLCHAIN_FILE=$(pwd)/../../../tools/depends/target/Toolchain_binaddons.cmake \
+            -DPLATFORM_DIR=$(pwd)/../../../tools/depends/target/android-${{ env.ANDROID_ARCH }} \
+            -DCMAKE_INSTALL_PREFIX=$(pwd)/../../../addons \
+            -DPACKAGE_ZIP=ON
+          make -j$(nproc)
+
+      - name: Locate and prepare addon package
         run: |
           set -euo pipefail
-          cd ${{ env.app_id }}/build
-          make install
-          
-          # Create addon package manually
-          cd ${{ github.workspace }}/install
-          
-          # Find the installed addon directory
-          ADDON_DIR=$(find . -type d -name "${{ env.app_id }}" -print -quit)
-          if [ -z "$ADDON_DIR" ]; then
-            echo "Addon directory not found in install path"
-            ls -la
+          # Find the built addon zip
+          ADDON_ZIP=$(find xbmc -name "${{ env.app_id }}-*.zip" -print -quit || true)
+          if [ -z "$ADDON_ZIP" ]; then
+            echo "Addon zip not found. Searching..." >&2
+            find xbmc -name "*.zip" -type f >&2
             exit 1
           fi
-          
-          # Create zip
-          zip -r "${{ github.workspace }}/${{ env.app_id }}-${VERSION}.zip" "$ADDON_DIR"
+          echo "Found addon package: $ADDON_ZIP"
+          cp "$ADDON_ZIP" "${{ github.workspace }}/${{ env.app_id }}-${VERSION}.zip"
           ls -lh "${{ github.workspace }}/${{ env.app_id }}-${VERSION}.zip"
 
       - name: Create repository package
