@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="repository.jellyfin.pvr" name="Jellyfin PVR Repository" version="1.0.0" provider-name="northernpowerhouse">
+<addon id="repository.jellyfin.pvr" name="Jellyfin PVR Repository" version="0.1.0" provider-name="northernpowerhouse">
     <extension point="xbmc.addon.repository" name="Jellyfin PVR Repository">
         <dir>
             <info compressed="false">https://raw.githubusercontent.com/northernpowerhouse/pvr.jellyfin/main/repository/addons.xml</info>
