@@ -14,13 +14,13 @@
         </options>
       </constraints>
     </setting>
-    <setting id="username" type="text" label="30024" default="" visible="eq(0,auth_method)|eq(1,auth_method)">
+    <setting id="username" type="text" label="30024" default="">
       <level>0</level>
     </setting>
-    <setting id="password" type="text" label="30025" default="" option="hidden" visible="eq(0,auth_method)">
+    <setting id="password" type="text" label="30025" default="" option="hidden">
       <level>0</level>
     </setting>
-    <setting id="api_key" type="text" label="30003" default="" option="hidden" visible="eq(2,auth_method)">
+    <setting id="api_key" type="text" label="30003" default="" option="hidden">
       <level>0</level>
     </setting>
     <setting id="user_id" type="text" label="30002" default="" enable="false">
@@ -34,8 +34,12 @@
     <setting id="enable_epg" type="boolean" label="30011" default="true">
       <level>0</level>
     </setting>
-    <setting id="epg_update_interval" type="integer" label="30012" default="120" min="30" max="600">
-      <level>1</level>
+    <setting id="epg_update_interval" type="integer" label="30012" default="120">
+      <level>0</level>
+      <constraints>
+        <minimum>30</minimum>
+        <maximum>600</maximum>
+      </constraints>
     </setting>
   </category>
   <category label="30030">
