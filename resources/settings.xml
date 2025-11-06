@@ -1,21 +1,120 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<settings>
-  <category label="30000">
-    <setting id="use_https" type="bool" label="30040" default="false" />
-    <setting id="server_address" type="text" label="30041" default="" />
-    <setting id="server_port" type="integer" label="30042" default="8096" />
-    <setting id="auth_method" type="select" label="30020" default="0" values="30021|30022|30023" />
-    <setting id="username" type="text" label="30024" default="" />
-    <setting id="password" type="text" label="30025" default="" option="hidden" />
-    <setting id="api_key" type="text" label="30003" default="" option="hidden" />
-    <setting id="user_id" type="text" label="30002" default="" enable="false" visible="false" />
-    <setting id="access_token" type="text" label="30026" default="" option="hidden" enable="false" visible="false" />
-  </category>
-  <category label="30010">
-    <setting id="enable_epg" type="bool" label="30011" default="true" />
-    <setting id="epg_update_interval" type="integer" label="30012" default="120" />
-  </category>
-  <category label="30030">
-    <setting id="enable_debug" type="bool" label="30031" default="false" />
-  </category>
+<?xml version="1.0" encoding="UTF-8"?>
+<settings version="2">
+  <section id="connection">
+    <category id="connection" label="30000">
+      <group id="1">
+        <setting id="use_https" type="boolean" label="30040" help="30043">
+          <level>0</level>
+          <default>false</default>
+          <control type="toggle" />
+        </setting>
+        <setting id="server_address" type="string" label="30041" help="30044">
+          <level>0</level>
+          <default></default>
+          <control type="edit" format="string">
+            <heading>30041</heading>
+          </control>
+        </setting>
+        <setting id="server_port" type="integer" label="30042" help="30045">
+          <level>0</level>
+          <default>8096</default>
+          <control type="spinner" format="integer">
+            <minimum>1</minimum>
+            <maximum>65535</maximum>
+          </control>
+        </setting>
+      </group>
+      <group id="2">
+        <setting id="auth_method" type="integer" label="30020" help="30046">
+          <level>0</level>
+          <default>0</default>
+          <control type="spinner" format="string">
+            <formatlabel>30021</formatlabel>
+            <formatlabel>30022</formatlabel>
+            <formatlabel>30023</formatlabel>
+          </control>
+          <constraints>
+            <options>
+              <option label="30021">0</option>
+              <option label="30022">1</option>
+              <option label="30023">2</option>
+            </options>
+          </constraints>
+        </setting>
+        <setting id="username" type="string" label="30024">
+          <level>0</level>
+          <default></default>
+          <control type="edit" format="string">
+            <heading>30024</heading>
+          </control>
+        </setting>
+        <setting id="password" type="string" label="30025">
+          <level>0</level>
+          <default></default>
+          <control type="edit" format="string">
+            <heading>30025</heading>
+            <hidden>true</hidden>
+          </control>
+        </setting>
+        <setting id="api_key" type="string" label="30003">
+          <level>0</level>
+          <default></default>
+          <control type="edit" format="string">
+            <heading>30003</heading>
+            <hidden>true</hidden>
+          </control>
+        </setting>
+      </group>
+      <group id="3">
+        <setting id="user_id" type="string" label="30002">
+          <level>1</level>
+          <default></default>
+          <control type="edit" format="string">
+            <heading>30002</heading>
+          </control>
+          <enable>false</enable>
+        </setting>
+        <setting id="access_token" type="string" label="30026">
+          <level>1</level>
+          <default></default>
+          <control type="edit" format="string">
+            <heading>30026</heading>
+            <hidden>true</hidden>
+          </control>
+          <enable>false</enable>
+        </setting>
+      </group>
+    </category>
+  </section>
+  <section id="epg">
+    <category id="epg" label="30010">
+      <group id="1">
+        <setting id="enable_epg" type="boolean" label="30011">
+          <level>0</level>
+          <default>true</default>
+          <control type="toggle" />
+        </setting>
+        <setting id="epg_update_interval" type="integer" label="30012">
+          <level>0</level>
+          <default>120</default>
+          <control type="spinner" format="integer">
+            <minimum>30</minimum>
+            <maximum>600</maximum>
+            <step>30</step>
+          </control>
+        </setting>
+      </group>
+    </category>
+  </section>
+  <section id="debug">
+    <category id="debug" label="30030">
+      <group id="1">
+        <setting id="enable_debug" type="boolean" label="30031">
+          <level>0</level>
+          <default>false</default>
+          <control type="toggle" />
+        </setting>
+      </group>
+    </category>
+  </section>
 </settings>

@@ -94,3 +94,19 @@ msgstr ""
 msgctxt "#30042"
 msgid "Server Port"
 msgstr ""
+
+msgctxt "#30043"
+msgid "Enable secure connection (HTTPS)"
+msgstr ""
+
+msgctxt "#30044"
+msgid "Server hostname or IP address (without http://)"
+msgstr ""
+
+msgctxt "#30045"
+msgid "Port number (default 8096)"
+msgstr ""
+
+msgctxt "#30046"
+msgid "Choose authentication method"
+msgstr ""
