@@ -261,11 +261,17 @@ build_addon() {
             mkdir -p /workspace/build-android
             cd /workspace/build-android
             
-            # Find Kodi headers location
-            # Kodi has headers in xbmc/addons/kodi-dev-kit/include/kodi
+            # Find Kodi headers location and dependencies
             export KODI_SOURCE=/opt/kodi
             export KODI_INCLUDE=\"\$KODI_SOURCE/xbmc/addons/kodi-dev-kit/include\"
             export DEPENDS_ROOT=\"/opt/xbmc-depends\"
+            
+            # List available headers for debugging
+            echo \"Checking for Kodi headers...\"
+            ls -la \$KODI_INCLUDE/kodi/ 2>&1 | head -20 || echo \"Kodi headers not found in expected location\"
+            echo \"Checking for jsoncpp...\"
+            find \$DEPENDS_ROOT/include -name 'json.h' 2>/dev/null || echo \"jsoncpp not found in depends\"
+            ls -la \$DEPENDS_ROOT/include/ 2>&1 | head -20 || echo \"No includes in depends\"
             
             # Configure with CMake for Android
             cmake .. \
@@ -277,6 +283,7 @@ build_addon() {
                 -DKODI_INCLUDE_DIR=\"\$KODI_INCLUDE\" \
                 -DCMAKE_CXX_FLAGS=\"-I\$KODI_INCLUDE -I\$KODI_SOURCE -I\$DEPENDS_ROOT/include\" \
                 -DCMAKE_C_FLAGS=\"-I\$KODI_SOURCE -I\$DEPENDS_ROOT/include\" \
+                -DCMAKE_FIND_ROOT_PATH=\"\$DEPENDS_ROOT\" \
                 -DPKG_CONFIG_PATH=\"\$DEPENDS_ROOT/lib/pkgconfig\" \
                 -DCORE_SYSTEM_NAME=android
             
