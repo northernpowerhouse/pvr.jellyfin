@@ -89,7 +89,8 @@ RUN ./bootstrap && \
       --with-ndk-path=${ANDROID_NDK_HOME} \
       --prefix=/opt/xbmc-depends \
       --disable-debug && \
-    make -j$(nproc) -k || echo "Some optional dependencies failed (this is OK if samba-gplv3)"
+    make -j$(nproc) -k && \
+    make install || echo "Some dependencies may have failed but continuing"
 
 # Create a marker file to indicate dependencies are built
 RUN touch /opt/xbmc-depends/.dependencies-built
