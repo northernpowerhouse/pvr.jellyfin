@@ -1,5 +1,8 @@
 # Build directories
 build/
+build-android/
+build-output/
+package/
 *.o
 *.so
 *.dll
