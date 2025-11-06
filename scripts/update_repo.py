@@ -67,28 +67,29 @@ def generate_md5(file_path):
 
 def update_repository():
     """Main function to update the repository."""
-    script_dir = Path(__file__).parent
-    repo_dir = script_dir.parent / 'repository'
-    artifacts_dir = script_dir.parent / 'artifacts'
+    # The script is run from within the addon-repo directory
+    # So current working directory IS the repository
+    repo_dir = Path.cwd()
     
     print(f"Updating repository in {repo_dir}")
     
-    # Create repository structure
-    repo_dir.mkdir(exist_ok=True)
+    # Check if pvr.jellyfin directory exists with zips
     pvr_jellyfin_dir = repo_dir / 'pvr.jellyfin'
-    pvr_jellyfin_dir.mkdir(exist_ok=True)
+    if not pvr_jellyfin_dir.exists():
+        print("Error: pvr.jellyfin directory not found!")
+        return
     
-    # Copy artifacts to repository
-    if artifacts_dir.exists():
-        for artifact_dir in artifacts_dir.iterdir():
-            if artifact_dir.is_dir():
-                for zip_file in artifact_dir.glob('*.zip'):
-                    dest = pvr_jellyfin_dir / zip_file.name
-                    print(f"Copying {zip_file} to {dest}")
-                    shutil.copy2(zip_file, dest)
+    zip_files = list(pvr_jellyfin_dir.glob('*.zip'))
+    if not zip_files:
+        print("Warning: No zip files found in pvr.jellyfin directory!")
+        return
+    
+    print(f"Found {len(zip_files)} addon zip file(s):")
+    for zf in zip_files:
+        print(f"  - {zf.name}")
     
     # Generate addons.xml
-    print("Generating addons.xml...")
+    print("\nGenerating addons.xml...")
     addons_xml_path = generate_addons_xml(repo_dir)
     
     # Generate addons.xml.md5
