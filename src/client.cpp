@@ -1,6 +1,7 @@
 #include "client.h"
 #include "jellyfin/JellyfinClient.h"
 #include "utilities/Logger.h"
+#include "utilities/LogUploader.h"
 #include <kodi/General.h>
 
 ADDON_STATUS CJellyfinAddon::CreateInstance(const kodi::addon::IInstanceInfo& instance,
@@ -111,7 +112,6 @@ bool CJellyfinPVRClient::LoadSettings()
   if (triggerLogUpload)
   {
     Logger::Log(ADDON_LOG_INFO, "Triggering log upload...");
-    #include "utilities/LogUploader.h"
     LogUploader uploader;
     uploader.UploadLogs();
     
