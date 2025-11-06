@@ -59,13 +59,32 @@ jobs:
             lsb-release meson nasm ninja-build python3-dev python3-pil python3-minimal \
             rapidjson-dev swig unzip uuid-dev zip zlib1g-dev
 
+      - name: Setup Android SDK and NDK
+        run: |
+          # Install Android SDK command line tools
+          mkdir -p $HOME/android-sdk
+          cd $HOME/android-sdk
+          wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
+          unzip -q commandlinetools-linux-9477386_latest.zip
+          mkdir -p cmdline-tools/latest
+          mv cmdline-tools/* cmdline-tools/latest/ 2>/dev/null || true
+          
+          # Install NDK
+          yes | cmdline-tools/latest/bin/sdkmanager --licenses || true
+          cmdline-tools/latest/bin/sdkmanager "ndk;25.2.9519653" "platforms;android-21"
+          
+          echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
+          echo "ANDROID_NDK_ROOT=$HOME/android-sdk/ndk/25.2.9519653" >> $GITHUB_ENV
+
       - name: Set up Android build environment
         run: |
           cd xbmc/tools/depends
           ./bootstrap
-          ./configure --host=${{ env.ANDROID_ARCH }}-linux-androideabi \
-            --with-platform=android-${{ env.ANDROID_ARCH }} \
-            --prefix=$(pwd)/android-${{ env.ANDROID_ARCH }}
+          ./configure \
+            --host=arm-linux-androideabi \
+            --with-sdk-path=$ANDROID_SDK_ROOT \
+            --with-ndk-path=$ANDROID_NDK_ROOT \
+            --prefix=$HOME/xbmc-depends
 
       - name: Build Kodi dependencies for Android
         run: |
@@ -79,18 +98,11 @@ jobs:
 
       - name: Build addon using Kodi build system
         run: |
-          cd xbmc/cmake/addons
-          mkdir -p build
-          cd build
-          cmake .. \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DADDONS_TO_BUILD=${{ env.app_id }} \
-            -DADDON_SRC_PREFIX=$(pwd)/../../../.. \
-            -DCMAKE_TOOLCHAIN_FILE=$(pwd)/../../../tools/depends/target/Toolchain_binaddons.cmake \
-            -DPLATFORM_DIR=$(pwd)/../../../tools/depends/target/android-${{ env.ANDROID_ARCH }} \
-            -DCMAKE_INSTALL_PREFIX=$(pwd)/../../../addons \
-            -DPACKAGE_ZIP=ON
-          make -j$(nproc)
+          cd xbmc
+          make -C tools/depends/target/binary-addons ADDONS="${{ env.app_id }}" \
+            ADDON_SRC_PREFIX=$(pwd)/.. \
+            PREFIX=$HOME/xbmc-depends \
+            CROSS_COMPILING=yes
 
       - name: Locate and prepare addon package
         run: |
