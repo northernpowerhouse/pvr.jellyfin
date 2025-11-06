@@ -177,10 +177,16 @@ clean_corrupted_volumes() {
 
 # Function to build the Docker image with caching
 build_docker_image() {
-    print_info "Building Docker image with Kodi dependencies..."
-    print_info "This may take 30-60 minutes on first run, but will be cached for subsequent builds"
-    
     cd "$PROJECT_DIR"
+    
+    # Check if image already exists
+    if docker image inspect pvr-jellyfin-android-builder:latest &>/dev/null; then
+        print_info "Docker image exists, checking if rebuild needed..."
+    else
+        print_info "Building Docker image with Kodi dependencies..."
+        print_warning "First build: 30-60 minutes (downloads SDK, builds dependencies)"
+        print_info "Subsequent builds: 5-10 minutes (uses cached layers and volumes)"
+    fi
     
     # Enable BuildKit for better caching
     export DOCKER_BUILDKIT=1
@@ -200,7 +206,12 @@ build_docker_image() {
     set +o pipefail
     
     if [ $build_result -eq 0 ]; then
-        print_success "Docker image built successfully"
+        # Check if this was a cached build or full rebuild
+        if docker image inspect pvr-jellyfin-android-builder:latest --format='{{.Created}}' 2>/dev/null | grep -q "$(date +%Y-%m-%d)"; then
+            print_success "Docker image built successfully (from cache)"
+        else
+            print_success "Docker image ready (cached from previous build)"
+        fi
         
         # Verify the image created the marker file
         check_volume_integrity
