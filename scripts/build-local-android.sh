@@ -264,14 +264,19 @@ build_addon() {
             # Find Kodi headers location and dependencies
             export KODI_SOURCE=/opt/kodi
             export KODI_INCLUDE=\"\$KODI_SOURCE/xbmc/addons/kodi-dev-kit/include\"
-            export DEPENDS_ROOT=\"/opt/xbmc-depends\"
+            
+            # The depends are installed under a host-specific subdirectory
+            export DEPENDS_HOST=\"arm-linux-androideabi\"
+            export DEPENDS_ROOT=\"/opt/xbmc-depends/\$DEPENDS_HOST\"
             
             # List available headers for debugging
             echo \"Checking for Kodi headers...\"
-            ls -la \$KODI_INCLUDE/kodi/ 2>&1 | head -20 || echo \"Kodi headers not found in expected location\"
-            echo \"Checking for jsoncpp...\"
-            find \$DEPENDS_ROOT/include -name 'json.h' 2>/dev/null || echo \"jsoncpp not found in depends\"
-            ls -la \$DEPENDS_ROOT/include/ 2>&1 | head -20 || echo \"No includes in depends\"
+            ls -la \$KODI_INCLUDE/kodi/ 2>&1 | head -20 || echo \"Kodi headers not found\"
+            echo \"Checking depends directory structure...\"
+            ls -la /opt/xbmc-depends/ 2>&1 || echo \"No xbmc-depends directory\"
+            echo \"Checking for jsoncpp in \$DEPENDS_ROOT...\"
+            ls -la \$DEPENDS_ROOT/include/ 2>&1 | head -20 || echo \"No includes in \$DEPENDS_ROOT\"
+            find \$DEPENDS_ROOT -name 'json.h' 2>/dev/null | head -5 || echo \"jsoncpp not found\"
             
             # Configure with CMake for Android
             cmake .. \
