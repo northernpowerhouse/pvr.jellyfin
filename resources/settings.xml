@@ -20,13 +20,13 @@
     <setting id="password" type="text" label="30025" default="" option="hidden" visible="eq(0,auth_method)">
       <level>0</level>
     </setting>
+    <setting id="api_key" type="text" label="30003" default="" option="hidden" visible="eq(2,auth_method)">
+      <level>0</level>
+    </setting>
     <setting id="user_id" type="text" label="30002" default="" enable="false">
       <level>1</level>
     </setting>
     <setting id="access_token" type="text" label="30026" default="" option="hidden" enable="false">
-      <level>1</level>
-    </setting>
-    <setting id="api_key" type="text" label="30003" default="" option="hidden" visible="eq(2,auth_method)">
       <level>1</level>
     </setting>
   </category>
@@ -40,9 +40,6 @@
   </category>
   <category label="30030">
     <setting id="enable_debug" type="boolean" label="30031" default="false">
-      <level>0</level>
-    </setting>
-    <setting id="upload_logs" type="action" label="30032" action="RunScript(special://home/addons/pvr.jellyfin/upload_logs.py)">
       <level>0</level>
     </setting>
   </category>
