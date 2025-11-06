@@ -33,7 +33,10 @@ if [ ! -f "$PROJECT_DIR/repository/repository.jellyfin.pvr/addon.xml" ]; then
     exit 1
 fi
 
-cp -r "$PROJECT_DIR/repository/repository.jellyfin.pvr/"* "$REPO_DIR/"
+# Copy only non-zip files to avoid including old repository addon versions
+cp "$PROJECT_DIR/repository/repository.jellyfin.pvr/addon.xml" "$REPO_DIR/"
+cp "$PROJECT_DIR/repository/repository.jellyfin.pvr/README.md" "$REPO_DIR/" 2>/dev/null || true
+cp "$PROJECT_DIR/repository/repository.jellyfin.pvr/icon.png"* "$REPO_DIR/" 2>/dev/null || true
 
 # Update version in addon.xml
 # Use | as delimiter to avoid issues with special characters in version string
