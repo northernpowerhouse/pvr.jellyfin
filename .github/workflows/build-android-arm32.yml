@@ -59,7 +59,15 @@ jobs:
             lsb-release meson nasm ninja-build python3-dev python3-pil python3-minimal \
             rapidjson-dev swig unzip uuid-dev zip zlib1g-dev
 
+      - name: Cache Android SDK and NDK
+        id: cache-android
+        uses: actions/cache@v4
+        with:
+          path: ~/android-sdk
+          key: android-sdk-ndk-25.2.9519653-${{ runner.os }}
+
       - name: Setup Android SDK and NDK
+        if: steps.cache-android.outputs.cache-hit != 'true'
         run: |
           # Install Android SDK command line tools
           mkdir -p $HOME/android-sdk
@@ -72,11 +80,25 @@ jobs:
           # Install NDK
           yes | cmdline-tools/latest/bin/sdkmanager --licenses || true
           cmdline-tools/latest/bin/sdkmanager "ndk;25.2.9519653" "platforms;android-21"
-          
+
+      - name: Set Android environment variables
+        run: |
           echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
           echo "ANDROID_NDK_ROOT=$HOME/android-sdk/ndk/25.2.9519653" >> $GITHUB_ENV
 
+      - name: Cache Kodi dependencies
+        id: cache-kodi-deps
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/xbmc-depends
+            xbmc/tools/depends/.configured
+          key: kodi-deps-android-arm-${{ hashFiles('xbmc/tools/depends/Makefile.include', 'xbmc/tools/depends/configure.ac') }}
+          restore-keys: |
+            kodi-deps-android-arm-
+
       - name: Set up Android build environment
+        if: steps.cache-kodi-deps.outputs.cache-hit != 'true'
         run: |
           cd xbmc/tools/depends
           ./bootstrap
@@ -85,8 +107,10 @@ jobs:
             --with-sdk-path=$ANDROID_SDK_ROOT \
             --with-ndk-path=$ANDROID_NDK_ROOT \
             --prefix=$HOME/xbmc-depends
+          touch .configured
 
       - name: Build Kodi dependencies for Android
+        if: steps.cache-kodi-deps.outputs.cache-hit != 'true'
         run: |
           cd xbmc/tools/depends
           make -j$(nproc)
