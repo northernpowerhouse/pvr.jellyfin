@@ -19,15 +19,8 @@ std::string Connection::BuildUrl(const std::string& endpoint) const
   std::ostringstream url;
   url << m_serverUrl << endpoint;
   
-  // Add API key parameter
-  if (endpoint.find('?') != std::string::npos)
-  {
-    url << "&api_key=" << m_apiKey;
-  }
-  else
-  {
-    url << "?api_key=" << m_apiKey;
-  }
+  // For Jellyfin 10.10+, we send the token via header instead of query param
+  // This is handled in the HTTP methods
   
   return url.str();
 }
@@ -96,8 +89,11 @@ std::string Connection::PerformHttpGet(const std::string& url)
   file.CURLCreate(url);
   file.CURLAddOption(ADDON_CURL_OPTION_PROTOCOL, "acceptencoding", "gzip");
   file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "Accept", "application/json");
-  file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "X-Emby-Authorization", 
-                     "MediaBrowser Client=\"Kodi\", Device=\"Kodi\", DeviceId=\"kodi-pvr-jellyfin\", Version=\"1.0.0\"");
+  
+  // Jellyfin 10.10+ compatible authentication header
+  std::ostringstream authHeader;
+  authHeader << "MediaBrowser Client=\"Kodi PVR\", Device=\"Kodi\", DeviceId=\"kodi-pvr-jellyfin\", Version=\"1.0.0\", Token=\"" << m_apiKey << "\"";
+  file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "X-Emby-Authorization", authHeader.str().c_str());
   
   if (!file.CURLOpen(ADDON_READ_NO_CACHE))
   {
@@ -124,8 +120,11 @@ std::string Connection::PerformHttpPost(const std::string& url, const std::strin
   file.CURLAddOption(ADDON_CURL_OPTION_PROTOCOL, "acceptencoding", "gzip");
   file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "Content-Type", "application/json");
   file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "Accept", "application/json");
-  file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "X-Emby-Authorization",
-                     "MediaBrowser Client=\"Kodi\", Device=\"Kodi\", DeviceId=\"kodi-pvr-jellyfin\", Version=\"1.0.0\"");
+  
+  // Jellyfin 10.10+ compatible authentication header
+  std::ostringstream authHeader;
+  authHeader << "MediaBrowser Client=\"Kodi PVR\", Device=\"Kodi\", DeviceId=\"kodi-pvr-jellyfin\", Version=\"1.0.0\", Token=\"" << m_apiKey << "\"";
+  file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "X-Emby-Authorization", authHeader.str().c_str());
   file.CURLAddOption(ADDON_CURL_OPTION_PROTOCOL, "postdata", data.c_str());
   
   if (!file.CURLOpen(ADDON_READ_NO_CACHE))
@@ -151,8 +150,11 @@ bool Connection::PerformHttpDelete(const std::string& url)
   kodi::vfs::CFile file;
   file.CURLCreate(url);
   file.CURLAddOption(ADDON_CURL_OPTION_PROTOCOL, "customrequest", "DELETE");
-  file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "X-Emby-Authorization",
-                     "MediaBrowser Client=\"Kodi\", Device=\"Kodi\", DeviceId=\"kodi-pvr-jellyfin\", Version=\"1.0.0\"");
+  
+  // Jellyfin 10.10+ compatible authentication header
+  std::ostringstream authHeader;
+  authHeader << "MediaBrowser Client=\"Kodi PVR\", Device=\"Kodi\", DeviceId=\"kodi-pvr-jellyfin\", Version=\"1.0.0\", Token=\"" << m_apiKey << "\"";
+  file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "X-Emby-Authorization", authHeader.str().c_str());
   
   if (!file.CURLOpen(ADDON_READ_NO_CACHE))
   {

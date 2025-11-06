@@ -2,6 +2,19 @@
 # Local Docker-based build script for Android ARM32
 # This script builds the addon, creates releases, and updates the repository
 # If build fails, it automatically creates a public gist with the debug log
+#
+# Usage: ./scripts/build-local-android.sh [OPTIONS]
+#
+# Options:
+#   --rebuild-repo    Force rebuild of repository addon (normally only rebuilt when addon.xml changes)
+#   --help           Show this help message
+#
+# The script will:
+#   1. Build Docker image with Kodi dependencies (cached)
+#   2. Build the pvr.jellyfin addon
+#   3. Package the addon as a .zip
+#   4. Package the repository addon (only if needed or --rebuild-repo is set)
+#   5. Create/update GitHub release with the addon package
 
 set -e  # Exit on error (we'll handle errors explicitly)
 
@@ -87,6 +100,15 @@ update_repo() {
     print_info "Updating repository from GitHub..."
     cd "$PROJECT_DIR"
     
+    # Fix ownership of .git directory if needed (Docker can create root-owned files)
+    if [ -d ".git" ]; then
+        print_info "Fixing .git directory ownership..."
+        # Fix ownership of all .git contents recursively
+        sudo chown -R $(id -u):$(id -g) .git/ 2>/dev/null || {
+            print_warning "Could not fix .git ownership with sudo, trying without..."
+        }
+    fi
+    
     # Get current hash of this script before pulling
     local script_path="$SCRIPT_DIR/$(basename "${BASH_SOURCE[0]}")"
     local old_hash=$(git hash-object "$script_path" 2>/dev/null || echo "none")
@@ -139,6 +161,9 @@ get_version() {
         fi
         print_info "Using version: $version" >&2
     fi
+    
+    # Strip leading 'v' if present (Kodi doesn't allow 'v' in version numbers)
+    version="${version#v}"
     
     echo "$version"
 }
@@ -381,6 +406,7 @@ package_repository() {
     
     if [ $package_result -eq 0 ]; then
         print_success "Repository packaged: repository.jellyfin.pvr-${version}.zip"
+        touch "$PROJECT_DIR/.repo-just-built"  # Mark that we just built the repo
         return 0
     else
         print_error "Repository packaging failed with exit code: $package_result"
@@ -427,24 +453,40 @@ Built with ❤️ using automated Docker-based build system
     
     # Check if release already exists
     if gh release view "$version" &>/dev/null; then
-        print_warning "Release $version already exists, deleting old assets..."
+        print_warning "Release $version already exists, updating addon asset..."
         gh release delete-asset "$version" "pvr.jellyfin-${version}.zip" --yes 2>/dev/null || true
-        gh release delete-asset "$version" "repository.jellyfin.pvr-${version}.zip" --yes 2>/dev/null || true
         
-        # Upload new assets
-        print_info "Uploading new assets to existing release..."
+        # Upload new addon asset
+        print_info "Uploading addon package to existing release..."
         gh release upload "$version" \
             "$PROJECT_DIR/pvr.jellyfin-${version}.zip" \
-            "$PROJECT_DIR/repository.jellyfin.pvr-${version}.zip" \
             --clobber
+        
+        # Only upload repository if it was just rebuilt
+        if [ -f "$PROJECT_DIR/.repo-just-built" ]; then
+            print_info "Uploading repository package (was rebuilt)..."
+            gh release delete-asset "$version" "repository.jellyfin.pvr-${version}.zip" --yes 2>/dev/null || true
+            gh release upload "$version" \
+                "$PROJECT_DIR/repository.jellyfin.pvr-${version}.zip" \
+                --clobber
+            rm "$PROJECT_DIR/.repo-just-built"
+        fi
         
         print_success "Release $version updated with new assets"
     else
         # Create new release
         print_info "Creating new release..."
+        
+        # Prepare assets to upload
+        local assets=("$PROJECT_DIR/pvr.jellyfin-${version}.zip")
+        
+        # Only include repository if it exists
+        if [ -f "$PROJECT_DIR/repository.jellyfin.pvr-${version}.zip" ]; then
+            assets+=("$PROJECT_DIR/repository.jellyfin.pvr-${version}.zip")
+        fi
+        
         gh release create "$version" \
-            "$PROJECT_DIR/pvr.jellyfin-${version}.zip" \
-            "$PROJECT_DIR/repository.jellyfin.pvr-${version}.zip" \
+            "${assets[@]}" \
             --title "pvr.jellyfin $version" \
             --notes "$release_notes"
         
@@ -456,22 +498,117 @@ Built with ❤️ using automated Docker-based build system
     print_info "Release URL: $release_url"
 }
 
-# Function to update repository addon with latest release
-update_repository_addon() {
+# Function to copy packages to repository structure
+copy_to_repository_structure() {
     local version="$1"
-    print_info "Updating repository addon with latest release info..."
+    print_info "Copying packages to repository structure..."
     
     cd "$PROJECT_DIR"
     
-    # Get the download URLs
-    local addon_url="https://github.com/northernpowerhouse/pvr.jellyfin/releases/download/${version}/pvr.jellyfin-${version}.zip"
+    # Create addon directory
+    mkdir -p repository/pvr.jellyfin
     
-    print_info "Addon will be available at: $addon_url"
-    print_success "Repository addon updated"
+    # Copy addon package
+    if [ -f "pvr.jellyfin-${version}.zip" ]; then
+        cp "pvr.jellyfin-${version}.zip" "repository/pvr.jellyfin/"
+        print_success "Copied pvr.jellyfin-${version}.zip to repository"
+    fi
+    
+    # Copy repository addon if it exists
+    if [ -f "repository.jellyfin.pvr-${version}.zip" ]; then
+        mkdir -p repository/repository.jellyfin.pvr
+        cp "repository.jellyfin.pvr-${version}.zip" "repository/repository.jellyfin.pvr/"
+        print_success "Copied repository.jellyfin.pvr-${version}.zip to repository"
+    fi
+}
+
+# Function to update repository metadata (addons.xml)
+update_repository_metadata() {
+    local version="$1"
+    print_info "Updating repository metadata (addons.xml)..."
+    
+    cd "$PROJECT_DIR"
+    
+    # Generate addons.xml with current version
+    if bash "$PROJECT_DIR/scripts/update_addons_xml.sh" "$version"; then
+        print_success "Repository metadata updated"
+        
+        # Copy packages to repository structure
+        copy_to_repository_structure "$version"
+        
+        # Check if anything changed
+        if git diff --quiet repository/ 2>/dev/null && ! git ls-files --others --exclude-standard repository/ | grep -q .; then
+            print_info "No changes to repository"
+            return 0
+        else
+            print_info "Repository changed, committing and pushing..."
+            
+            # Add all repository files
+            git add repository/
+            
+            # Commit with version message
+            if git commit -m "Update repository for version $version"; then
+                print_success "Changes committed"
+                
+                # Push to remote
+                print_info "Pushing to GitHub..."
+                if git push; then
+                    print_success "Repository pushed to GitHub"
+                    print_info "Packages available at:"
+                    echo "  https://raw.githubusercontent.com/northernpowerhouse/pvr.jellyfin/main/repository/pvr.jellyfin/pvr.jellyfin-${version}.zip"
+                    return 0
+                else
+                    print_error "Failed to push to GitHub"
+                    print_warning "You may need to manually push:"
+                    echo "  git push"
+                    return 1
+                fi
+            else
+                print_error "Failed to commit changes"
+                return 1
+            fi
+        fi
+    else
+        print_error "Failed to update repository metadata"
+        return 1
+    fi
 }
 
 # Main execution
 main() {
+    # Check for help flag
+    if [[ "$*" == *"--help"* ]] || [[ "$*" == *"-h"* ]]; then
+        echo ""
+        echo "================================================================"
+        echo "  pvr.jellyfin Local Android ARM32 Build Script"
+        echo "================================================================"
+        echo ""
+        echo "Usage: ./scripts/build-local-android.sh [OPTIONS]"
+        echo ""
+        echo "Options:"
+        echo "  --rebuild-repo    Force rebuild of repository addon"
+        echo "                    (normally only rebuilt when addon.xml changes)"
+        echo "  --help, -h        Show this help message"
+        echo ""
+        echo "The script will:"
+        echo "  1. Build Docker image with Kodi dependencies (cached)"
+        echo "  2. Build the pvr.jellyfin addon"
+        echo "  3. Package the addon as a .zip"
+        echo "  4. Package the repository addon (only if needed)"
+        echo "  5. Create/update GitHub release with packages"
+        echo "  6. Update repository metadata (addons.xml for Kodi updates)"
+        echo ""
+        echo "Note: Repository addon is only rebuilt when:"
+        echo "  - It doesn't exist"
+        echo "  - repository/repository.jellyfin.pvr/addon.xml changes"
+        echo "  - --rebuild-repo flag is used"
+        echo ""
+        echo "Important: After build, commit and push repository/addons.xml* files"
+        echo "to enable automatic updates through Kodi's addon manager."
+        echo ""
+        exit 0
+    fi
+    
     echo ""
     echo "================================================================"
     echo "  pvr.jellyfin Local Android ARM32 Build Script"
@@ -521,14 +658,14 @@ main() {
     fi
     
     # Build Docker image
-    print_info "Step 1/5: Building Docker image with dependencies..."
+    print_info "Step 1/6: Building Docker image with dependencies..."
     if ! build_docker_image; then
         BUILD_FAILED=1
     fi
     
     # Build addon
     if [ $BUILD_FAILED -eq 0 ]; then
-        print_info "Step 2/5: Building addon..."
+        print_info "Step 2/6: Building addon..."
         if ! build_addon "$VERSION"; then
             BUILD_FAILED=1
             # Note: Addon build doesn't affect volumes, only Docker image build does
@@ -538,27 +675,58 @@ main() {
     
     # Package addon
     if [ $BUILD_FAILED -eq 0 ]; then
-        print_info "Step 3/5: Packaging addon..."
+        print_info "Step 3/6: Packaging addon..."
         if ! package_addon "$VERSION"; then
             BUILD_FAILED=1
         fi
     fi
     
-    # Package repository
+    # Package repository (only if it doesn't exist or --rebuild-repo flag is set)
+    local REBUILD_REPO=0
+    if [[ "$*" == *"--rebuild-repo"* ]]; then
+        REBUILD_REPO=1
+    fi
+    
+    # Check if repository addon.xml has changed
+    REPO_ADDON_XML="$PROJECT_DIR/repository/repository.jellyfin.pvr/addon.xml"
+    REPO_ADDON_HASH=$(git hash-object "$REPO_ADDON_XML" 2>/dev/null || echo "none")
+    LAST_REPO_HASH=""
+    if [ -f "$PROJECT_DIR/.last-repo-hash" ]; then
+        LAST_REPO_HASH=$(cat "$PROJECT_DIR/.last-repo-hash")
+    fi
+    
+    if [ "$REPO_ADDON_HASH" != "$LAST_REPO_HASH" ]; then
+        print_info "Repository addon.xml has changed, will rebuild repository package"
+        REBUILD_REPO=1
+    fi
+    
     if [ $BUILD_FAILED -eq 0 ]; then
-        print_info "Step 4/5: Packaging repository..."
-        if ! package_repository "$VERSION"; then
-            BUILD_FAILED=1
+        # Check if repository zip already exists
+        if [ ! -f "$PROJECT_DIR/repository.jellyfin.pvr-${VERSION}.zip" ] || [ $REBUILD_REPO -eq 1 ]; then
+            print_info "Step 4/6: Packaging repository..."
+            if ! package_repository "$VERSION"; then
+                BUILD_FAILED=1
+            else
+                echo "$REPO_ADDON_HASH" > "$PROJECT_DIR/.last-repo-hash"
+            fi
+        else
+            print_info "Step 4/6: Skipping repository packaging (already exists, use --rebuild-repo to force)"
         fi
     fi
     
-    # Create release
+    # Update repository metadata (addons.xml) and commit BEFORE creating release
     if [ $BUILD_FAILED -eq 0 ]; then
-        print_info "Step 5/5: Creating GitHub release..."
+        print_info "Step 5/6: Updating repository metadata..."
+        if ! update_repository_metadata "$VERSION"; then
+            print_warning "Failed to update repository metadata (non-fatal)"
+        fi
+    fi
+    
+    # Create release AFTER repository is updated
+    if [ $BUILD_FAILED -eq 0 ]; then
+        print_info "Step 6/6: Creating GitHub release..."
         if ! create_release "$VERSION"; then
             BUILD_FAILED=1
-        else
-            update_repository_addon "$VERSION"
         fi
     fi
     
@@ -580,9 +748,15 @@ main() {
         echo ""
         print_success "Packages created:"
         echo "  - pvr.jellyfin-${VERSION}.zip"
-        echo "  - repository.jellyfin.pvr-${VERSION}.zip"
+        if [ -f "$PROJECT_DIR/repository.jellyfin.pvr-${VERSION}.zip" ]; then
+            if [ -f "$PROJECT_DIR/.last-repo-hash" ]; then
+                echo "  - repository.jellyfin.pvr-${VERSION}.zip (cached from previous build)"
+            else
+                echo "  - repository.jellyfin.pvr-${VERSION}.zip"
+            fi
+        fi
         echo ""
-        print_success "GitHub release created for version: $VERSION"
+        print_success "GitHub release created/updated for version: $VERSION"
         echo ""
         print_info "To install in Kodi:"
         echo "  1. Download repository.jellyfin.pvr-${VERSION}.zip from the release"

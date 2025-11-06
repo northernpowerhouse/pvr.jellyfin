@@ -1,1 +1,1 @@
-pvr.jellyfin https://github.com/northernpowerhouse/pvr.jellyfin main
+.jellyfin https://github.com/northernpowerhouse/pvr.jellyfin main
