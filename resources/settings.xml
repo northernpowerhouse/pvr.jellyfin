@@ -1,50 +1,21 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
   <category label="30000">
-    <setting id="server_url" type="text" label="30001" default="">
-      <level>0</level>
-    </setting>
-    <setting id="auth_method" type="integer" label="30020" default="0">
-      <level>0</level>
-      <constraints>
-        <options>
-          <option label="30021">0</option>
-          <option label="30022">1</option>
-          <option label="30023">2</option>
-        </options>
-      </constraints>
-    </setting>
-    <setting id="username" type="text" label="30024" default="">
-      <level>0</level>
-    </setting>
-    <setting id="password" type="text" label="30025" default="" option="hidden">
-      <level>0</level>
-    </setting>
-    <setting id="api_key" type="text" label="30003" default="" option="hidden">
-      <level>0</level>
-    </setting>
-    <setting id="user_id" type="text" label="30002" default="" enable="false">
-      <level>1</level>
-    </setting>
-    <setting id="access_token" type="text" label="30026" default="" option="hidden" enable="false">
-      <level>1</level>
-    </setting>
+    <setting id="use_https" type="bool" label="30040" default="false" />
+    <setting id="server_address" type="text" label="30041" default="" />
+    <setting id="server_port" type="integer" label="30042" default="8096" />
+    <setting id="auth_method" type="select" label="30020" default="0" values="30021|30022|30023" />
+    <setting id="username" type="text" label="30024" default="" />
+    <setting id="password" type="text" label="30025" default="" option="hidden" />
+    <setting id="api_key" type="text" label="30003" default="" option="hidden" />
+    <setting id="user_id" type="text" label="30002" default="" enable="false" visible="false" />
+    <setting id="access_token" type="text" label="30026" default="" option="hidden" enable="false" visible="false" />
   </category>
   <category label="30010">
-    <setting id="enable_epg" type="boolean" label="30011" default="true">
-      <level>0</level>
-    </setting>
-    <setting id="epg_update_interval" type="integer" label="30012" default="120">
-      <level>0</level>
-      <constraints>
-        <minimum>30</minimum>
-        <maximum>600</maximum>
-      </constraints>
-    </setting>
+    <setting id="enable_epg" type="bool" label="30011" default="true" />
+    <setting id="epg_update_interval" type="integer" label="30012" default="120" />
   </category>
   <category label="30030">
-    <setting id="enable_debug" type="boolean" label="30031" default="false">
-      <level>0</level>
-    </setting>
+    <setting id="enable_debug" type="bool" label="30031" default="false" />
   </category>
 </settings>

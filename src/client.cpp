@@ -2,6 +2,7 @@
 #include "jellyfin/JellyfinClient.h"
 #include "utilities/Logger.h"
 #include <kodi/General.h>
+#include <sstream>
 
 ADDON_STATUS CJellyfinAddon::CreateInstance(const kodi::addon::IInstanceInfo& instance,
                                             KODI_ADDON_INSTANCE_HDL& hdl)
@@ -96,7 +97,29 @@ CJellyfinPVRClient::~CJellyfinPVRClient()
 
 bool CJellyfinPVRClient::LoadSettings()
 {
-  m_serverUrl = kodi::addon::GetSettingString("server_url", "");
+  // Build server URL from components
+  bool useHttps = kodi::addon::GetSettingBoolean("use_https", false);
+  std::string serverAddress = kodi::addon::GetSettingString("server_address", "");
+  int serverPort = kodi::addon::GetSettingInt("server_port", 8096);
+  
+  if (!serverAddress.empty())
+  {
+    std::ostringstream urlBuilder;
+    urlBuilder << (useHttps ? "https://" : "http://") << serverAddress;
+    
+    // Only add port if it's not the default for the protocol
+    if ((useHttps && serverPort != 443) || (!useHttps && serverPort != 80))
+    {
+      urlBuilder << ":" << serverPort;
+    }
+    
+    m_serverUrl = urlBuilder.str();
+  }
+  else
+  {
+    m_serverUrl = "";
+  }
+  
   m_userId = kodi::addon::GetSettingString("user_id", "");
   
   // Try to load access token first (from authentication), fall back to API key
@@ -111,6 +134,8 @@ bool CJellyfinPVRClient::LoadSettings()
     Logger::Log(ADDON_LOG_ERROR, "Server URL not configured");
     return false;
   }
+
+  Logger::Log(ADDON_LOG_INFO, "Connecting to server: %s", m_serverUrl.c_str());
 
   // API key/access token is optional at this stage - will be obtained during authentication
   return true;

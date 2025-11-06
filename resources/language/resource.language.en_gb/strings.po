@@ -82,3 +82,15 @@ msgstr ""
 msgctxt "#30032"
 msgid "Upload Logs to GitHub"
 msgstr ""
+
+msgctxt "#30040"
+msgid "Use HTTPS"
+msgstr ""
+
+msgctxt "#30041"
+msgid "Server Address"
+msgstr ""
+
+msgctxt "#30042"
+msgid "Server Port"
+msgstr ""
