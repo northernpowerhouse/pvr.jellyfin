@@ -4,7 +4,7 @@
     <setting id="use_https" label="30040" type="bool" default="false" />
     <setting id="server_address" label="30041" type="text" default="" />
     <setting id="server_port" label="30042" type="number" default="8096" />
-    <setting id="auth_method" label="30020" type="labelenum" values="30021|30022|30023" default="30021" />
+    <setting id="auth_method" label="30020" type="enum" lvalues="30021|30022|30023" default="0" />
     <setting id="username" label="30024" type="text" default="" />
     <setting id="password" label="30025" type="text" option="hidden" default="" />
     <setting id="api_key" label="30003" type="text" option="hidden" default="" />
