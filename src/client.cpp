@@ -298,4 +298,43 @@ PVR_ERROR CJellyfinPVRClient::GetRecordingStreamProperties(const kodi::addon::PV
   return m_jellyfinClient->GetRecordingStreamProperties(recording, properties);
 }
 
+ADDON_STATUS CJellyfinPVRClient::SetSetting(const std::string& settingName,
+                                             const kodi::addon::CSettingValue& settingValue)
+{
+  if (settingName == "trigger_log_upload")
+  {
+    bool shouldUpload = settingValue.GetBoolean();
+    if (shouldUpload)
+    {
+      Logger::Log(ADDON_LOG_INFO, "Uploading logs to GitHub...");
+      
+      // Upload logs using LogUploader
+      #include "utilities/LogUploader.h"
+      LogUploader uploader;
+      std::string gistUrl = uploader.UploadLogs();
+      
+      if (!gistUrl.empty())
+      {
+        Logger::Log(ADDON_LOG_INFO, "Logs uploaded successfully to: %s", gistUrl.c_str());
+        kodi::gui::dialogs::OK::ShowAndGetInput("Log Upload", 
+          "Logs uploaded successfully!", 
+          "URL: " + gistUrl,
+          "The URL has been copied to Kodi's log file.");
+      }
+      else
+      {
+        Logger::Log(ADDON_LOG_ERROR, "Failed to upload logs");
+        kodi::gui::dialogs::OK::ShowAndGetInput("Log Upload", 
+          "Failed to upload logs", 
+          "Check Kodi's log file for details");
+      }
+      
+      // Reset the setting back to false
+      kodi::addon::SetSettingBoolean("trigger_log_upload", false);
+    }
+  }
+  
+  return ADDON_STATUS_OK;
+}
+
 ADDONCREATOR(CJellyfinAddon)

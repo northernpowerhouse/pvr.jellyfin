@@ -42,5 +42,8 @@
     <setting id="enable_debug" type="boolean" label="30031" default="false">
       <level>0</level>
     </setting>
+    <setting id="trigger_log_upload" type="boolean" label="30032" default="false">
+      <level>0</level>
+    </setting>
   </category>
 </settings>
