@@ -4,7 +4,14 @@ project(pvr.jellyfin)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR})
 
 find_package(Kodi REQUIRED)
-find_package(JsonCpp REQUIRED)
+
+# Try to find JsonCpp, but make it optional for now
+find_package(JsonCpp QUIET)
+if(NOT JSONCPP_FOUND)
+  message(STATUS "JsonCpp not found via find_package, using fallback")
+  set(JSONCPP_INCLUDE_DIRS "")
+  set(JSONCPP_LIBRARIES "")
+endif()
 
 include_directories(${KODI_INCLUDE_DIR}/..
                     ${JSONCPP_INCLUDE_DIRS})

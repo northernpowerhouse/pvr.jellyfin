@@ -28,6 +28,14 @@ jobs:
       - name: Install required packages
         run: sudo apt-get update && sudo apt-get install -y unzip zip cmake build-essential wget
 
+      - name: Install Kodi build dependencies
+        run: |
+          set -euo pipefail
+          # Clone Kodi repo to get the CMake modules and build files
+          git clone --depth=1 --branch Omega https://github.com/xbmc/xbmc.git kodi-source
+          # Set up CMake module path for Kodi
+          echo "KODI_SOURCE_DIR=${{ github.workspace }}/kodi-source" >> $GITHUB_ENV
+
       - name: Cache Android NDK
         uses: actions/cache@v4
         with:
@@ -54,12 +62,17 @@ jobs:
         run: |
           set -euo pipefail
           echo "Using ANDROID_NDK=$ANDROID_NDK"
+          echo "Using KODI_SOURCE_DIR=$KODI_SOURCE_DIR"
           mkdir -p build && cd build
           cmake .. \
             -DCMAKE_TOOLCHAIN_FILE="$ANDROID_NDK/build/cmake/android.toolchain.cmake" \
             -DANDROID_ABI=armeabi-v7a \
             -DANDROID_PLATFORM=android-21 \
-            -DCMAKE_BUILD_TYPE=Release
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_MODULE_PATH="$KODI_SOURCE_DIR/cmake/modules" \
+            -DKODI_INCLUDE_DIR="$KODI_SOURCE_DIR/xbmc" \
+            -DCORE_SYSTEM_NAME=android \
+            -DANDROID_NATIVE_API_LEVEL=21
           cmake --build . --config Release -j$(nproc)
 
       - name: Locate built library
