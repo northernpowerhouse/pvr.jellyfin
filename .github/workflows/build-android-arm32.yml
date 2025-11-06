@@ -56,12 +56,16 @@ jobs:
       - name: Set NDK path
         run: echo "ANDROID_NDK_ROOT=${GITHUB_WORKSPACE}/android-ndk-${NDK_VERSION}" >> $GITHUB_ENV
 
+      - name: Install JsonCpp
+        run: |
+          sudo apt-get install -y libjsoncpp-dev
+          
       - name: Checkout Kodi headers (shallow)
         run: |
-          # Only clone xbmc headers directory - much faster
+          # Clone Kodi dev-kit headers we need - sparse checkout for speed
           git clone --depth=1 --filter=blob:none --sparse https://github.com/xbmc/xbmc.git kodi
           cd kodi
-          git sparse-checkout set xbmc/addons
+          git sparse-checkout set xbmc/addons/kodi-dev-kit
 
       - name: Process addon.xml template
         run: |
@@ -82,7 +86,7 @@ jobs:
             -DANDROID_ABI=armeabi-v7a \
             -DANDROID_PLATFORM=android-21 \
             -DCMAKE_BUILD_TYPE=Release \
-            -DKODI_INCLUDE_DIR=${{ github.workspace }}/kodi/xbmc \
+            -DKODI_INCLUDE_DIR=${{ github.workspace }}/kodi/xbmc/addons/kodi-dev-kit/include \
             -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
 
       - name: Build addon
