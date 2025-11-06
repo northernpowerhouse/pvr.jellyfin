@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.5)
 project(pvr.jellyfin)
 
+# When built by Kodi's addon build system, APP_ROOT points to Kodi source
+if(NOT CMAKE_MODULE_PATH AND DEFINED APP_ROOT)
+  list(APPEND CMAKE_MODULE_PATH ${APP_ROOT}/cmake/modules)
+endif()
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR})
 
 find_package(Kodi REQUIRED)
