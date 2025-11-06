@@ -95,6 +95,24 @@ RUN ./bootstrap && \
 # Create a marker file to indicate dependencies are built
 RUN touch /opt/xbmc-depends/.dependencies-built
 
+# Build jsoncpp for Android ARM (not included in Kodi depends)
+WORKDIR /tmp
+RUN git clone --branch 1.9.5 --depth 1 https://github.com/open-source-parsers/jsoncpp.git && \
+    cd jsoncpp && \
+    mkdir build && cd build && \
+    cmake .. \
+      -DCMAKE_TOOLCHAIN_FILE=${ANDROID_NDK_HOME}/build/cmake/android.toolchain.cmake \
+      -DANDROID_ABI=armeabi-v7a \
+      -DANDROID_PLATFORM=android-21 \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_INSTALL_PREFIX=/opt/xbmc-depends/arm-linux-androideabi-21-release \
+      -DBUILD_SHARED_LIBS=OFF \
+      -DJSONCPP_WITH_TESTS=OFF \
+      -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF && \
+    make -j$(nproc) && \
+    make install && \
+    cd / && rm -rf /tmp/jsoncpp
+
 # Set environment variables for build
 ENV PREFIX=/opt/xbmc-depends
 ENV CROSS_COMPILING=yes

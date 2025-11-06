@@ -94,6 +94,20 @@ if(STANDALONE_BUILD)
     SUFFIX ".so"
   )
   
+  # Find jsoncpp library
+  find_library(JSONCPP_LIBRARY
+    NAMES jsoncpp
+    PATHS ${CMAKE_PREFIX_PATH}/lib
+    NO_DEFAULT_PATH
+  )
+  
+  if(JSONCPP_LIBRARY)
+    message(STATUS "Found jsoncpp library: ${JSONCPP_LIBRARY}")
+    target_link_libraries(pvr.jellyfin ${JSONCPP_LIBRARY})
+  else()
+    message(WARNING "jsoncpp library not found, linking may fail")
+  endif()
+  
   # Link against Android log library if on Android
   if(ANDROID)
     target_link_libraries(pvr.jellyfin log)
