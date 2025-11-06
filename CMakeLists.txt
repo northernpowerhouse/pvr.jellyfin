@@ -73,8 +73,7 @@ set(JELLYFIN_SOURCES
     src/jellyfin/RecordingManager.cpp
     src/jellyfin/AuthManager.cpp
     src/utilities/Logger.cpp
-    src/utilities/Utilities.cpp
-    src/utilities/LogUploader.cpp)
+    src/utilities/Utilities.cpp)
 
 set(JELLYFIN_HEADERS
     src/client.h
@@ -85,8 +84,7 @@ set(JELLYFIN_HEADERS
     src/jellyfin/RecordingManager.h
     src/jellyfin/AuthManager.h
     src/utilities/Logger.h
-    src/utilities/Utilities.h
-    src/utilities/LogUploader.h)
+    src/utilities/Utilities.h)
 
 if(STANDALONE_BUILD)
   # Standalone build - create shared library directly
