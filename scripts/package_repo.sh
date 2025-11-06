@@ -18,6 +18,21 @@ mkdir -p "$REPO_DIR"
 
 # Copy repository addon files
 echo "Copying repository addon files..."
+
+# Check if source directory exists
+if [ ! -d "$PROJECT_DIR/repository/repository.jellyfin.pvr" ]; then
+    echo "ERROR: Repository addon directory not found at $PROJECT_DIR/repository/repository.jellyfin.pvr"
+    echo "Please ensure you have the latest changes from git."
+    exit 1
+fi
+
+# Check if addon.xml exists
+if [ ! -f "$PROJECT_DIR/repository/repository.jellyfin.pvr/addon.xml" ]; then
+    echo "ERROR: addon.xml not found in repository directory"
+    echo "Please run 'git pull' to get the latest repository files."
+    exit 1
+fi
+
 cp -r "$PROJECT_DIR/repository/repository.jellyfin.pvr/"* "$REPO_DIR/"
 
 # Update version in addon.xml
