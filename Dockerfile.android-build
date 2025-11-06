@@ -96,6 +96,7 @@ RUN ./bootstrap && \
 RUN touch /opt/xbmc-depends/.dependencies-built
 
 # Build jsoncpp for Android ARM (not included in Kodi depends)
+# Install to /opt/jsoncpp-android instead of /opt/xbmc-depends to avoid volume mount conflicts
 WORKDIR /tmp
 RUN git clone --branch 1.9.5 --depth 1 https://github.com/open-source-parsers/jsoncpp.git && \
     cd jsoncpp && \
@@ -105,7 +106,7 @@ RUN git clone --branch 1.9.5 --depth 1 https://github.com/open-source-parsers/js
       -DANDROID_ABI=armeabi-v7a \
       -DANDROID_PLATFORM=android-21 \
       -DCMAKE_BUILD_TYPE=Release \
-      -DCMAKE_INSTALL_PREFIX=/opt/xbmc-depends/arm-linux-androideabi-21-release \
+      -DCMAKE_INSTALL_PREFIX=/opt/jsoncpp-android \
       -DBUILD_SHARED_LIBS=OFF \
       -DJSONCPP_WITH_TESTS=OFF \
       -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF && \

@@ -94,13 +94,14 @@ if(STANDALONE_BUILD)
     SUFFIX ".so"
   )
   
-  # Find jsoncpp library - check multiple possible names and locations
-  # For Android, we built a static library
-  set(JSONCPP_LIB_PATH "/opt/xbmc-depends/arm-linux-androideabi-21-release/lib/libjsoncpp.a")
+  # Find jsoncpp library - built in Docker image at /opt/jsoncpp-android
+  set(JSONCPP_LIB_PATH "/opt/jsoncpp-android/lib/libjsoncpp.a")
+  set(JSONCPP_INCLUDE_DIR "/opt/jsoncpp-android/include")
   
-  # Debug: Check if library exists
+  # Check if library exists
   if(EXISTS ${JSONCPP_LIB_PATH})
     message(STATUS "jsoncpp library found at: ${JSONCPP_LIB_PATH}")
+    target_include_directories(pvr.jellyfin PRIVATE ${JSONCPP_INCLUDE_DIR})
     target_link_libraries(pvr.jellyfin ${JSONCPP_LIB_PATH})
   else()
     message(FATAL_ERROR "jsoncpp library not found at ${JSONCPP_LIB_PATH}")
