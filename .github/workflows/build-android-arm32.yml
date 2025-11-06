@@ -81,13 +81,18 @@ jobs:
           cd ${{ env.app_id }}
           mkdir -p build
           cd build
+          
+          # Get JsonCpp include paths from host pkg-config
+          JSONCPP_CFLAGS=$(pkg-config --cflags jsoncpp || echo "-I/usr/include/jsoncpp")
+          
           cmake .. \
             -DCMAKE_TOOLCHAIN_FILE=${{ env.ANDROID_NDK_ROOT }}/build/cmake/android.toolchain.cmake \
             -DANDROID_ABI=armeabi-v7a \
             -DANDROID_PLATFORM=android-21 \
             -DCMAKE_BUILD_TYPE=Release \
             -DKODI_INCLUDE_DIR=${{ github.workspace }}/kodi/xbmc/addons/kodi-dev-kit/include \
-            -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
+            -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install \
+            -DCMAKE_CXX_FLAGS="${JSONCPP_CFLAGS}"
 
       - name: Build addon
         run: |
