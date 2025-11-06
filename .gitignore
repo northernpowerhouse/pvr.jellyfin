@@ -3,6 +3,7 @@ build/
 build-android/
 build-output/
 package/
+package-repo/
 *.o
 *.so
 *.dll
