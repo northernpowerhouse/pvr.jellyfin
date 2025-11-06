@@ -261,17 +261,24 @@ build_addon() {
             mkdir -p /workspace/build-android
             cd /workspace/build-android
             
-            # Configure with CMake for Android - using correct Kodi paths
-            # The Kodi headers are in /opt/kodi/xbmc/addons/kodi-dev-kit/include/kodi
+            # Find Kodi headers location
+            # Kodi has headers in xbmc/addons/kodi-dev-kit/include/kodi
+            export KODI_SOURCE=/opt/kodi
+            export KODI_INCLUDE=\"\$KODI_SOURCE/xbmc/addons/kodi-dev-kit/include\"
+            export DEPENDS_ROOT=\"/opt/xbmc-depends\"
+            
+            # Configure with CMake for Android
             cmake .. \
                 -DCMAKE_TOOLCHAIN_FILE=\$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake \
                 -DANDROID_ABI=armeabi-v7a \
                 -DANDROID_PLATFORM=android-21 \
                 -DCMAKE_BUILD_TYPE=Release \
-                -DCMAKE_PREFIX_PATH=\"/opt/xbmc-depends;/opt/kodi/xbmc/addons/kodi-dev-kit\" \
-                -DCMAKE_FIND_ROOT_PATH=\"/opt/xbmc-depends;/opt/kodi\" \
-                -DCORE_SYSTEM_NAME=android \
-                -DSTANDALONE_BUILD=OFF
+                -DCMAKE_PREFIX_PATH=\"\$DEPENDS_ROOT\" \
+                -DKODI_INCLUDE_DIR=\"\$KODI_INCLUDE\" \
+                -DCMAKE_CXX_FLAGS=\"-I\$KODI_INCLUDE -I\$KODI_SOURCE -I\$DEPENDS_ROOT/include\" \
+                -DCMAKE_C_FLAGS=\"-I\$KODI_SOURCE -I\$DEPENDS_ROOT/include\" \
+                -DPKG_CONFIG_PATH=\"\$DEPENDS_ROOT/lib/pkgconfig\" \
+                -DCORE_SYSTEM_NAME=android
             
             # Build
             make -j\$(nproc)

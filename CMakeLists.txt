@@ -6,13 +6,29 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Check if building standalone (e.g., for Android CI)
 if(DEFINED KODI_INCLUDE_DIR AND NOT KODI_FOUND)
-  message(STATUS "Building in standalone mode with provided KODI_INCLUDE_DIR")
+  message(STATUS "Building in standalone mode with provided KODI_INCLUDE_DIR: ${KODI_INCLUDE_DIR}")
   set(STANDALONE_BUILD TRUE)
   
   # Try to find JsonCpp for standalone build
   find_package(PkgConfig QUIET)
   if(PKG_CONFIG_FOUND)
     pkg_check_modules(JSONCPP jsoncpp)
+    message(STATUS "JsonCpp found via pkg-config: ${JSONCPP_INCLUDE_DIRS}")
+  endif()
+  
+  if(NOT JSONCPP_FOUND)
+    # Try to find jsoncpp manually in common locations
+    find_path(JSONCPP_INCLUDE_DIR json/json.h
+      HINTS
+        ${CMAKE_PREFIX_PATH}/include
+        /opt/xbmc-depends/include
+        /usr/include
+        /usr/local/include
+    )
+    if(JSONCPP_INCLUDE_DIR)
+      set(JSONCPP_INCLUDE_DIRS ${JSONCPP_INCLUDE_DIR})
+      message(STATUS "JsonCpp found manually: ${JSONCPP_INCLUDE_DIRS}")
+    endif()
   endif()
   
   # Manually set up include directories for standalone build
@@ -20,7 +36,10 @@ if(DEFINED KODI_INCLUDE_DIR AND NOT KODI_FOUND)
     ${KODI_INCLUDE_DIR}
     ${KODI_INCLUDE_DIR}/..
     ${JSONCPP_INCLUDE_DIRS}
+    ${CMAKE_PREFIX_PATH}/include
   )
+  
+  message(STATUS "Include directories: ${KODI_INCLUDE_DIR}, ${JSONCPP_INCLUDE_DIRS}")
   
   # Add system include for standard libraries
   if(ANDROID)
