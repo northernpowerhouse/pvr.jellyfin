@@ -12,13 +12,6 @@ jobs:
       app_id: pvr.jellyfin
       NDK_VERSION: r26d
     steps:
-      - name: Checkout Kodi repo
-        uses: actions/checkout@v4
-        with:
-          repository: xbmc/xbmc
-          ref: Omega
-          path: kodi
-
       - name: Checkout addon repo
         uses: actions/checkout@v4
         with:
@@ -63,6 +56,21 @@ jobs:
       - name: Set NDK path
         run: echo "ANDROID_NDK_ROOT=${GITHUB_WORKSPACE}/android-ndk-${NDK_VERSION}" >> $GITHUB_ENV
 
+      - name: Checkout Kodi headers (shallow)
+        run: |
+          # Only clone xbmc headers directory - much faster
+          git clone --depth=1 --filter=blob:none --sparse https://github.com/xbmc/xbmc.git kodi
+          cd kodi
+          git sparse-checkout set xbmc/addons
+
+      - name: Process addon.xml template
+        run: |
+          cd ${{ env.app_id }}
+          # Create addon.xml from template
+          sed "s/@ADDON_DEPENDS@/<import addon=\"xbmc.pvr\" version=\"8.2.0\"\/>/g" addon.xml.in | \
+          sed "s/@PLATFORM@/android/g" | \
+          sed "s/@LIBRARY_FILENAME@/pvr.jellyfin.so/g" > addon.xml
+
       - name: Configure addon directly for Android
         run: |
           set -euo pipefail
@@ -74,10 +82,8 @@ jobs:
             -DANDROID_ABI=armeabi-v7a \
             -DANDROID_PLATFORM=android-21 \
             -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_MODULE_PATH=${{ github.workspace }}/kodi/cmake/modules \
             -DKODI_INCLUDE_DIR=${{ github.workspace }}/kodi/xbmc \
-            -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install \
-            -DCMAKE_PREFIX_PATH=${{ github.workspace }}/kodi
+            -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
 
       - name: Build addon
         run: |
