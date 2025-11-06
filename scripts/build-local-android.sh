@@ -114,6 +114,8 @@ update_repo() {
         fi
     else
         print_error "Failed to pull latest changes"
+        print_info "If you're seeing SSH key errors, switch to HTTPS with:"
+        print_info "  git remote set-url origin https://github.com/northernpowerhouse/pvr.jellyfin"
         exit 1
     fi
 }
