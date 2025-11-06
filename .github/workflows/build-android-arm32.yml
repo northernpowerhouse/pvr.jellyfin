@@ -63,47 +63,46 @@ jobs:
       - name: Set NDK path
         run: echo "ANDROID_NDK_ROOT=${GITHUB_WORKSPACE}/android-ndk-${NDK_VERSION}" >> $GITHUB_ENV
 
-      - name: Prepare Kodi addon build
-        run: |
-          mkdir -p kodi/cmake/addons/addons/${{ env.app_id }}
-          echo "${{ env.app_id }} ${{ github.workspace }}/${{ env.app_id }}" > kodi/cmake/addons/addons/${{ env.app_id }}/${{ env.app_id }}.txt
-
-      - name: Configure addon for Android
+      - name: Configure addon directly for Android
         run: |
           set -euo pipefail
-          cmake \
-            -B ${{ env.app_id }}/build \
-            -DADDONS_TO_BUILD=${{ env.app_id }} \
-            -DADDON_SRC_PREFIX=${{ github.workspace }} \
-            -DADDONS_DEFINITION_DIR=${{ github.workspace }}/kodi/cmake/addons/addons \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/kodi/addons \
-            -DPACKAGE_ZIP=1 \
+          cd ${{ env.app_id }}
+          mkdir -p build
+          cd build
+          cmake .. \
             -DCMAKE_TOOLCHAIN_FILE=${{ env.ANDROID_NDK_ROOT }}/build/cmake/android.toolchain.cmake \
             -DANDROID_ABI=armeabi-v7a \
             -DANDROID_PLATFORM=android-21 \
-            -DCORE_SYSTEM_NAME=android \
-            -DCPU=armeabi-v7a \
-            -DOS=android \
-            ${{ github.workspace }}/kodi/cmake/addons
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_MODULE_PATH=${{ github.workspace }}/kodi/cmake/modules \
+            -DKODI_INCLUDE_DIR=${{ github.workspace }}/kodi/xbmc \
+            -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install \
+            -DCMAKE_PREFIX_PATH=${{ github.workspace }}/kodi
 
       - name: Build addon
         run: |
-          make -C ${{ env.app_id }}/build -j$(nproc)
+          cd ${{ env.app_id }}/build
+          make -j$(nproc)
 
-      - name: Locate and prepare addon package
+      - name: Install and package addon
         run: |
           set -euo pipefail
-          # Kodi build system creates the zip in the build directory
-          ADDON_ZIP=$(find ${{ env.app_id }}/build -name "${{ env.app_id }}-*.zip" -print -quit || true)
-          if [ -z "$ADDON_ZIP" ]; then
-            echo "Addon zip not found. Listing build directory:" >&2
-            find ${{ env.app_id }}/build -type f | head -50 >&2
+          cd ${{ env.app_id }}/build
+          make install
+          
+          # Create addon package manually
+          cd ${{ github.workspace }}/install
+          
+          # Find the installed addon directory
+          ADDON_DIR=$(find . -type d -name "${{ env.app_id }}" -print -quit)
+          if [ -z "$ADDON_DIR" ]; then
+            echo "Addon directory not found in install path"
+            ls -la
             exit 1
           fi
-          echo "Found addon package: $ADDON_ZIP"
-          # Rename to our versioning scheme
-          cp "$ADDON_ZIP" "${{ github.workspace }}/${{ env.app_id }}-${VERSION}.zip"
+          
+          # Create zip
+          zip -r "${{ github.workspace }}/${{ env.app_id }}-${VERSION}.zip" "$ADDON_DIR"
           ls -lh "${{ github.workspace }}/${{ env.app_id }}-${VERSION}.zip"
 
       - name: Create repository package
