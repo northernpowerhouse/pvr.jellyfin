@@ -276,6 +276,11 @@ build_addon() {
             echo \"Using dependencies from: \$DEPENDS_ROOT\"
             echo \"Using jsoncpp from: \$JSONCPP_INCLUDE\"
             
+            # Search for jsoncpp library files
+            echo \"Searching for jsoncpp library...\"
+            find /opt/kodi -name '*jsoncpp*' -o -name '*libjson*' 2>/dev/null | grep -E '\\.(a|so)$' | head -10
+            find \$DEPENDS_ROOT -name '*jsoncpp*' -o -name '*libjson*' 2>/dev/null | grep -E '\\.(a|so)$' | head -10
+            
             # Configure with CMake for Android
             cmake .. \
                 -DCMAKE_TOOLCHAIN_FILE=\$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake \
