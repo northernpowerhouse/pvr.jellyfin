@@ -35,10 +35,11 @@
   <!-- repository.jellyfin.pvr addon (self-update) -->
   <addon id="repository.jellyfin.pvr" name="Jellyfin PVR Repository" version="1.0.0" provider-name="northernpowerhouse">
       <extension point="xbmc.addon.repository" name="Jellyfin PVR Repository">
-          <dir minversion="21.0.0">
+          <dir>
               <info compressed="false">https://raw.githubusercontent.com/northernpowerhouse/pvr.jellyfin/main/repository/addons.xml</info>
               <checksum>https://raw.githubusercontent.com/northernpowerhouse/pvr.jellyfin/main/repository/addons.xml.md5</checksum>
-              <datadir zip="true">https://github.com/northernpowerhouse/pvr.jellyfin/releases/download</datadir>
+              <datadir zip="true">https://raw.githubusercontent.com/northernpowerhouse/pvr.jellyfin/main/repository</datadir>
+              <hashes>false</hashes>
           </dir>
       </extension>
       <extension point="xbmc.addon.metadata">

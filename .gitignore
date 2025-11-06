@@ -26,13 +26,16 @@ Makefile
 
 # Generated files
 /addon.xml
-*.zip
+/*.zip
 
-# But keep repository addon.xml
+# But keep repository addon.xml and zip files
 !repository/**/addon.xml
+!repository/**/*.zip
 
 # Build script state
 .last-dockerfile-hash
+.last-repo-hash
+.repo-just-built
 last-build-log-url.txt
 build-debug.log
 
