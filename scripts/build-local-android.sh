@@ -170,6 +170,8 @@ build_docker_image() {
     export DOCKER_BUILDKIT=1
     
     # Build the image (capture exit code from docker, not tee)
+    # Use set -o pipefail to ensure pipeline failures are caught
+    set -o pipefail
     docker build \
         --progress=plain \
         --tag pvr-jellyfin-android-builder:latest \
@@ -177,8 +179,9 @@ build_docker_image() {
         --cache-from pvr-jellyfin-android-builder:latest \
         . 2>&1 | tee -a "$BUILD_LOG"
     
-    # Check the actual exit code from docker build (PIPESTATUS[0])
-    local build_result=${PIPESTATUS[0]}
+    # Capture the exit code
+    local build_result=$?
+    set +o pipefail
     
     if [ $build_result -eq 0 ]; then
         print_success "Docker image built successfully"
@@ -210,6 +213,7 @@ build_addon() {
     # Run the build in Docker container
     print_info "Running addon build in Docker container..."
     
+    set -o pipefail
     docker run --rm \
         -v "$PROJECT_DIR:/workspace" \
         -v kodi-source-cache:/opt/kodi \
@@ -250,8 +254,9 @@ build_addon() {
             echo '=== Build completed successfully ==='
         " 2>&1 | tee -a "$BUILD_LOG"
     
-    # Check the actual exit code from docker run
-    local build_result=${PIPESTATUS[0]}
+    # Capture the exit code
+    local build_result=$?
+    set +o pipefail
     
     if [ $build_result -eq 0 ]; then
         print_success "Addon built successfully"
@@ -286,8 +291,10 @@ package_addon() {
     cp "$PROJECT_DIR/build-output/pvr.jellyfin.so" "$PROJECT_DIR/build-android/"
     
     # Run packaging script
+    set -o pipefail
     bash "$PROJECT_DIR/scripts/package.sh" "$version" 2>&1 | tee -a "$BUILD_LOG"
-    local package_result=${PIPESTATUS[0]}
+    local package_result=$?
+    set +o pipefail
     
     if [ $package_result -eq 0 ]; then
         print_success "Addon packaged: pvr.jellyfin-${version}.zip"
@@ -305,8 +312,10 @@ package_repository() {
     
     cd "$PROJECT_DIR"
     
+    set -o pipefail
     bash "$PROJECT_DIR/scripts/package_repo.sh" "$version" 2>&1 | tee -a "$BUILD_LOG"
-    local package_result=${PIPESTATUS[0]}
+    local package_result=$?
+    set +o pipefail
     
     if [ $package_result -eq 0 ]; then
         print_success "Repository packaged: repository.jellyfin.pvr-${version}.zip"
