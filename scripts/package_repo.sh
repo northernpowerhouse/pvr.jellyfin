@@ -21,7 +21,8 @@ echo "Copying repository addon files..."
 cp -r "$PROJECT_DIR/repository/repository.jellyfin.pvr/"* "$REPO_DIR/"
 
 # Update version in addon.xml
-sed -i "s/version=\"[^\"]*\"/version=\"$VERSION\"/" "$REPO_DIR/addon.xml"
+# Use | as delimiter to avoid issues with special characters in version string
+sed -i "s|version=\"[^\"]*\"|version=\"$VERSION\"|" "$REPO_DIR/addon.xml"
 
 # Create icon placeholder if it doesn't exist
 if [ ! -f "$REPO_DIR/icon.png" ]; then
