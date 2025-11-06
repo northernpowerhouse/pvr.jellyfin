@@ -121,10 +121,19 @@ std::string Connection::PerformHttpPost(const std::string& url, const std::strin
   file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "Content-Type", "application/json");
   file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "Accept", "application/json");
   
-  // Jellyfin 10.10+ compatible authentication header
-  std::ostringstream authHeader;
-  authHeader << "MediaBrowser Client=\"Kodi PVR\", Device=\"Kodi\", DeviceId=\"kodi-pvr-jellyfin\", Version=\"1.0.0\", Token=\"" << m_apiKey << "\"";
-  file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "X-Emby-Authorization", authHeader.str().c_str());
+  // Only add authentication header if we have a token
+  if (!m_apiKey.empty())
+  {
+    std::ostringstream authHeader;
+    authHeader << "MediaBrowser Client=\"Kodi PVR\", Device=\"Kodi\", DeviceId=\"kodi-pvr-jellyfin\", Version=\"1.0.0\", Token=\"" << m_apiKey << "\"";
+    file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "X-Emby-Authorization", authHeader.str().c_str());
+  }
+  else
+  {
+    // For unauthenticated requests (like login), still need the client identification
+    file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "X-Emby-Authorization", "MediaBrowser Client=\"Kodi PVR\", Device=\"Kodi\", DeviceId=\"kodi-pvr-jellyfin\", Version=\"1.0.0\"");
+  }
+  
   file.CURLAddOption(ADDON_CURL_OPTION_PROTOCOL, "postdata", data.c_str());
   
   if (!file.CURLOpen(ADDON_READ_NO_CACHE))
