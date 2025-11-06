@@ -1,7 +1,6 @@
 #include "client.h"
 #include "jellyfin/JellyfinClient.h"
 #include "utilities/Logger.h"
-#include "utilities/LogUploader.h"
 #include <kodi/General.h>
 
 ADDON_STATUS CJellyfinAddon::CreateInstance(const kodi::addon::IInstanceInfo& instance,
@@ -105,18 +104,6 @@ bool CJellyfinPVRClient::LoadSettings()
   if (m_apiKey.empty())
   {
     m_apiKey = kodi::addon::GetSettingString("api_key", "");
-  }
-
-  // Check if log upload was triggered
-  bool triggerLogUpload = kodi::addon::GetSettingBoolean("trigger_log_upload", false);
-  if (triggerLogUpload)
-  {
-    Logger::Log(ADDON_LOG_INFO, "Triggering log upload...");
-    LogUploader uploader;
-    uploader.UploadLogs();
-    
-    // Reset the setting
-    kodi::addon::SetSettingBoolean("trigger_log_upload", false);
   }
 
   if (m_serverUrl.empty())
