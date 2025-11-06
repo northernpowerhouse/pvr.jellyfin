@@ -83,6 +83,8 @@ jobs:
             -DANDROID_ABI=armeabi-v7a \
             -DANDROID_PLATFORM=android-21 \
             -DCORE_SYSTEM_NAME=android \
+            -DCPU=armeabi-v7a \
+            -DOS=android \
             ${{ github.workspace }}/kodi/cmake/addons
 
       - name: Build addon
