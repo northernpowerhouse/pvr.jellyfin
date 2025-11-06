@@ -96,28 +96,14 @@ if(STANDALONE_BUILD)
   
   # Find jsoncpp library - check multiple possible names and locations
   # For Android, we built a static library
-  set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-  find_library(JSONCPP_LIBRARY
-    NAMES jsoncpp
-    PATHS 
-      /opt/xbmc-depends/arm-linux-androideabi-21-release/lib
-      ${CMAKE_PREFIX_PATH}/lib
-    NO_DEFAULT_PATH
-  )
+  set(JSONCPP_LIB_PATH "/opt/xbmc-depends/arm-linux-androideabi-21-release/lib/libjsoncpp.a")
   
-  if(JSONCPP_LIBRARY)
-    message(STATUS "Found jsoncpp library: ${JSONCPP_LIBRARY}")
-    target_link_libraries(pvr.jellyfin ${JSONCPP_LIBRARY})
+  # Debug: Check if library exists
+  if(EXISTS ${JSONCPP_LIB_PATH})
+    message(STATUS "jsoncpp library found at: ${JSONCPP_LIB_PATH}")
+    target_link_libraries(pvr.jellyfin ${JSONCPP_LIB_PATH})
   else()
-    # Try direct path as fallback
-    set(JSONCPP_LIBRARY "/opt/xbmc-depends/arm-linux-androideabi-21-release/lib/libjsoncpp.a")
-    if(EXISTS ${JSONCPP_LIBRARY})
-      message(STATUS "Using jsoncpp library at: ${JSONCPP_LIBRARY}")
-      target_link_libraries(pvr.jellyfin ${JSONCPP_LIBRARY})
-    else()
-      message(STATUS "Searching for jsoncpp in: ${CMAKE_PREFIX_PATH}/lib")
-      message(WARNING "jsoncpp library not found, linking may fail")
-    endif()
+    message(FATAL_ERROR "jsoncpp library not found at ${JSONCPP_LIB_PATH}")
   endif()
   
   # Link against Android log library if on Android
