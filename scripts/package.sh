@@ -22,11 +22,21 @@ mkdir -p "$ADDON_DIR"
 
 # Copy files
 echo "Copying addon files..."
-cp -r "$PROJECT_DIR/src" "$ADDON_DIR/"
 cp -r "$PROJECT_DIR/resources" "$ADDON_DIR/"
 cp "$PROJECT_DIR/LICENSE" "$ADDON_DIR/"
 cp "$PROJECT_DIR/README.md" "$ADDON_DIR/"
-cp "$PROJECT_DIR/CMakeLists.txt" "$ADDON_DIR/"
+
+# Copy the built library file
+if [ -f "$PROJECT_DIR/build-output/$LIBRARY_FILENAME" ]; then
+    echo "Copying built library: $LIBRARY_FILENAME"
+    cp "$PROJECT_DIR/build-output/$LIBRARY_FILENAME" "$ADDON_DIR/"
+elif [ -f "$PROJECT_DIR/build-android/$LIBRARY_FILENAME" ]; then
+    echo "Copying built library from build-android: $LIBRARY_FILENAME"
+    cp "$PROJECT_DIR/build-android/$LIBRARY_FILENAME" "$ADDON_DIR/"
+else
+    echo "ERROR: Built library not found at $PROJECT_DIR/build-output/$LIBRARY_FILENAME or $PROJECT_DIR/build-android/$LIBRARY_FILENAME"
+    exit 1
+fi
 
 # Process addon.xml.in
 echo "Processing addon.xml... (platform=$PLATFORM, library=$LIBRARY_FILENAME)"

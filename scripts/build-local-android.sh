@@ -314,6 +314,8 @@ build_addon() {
             # Package the addon inside Docker where zip is available
             echo 'Packaging addon...'
             cd /workspace
+            export PLATFORM=android
+            export LIBRARY_FILENAME=pvr.jellyfin.so
             bash /workspace/scripts/package.sh \"\$version\"
             
             echo '=== Packaging completed ==='
