@@ -130,14 +130,14 @@ get_version() {
     if [ -z "$version" ]; then
         # No tags, use date-based version
         version="0.1.0-dev.$(date +%Y%m%d.%H%M%S)"
-        print_warning "No git tags found, using generated version: $version"
+        print_warning "No git tags found, using generated version: $version" >&2
     else
         # Add commit count if not on a tag
         local commits_ahead=$(git rev-list ${version}..HEAD --count)
         if [ "$commits_ahead" -gt 0 ]; then
             version="${version}+${commits_ahead}.$(git rev-parse --short HEAD)"
         fi
-        print_info "Using version: $version"
+        print_info "Using version: $version" >&2
     fi
     
     echo "$version"
