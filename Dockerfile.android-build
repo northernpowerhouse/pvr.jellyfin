@@ -25,6 +25,7 @@ RUN apt-get update && apt-get install -y \
     lib32z1-dev \
     libcurl4-openssl-dev \
     libtool \
+    lbzip2 \
     m4 \
     make \
     maven \
