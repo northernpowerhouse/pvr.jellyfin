@@ -454,7 +454,12 @@ main() {
     # Check cache integrity before building
     if ! check_volume_integrity; then
         print_warning "Previous build may have failed during dependency compilation"
-        print_info "Corrupted cache will be cleaned automatically if build fails"
+        print_warning "Cleaning corrupted cache now to ensure fresh build..."
+        clean_corrupted_volumes
+        
+        # Also remove the Docker image to force rebuild
+        print_info "Removing cached Docker image to force rebuild with clean volumes..."
+        docker rmi pvr-jellyfin-android-builder:latest 2>/dev/null || true
     fi
     
     # Build Docker image
