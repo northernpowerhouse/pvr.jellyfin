@@ -224,7 +224,6 @@ PVR_ERROR CJellyfinPVRClient::DeleteTimer(const kodi::addon::PVRTimer& timer, bo
 }
 
 PVR_ERROR CJellyfinPVRClient::GetChannelStreamProperties(const kodi::addon::PVRChannel& channel,
-                                                         PVR_SOURCE source,
                                                          std::vector<kodi::addon::PVRStreamProperty>& properties)
 {
   if (!m_jellyfinClient)

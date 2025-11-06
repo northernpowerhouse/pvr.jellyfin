@@ -6,5 +6,5 @@
 class Logger
 {
 public:
-  static void Log(const AddonLog level, const char* format, ...);
+  static void Log(const ADDON_LOG level, const char* format, ...);
 };

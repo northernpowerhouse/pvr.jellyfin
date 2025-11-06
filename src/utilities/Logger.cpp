@@ -3,7 +3,7 @@
 #include <cstdarg>
 #include <cstdio>
 
-void Logger::Log(const AddonLog level, const char* format, ...)
+void Logger::Log(const ADDON_LOG level, const char* format, ...)
 {
   char buffer[16384];
   va_list args;

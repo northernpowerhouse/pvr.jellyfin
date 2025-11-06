@@ -1,6 +1,6 @@
 #include "Connection.h"
 #include "../utilities/Logger.h"
-#include <kodi/Network.h>
+#include <kodi/Filesystem.h>
 #include <sstream>
 
 Connection::Connection(const std::string& serverUrl, const std::string& apiKey)
@@ -92,44 +92,69 @@ bool Connection::SendDeleteRequest(const std::string& endpoint)
 
 std::string Connection::PerformHttpGet(const std::string& url)
 {
-  kodi::network::CURLRequest request;
-  request.SetHeader("Accept", "application/json");
-  request.SetHeader("X-Emby-Authorization", "MediaBrowser Client=\"Kodi\", Device=\"Kodi\", DeviceId=\"kodi-pvr-jellyfin\", Version=\"1.0.0\"");
+  kodi::vfs::CFile file;
+  file.CURLCreate(url);
+  file.CURLAddOption(ADDON_CURL_OPTION_PROTOCOL, "acceptencoding", "gzip");
+  file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "Accept", "application/json");
+  file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "X-Emby-Authorization", 
+                     "MediaBrowser Client=\"Kodi\", Device=\"Kodi\", DeviceId=\"kodi-pvr-jellyfin\", Version=\"1.0.0\"");
   
-  std::string response;
-  if (!request.Get(url, response))
+  if (!file.CURLOpen(ADDON_READ_NO_CACHE))
   {
     Logger::Log(ADDON_LOG_ERROR, "HTTP GET failed for URL: %s", url.c_str());
     return "";
   }
+  
+  std::string response;
+  char buffer[1024];
+  ssize_t bytesRead;
+  while ((bytesRead = file.Read(buffer, sizeof(buffer))) > 0)
+  {
+    response.append(buffer, bytesRead);
+  }
+  file.Close();
   
   return response;
 }
 
 std::string Connection::PerformHttpPost(const std::string& url, const std::string& data)
 {
-  kodi::network::CURLRequest request;
-  request.SetHeader("Content-Type", "application/json");
-  request.SetHeader("Accept", "application/json");
-  request.SetHeader("X-Emby-Authorization", "MediaBrowser Client=\"Kodi\", Device=\"Kodi\", DeviceId=\"kodi-pvr-jellyfin\", Version=\"1.0.0\"");
+  kodi::vfs::CFile file;
+  file.CURLCreate(url);
+  file.CURLAddOption(ADDON_CURL_OPTION_PROTOCOL, "acceptencoding", "gzip");
+  file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "Content-Type", "application/json");
+  file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "Accept", "application/json");
+  file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "X-Emby-Authorization",
+                     "MediaBrowser Client=\"Kodi\", Device=\"Kodi\", DeviceId=\"kodi-pvr-jellyfin\", Version=\"1.0.0\"");
+  file.CURLAddOption(ADDON_CURL_OPTION_PROTOCOL, "postdata", data.c_str());
   
-  std::string response;
-  if (!request.Post(url, data, response))
+  if (!file.CURLOpen(ADDON_READ_NO_CACHE))
   {
     Logger::Log(ADDON_LOG_ERROR, "HTTP POST failed for URL: %s", url.c_str());
     return "";
   }
+  
+  std::string response;
+  char buffer[1024];
+  ssize_t bytesRead;
+  while ((bytesRead = file.Read(buffer, sizeof(buffer))) > 0)
+  {
+    response.append(buffer, bytesRead);
+  }
+  file.Close();
   
   return response;
 }
 
 bool Connection::PerformHttpDelete(const std::string& url)
 {
-  kodi::network::CURLRequest request;
-  request.SetHeader("X-Emby-Authorization", "MediaBrowser Client=\"Kodi\", Device=\"Kodi\", DeviceId=\"kodi-pvr-jellyfin\", Version=\"1.0.0\"");
+  kodi::vfs::CFile file;
+  file.CURLCreate(url);
+  file.CURLAddOption(ADDON_CURL_OPTION_PROTOCOL, "customrequest", "DELETE");
+  file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "X-Emby-Authorization",
+                     "MediaBrowser Client=\"Kodi\", Device=\"Kodi\", DeviceId=\"kodi-pvr-jellyfin\", Version=\"1.0.0\"");
   
-  std::string response;
-  if (!request.Delete(url, response))
+  if (!file.CURLOpen(ADDON_READ_NO_CACHE))
   {
     Logger::Log(ADDON_LOG_ERROR, "HTTP DELETE failed for URL: %s", url.c_str());
     return false;
