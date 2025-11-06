@@ -354,6 +354,10 @@ package_addon() {
     
     # Packaging is now done inside Docker during build
     # Just verify the zip file was created
+    print_info "Looking for: $PROJECT_DIR/pvr.jellyfin-${version}.zip"
+    print_info "Available zip files:"
+    ls -la "$PROJECT_DIR"/*.zip 2>/dev/null || echo "  No zip files found"
+    
     if [ -f "$PROJECT_DIR/pvr.jellyfin-${version}.zip" ]; then
         print_success "Addon packaged: pvr.jellyfin-${version}.zip"
         return 0
