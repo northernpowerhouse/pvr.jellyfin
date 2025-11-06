@@ -310,6 +310,13 @@ build_addon() {
             find . -name 'pvr.jellyfin.so' -exec cp {} /workspace/build-output/ \;
             
             echo '=== Build completed successfully ==='
+            
+            # Package the addon inside Docker where zip is available
+            echo 'Packaging addon...'
+            cd /workspace
+            bash /workspace/scripts/package.sh \"\$version\"
+            
+            echo '=== Packaging completed ==='
         " 2>&1 | tee -a "$BUILD_LOG"
     
     # Capture the exit code
@@ -336,29 +343,15 @@ build_addon() {
 # Function to package the addon
 package_addon() {
     local version="$1"
-    print_info "Packaging addon..."
+    print_info "Verifying packaged addon..."
     
-    cd "$PROJECT_DIR"
-    
-    # Set environment variables for packaging script
-    export PLATFORM="android"
-    export LIBRARY_FILENAME="pvr.jellyfin.so"
-    
-    # Copy the built library to expected location for packaging
-    mkdir -p "$PROJECT_DIR/build-android"
-    cp "$PROJECT_DIR/build-output/pvr.jellyfin.so" "$PROJECT_DIR/build-android/"
-    
-    # Run packaging script
-    set -o pipefail
-    bash "$PROJECT_DIR/scripts/package.sh" "$version" 2>&1 | tee -a "$BUILD_LOG"
-    local package_result=$?
-    set +o pipefail
-    
-    if [ $package_result -eq 0 ]; then
+    # Packaging is now done inside Docker during build
+    # Just verify the zip file was created
+    if [ -f "$PROJECT_DIR/pvr.jellyfin-${version}.zip" ]; then
         print_success "Addon packaged: pvr.jellyfin-${version}.zip"
         return 0
     else
-        print_error "Packaging failed with exit code: $package_result"
+        print_error "Packaging failed - zip file not found"
         return 1
     fi
 }
