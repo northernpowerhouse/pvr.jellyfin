@@ -318,6 +318,9 @@ build_addon() {
             export LIBRARY_FILENAME=pvr.jellyfin.so
             bash /workspace/scripts/package.sh \"\$version\"
             
+            # Fix ownership of created files (Docker runs as root)
+            chown -R \$(stat -c '%u:%g' /workspace) /workspace/package /workspace/*.zip 2>/dev/null || true
+            
             echo '=== Packaging completed ==='
         " 2>&1 | tee -a "$BUILD_LOG"
     

@@ -53,3 +53,7 @@ echo "Creating $ZIP_NAME..."
 zip -r "$PROJECT_DIR/$ZIP_NAME" pvr.jellyfin
 
 echo "Package created: $PROJECT_DIR/$ZIP_NAME"
+
+# Clean up package directory
+cd "$PROJECT_DIR"
+rm -rf "$PACKAGE_DIR"
