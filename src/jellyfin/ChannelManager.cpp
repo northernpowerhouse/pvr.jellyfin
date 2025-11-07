@@ -263,37 +263,51 @@ PVR_ERROR ChannelManager::GetChannelStreamProperties(const kodi::addon::PVRChann
   
   Logger::Log(ADDON_LOG_INFO, "Opening live stream for channel: %s", channelId.c_str());
   
-  // Step 1: Open the live stream to get LiveStreamId
-  // Using query parameters instead of POST body
-  std::ostringstream openEndpoint;
-  openEndpoint << "/LiveTv/LiveStreams/Open"
-               << "?UserId=" << m_userId
-               << "&ItemId=" << channelId
-               << "&OpenToken=" << channelId;
+  // Step 1: Get PlaybackInfo which auto-opens the live stream
+  // This is the correct Jellyfin API method used by the official addon
+  std::ostringstream playbackEndpoint;
+  playbackEndpoint << "/Items/" << channelId << "/PlaybackInfo";
   
-  Json::Value openResponse;
-  if (!m_connection->SendRequest(openEndpoint.str(), openResponse))
+  Json::Value playbackRequest;
+  playbackRequest["UserId"] = m_userId;
+  playbackRequest["AutoOpenLiveStream"] = true;
+  
+  Json::Value playbackResponse;
+  if (!m_connection->SendPostRequest(playbackEndpoint.str(), playbackRequest, playbackResponse))
   {
-    Logger::Log(ADDON_LOG_ERROR, "Failed to open live stream for channel: %s", channelId.c_str());
+    Logger::Log(ADDON_LOG_ERROR, "Failed to get playback info for channel: %s", channelId.c_str());
     return PVR_ERROR_FAILED;
   }
   
-  // Extract LiveStreamId from response
-  if (!openResponse.isMember("Id"))
+  // Extract MediaSource which contains the stream information
+  if (!playbackResponse.isMember("MediaSources") || !playbackResponse["MediaSources"].isArray() || playbackResponse["MediaSources"].empty())
   {
-    Logger::Log(ADDON_LOG_ERROR, "No LiveStreamId returned for channel: %s", channelId.c_str());
+    Logger::Log(ADDON_LOG_ERROR, "No MediaSources returned for channel: %s", channelId.c_str());
     return PVR_ERROR_FAILED;
   }
   
-  std::string liveStreamId = openResponse["Id"].asString();
-  Logger::Log(ADDON_LOG_INFO, "Got LiveStreamId: %s for channel: %s", liveStreamId.c_str(), channelId.c_str());
+  Json::Value mediaSource = playbackResponse["MediaSources"][0];
   
-  // Step 2: Build playback URL using the LiveStreamId
+  // Get the LiveStreamId if available
+  std::string liveStreamId;
+  if (mediaSource.isMember("LiveStreamId") && mediaSource["LiveStreamId"].isString())
+  {
+    liveStreamId = mediaSource["LiveStreamId"].asString();
+    Logger::Log(ADDON_LOG_INFO, "Got LiveStreamId: %s for channel: %s", liveStreamId.c_str(), channelId.c_str());
+  }
+  
+  // Step 2: Build playback URL
   std::ostringstream streamUrl;
   streamUrl << m_connection->GetServerUrl() 
             << "/Videos/" << channelId 
-            << "/live.m3u8?LiveStreamId=" << liveStreamId
-            << "&api_key=" << m_connection->GetApiKey();
+            << "/stream?static=true&MediaSourceId=" << mediaSource["Id"].asString();
+  
+  if (!liveStreamId.empty())
+  {
+    streamUrl << "&LiveStreamId=" << liveStreamId;
+  }
+  
+  streamUrl << "&api_key=" << m_connection->GetApiKey();
   
   Logger::Log(ADDON_LOG_INFO, "Stream URL: %s", streamUrl.str().c_str());
   
