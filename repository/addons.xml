@@ -3,7 +3,7 @@
   <!-- pvr.jellyfin addon -->
   <addon
     id="pvr.jellyfin"
-    version="0.1.0-test+107.d7c89ec"
+    version="0.1.0-test+110.8e28ae7"
     name="Jellyfin PVR Client"
     provider-name="Northern Powerhouse">
     <requires><import addon="kodi.binary.global.main" version="2.0.0"/>
