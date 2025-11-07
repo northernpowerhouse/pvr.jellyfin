@@ -115,6 +115,9 @@ std::string Connection::PerformHttpGet(const std::string& url)
 
 std::string Connection::PerformHttpPost(const std::string& url, const std::string& data)
 {
+  Logger::Log(ADDON_LOG_DEBUG, "HTTP POST to: %s", url.c_str());
+  Logger::Log(ADDON_LOG_DEBUG, "POST data: %s", data.c_str());
+  
   kodi::vfs::CFile file;
   file.CURLCreate(url);
   file.CURLAddOption(ADDON_CURL_OPTION_PROTOCOL, "acceptencoding", "gzip");
@@ -127,11 +130,13 @@ std::string Connection::PerformHttpPost(const std::string& url, const std::strin
     std::ostringstream authHeader;
     authHeader << "MediaBrowser Client=\"Kodi PVR\", Device=\"Kodi\", DeviceId=\"kodi-pvr-jellyfin\", Version=\"1.0.0\", Token=\"" << m_apiKey << "\"";
     file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "X-Emby-Authorization", authHeader.str().c_str());
+    Logger::Log(ADDON_LOG_DEBUG, "Auth header (with token)");
   }
   else
   {
     // For unauthenticated requests (like login), still need the client identification
     file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "X-Emby-Authorization", "MediaBrowser Client=\"Kodi PVR\", Device=\"Kodi\", DeviceId=\"kodi-pvr-jellyfin\", Version=\"1.0.0\"");
+    Logger::Log(ADDON_LOG_DEBUG, "Auth header (no token)");
   }
   
   file.CURLAddOption(ADDON_CURL_OPTION_PROTOCOL, "postdata", data.c_str());

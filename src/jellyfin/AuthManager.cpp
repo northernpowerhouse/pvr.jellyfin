@@ -15,7 +15,10 @@ bool AuthManager::AuthenticateByPassword(const std::string& username, const std:
   
   Json::Value requestData;
   requestData["Username"] = username;
-  requestData["Password"] = password;
+  requestData["Pw"] = password;
+  
+  // Log the request (without password for security)
+  Logger::Log(ADDON_LOG_DEBUG, "Auth request - Username: %s, Endpoint: /Users/AuthenticateByName", username.c_str());
   
   Json::Value response;
   if (!m_connection->SendPostRequest("/Users/AuthenticateByName", requestData, response))
