@@ -388,3 +388,12 @@
 2025-11-07 02:55:04.449 T:26263    info <general>: Loading skin file: DialogSelect.xml, load type: KEEP_IN_MEMORY
 2025-11-07 02:55:09.015 T:26382    info <general>: KodiGithubLogs: Building log payload (level=debug, include_old=True, exclude_startup=False)
 2025-11-07 02:55:09.015 T:26382    info <general>: KodiGithubLogs: Checking log path: special://logpath/kodi.log -> /storage/emulated/0/Android/data/org.xbmc.kodi/files/.kodi/temp/kodi.log
+2025-11-07 02:55:09.016 T:26382    info <general>: KodiGithubLogs: Read 46697 bytes from /storage/emulated/0/Android/data/org.xbmc.kodi/files/.kodi/temp/kodi.log
+2025-11-07 02:55:09.016 T:26382    info <general>: KodiGithubLogs: Checking log path: special://logpath/kodi.old -> /storage/emulated/0/Android/data/org.xbmc.kodi/files/.kodi/temp/kodi.old
+2025-11-07 02:55:09.016 T:26382 warning <general>: KodiGithubLogs: Log file does not exist: /storage/emulated/0/Android/data/org.xbmc.kodi/files/.kodi/temp/kodi.old
+2025-11-07 02:55:09.016 T:26382    info <general>: KodiGithubLogs: Total log text length: 46695
+2025-11-07 02:55:09.017 T:26382    info <general>: KodiGithubLogs: Uploading to northernpowerhouse/pvr.jellyfin/devlog/kodilog202511070155.txt
+2025-11-07 02:55:10.319 T:26382    info <general>: KodiGithubLogs: Upload successful
+2025-11-07 02:55:10.326 T:26263    info <general>: Loading skin file: DialogConfirm.xml, load type: KEEP_IN_MEMORY
+2025-11-07 02:55:44.496 T:26382    info <general>: KodiGithubLogs: Building log payload (level=debug, include_old=True, exclude_startup=False)
+2025-11-07 02:55:44.496 T:26382    info <general>: KodiGithubLogs: Checking log path: special://logpath/kodi.log -> /storage/emulated/0/Android/data/org.xbmc.kodi/files/.kodi/temp/kodi.log
