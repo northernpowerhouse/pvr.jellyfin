@@ -49,9 +49,28 @@ bool ChannelManager::LoadChannels()
       channel.name = item["Name"].asString();
       
       // Use ChannelNumber if available, otherwise use position
+      // ChannelNumber can be a string like "1.1" or an integer
       if (item.isMember("ChannelNumber"))
       {
-        channel.number = item["ChannelNumber"].asInt();
+        if (item["ChannelNumber"].isInt())
+        {
+          channel.number = item["ChannelNumber"].asInt();
+        }
+        else if (item["ChannelNumber"].isString())
+        {
+          // Try to parse string as integer (e.g., "502" -> 502)
+          try {
+            channel.number = std::stoi(item["ChannelNumber"].asString());
+          }
+          catch (...) {
+            // If parsing fails, use position
+            channel.number = i + 1;
+          }
+        }
+        else
+        {
+          channel.number = i + 1;
+        }
       }
       else
       {
