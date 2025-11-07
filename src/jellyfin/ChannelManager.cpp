@@ -1,4 +1,4 @@
-#include "ChannelManager.h"
+#in "ChannelManager.h"
 #include "Connection.h"
 #include "../utilities/Logger.h"
 #include <json/json.h>
@@ -263,18 +263,17 @@ PVR_ERROR ChannelManager::GetChannelStreamProperties(const kodi::addon::PVRChann
   
   Logger::Log(ADDON_LOG_INFO, "Opening live stream for channel: %s", channelId.c_str());
   
-  // Build DeviceProfile for live TV (based on jellyfin-kodi addon)
+  // Build DeviceProfile for live TV (simplified minimal profile)
   Json::Value deviceProfile;
   deviceProfile["Name"] = "Kodi";
-  deviceProfile["MaxStaticBitrate"] = 120000000;  // 120 Mbps
   deviceProfile["MaxStreamingBitrate"] = 120000000;
+  deviceProfile["MaxStaticBitrate"] = 120000000;
   deviceProfile["MusicStreamingTranscodingBitrate"] = 1280000;
-  deviceProfile["TimelineOffsetSeconds"] = 5;
   
   // TranscodingProfiles
   Json::Value transcodingProfiles(Json::arrayValue);
   
-  // Live TV transcoding profile (must be first for TvChannel type)
+  // Live TV transcoding profile (HLS for live streams)
   Json::Value liveTvProfile;
   liveTvProfile["Container"] = "ts";
   liveTvProfile["Type"] = "Video";
@@ -287,10 +286,10 @@ PVR_ERROR ChannelManager::GetChannelStreamProperties(const kodi::addon::PVRChann
   liveTvProfile["BreakOnNonKeyFrames"] = true;
   transcodingProfiles.append(liveTvProfile);
   
-  // Standard video transcoding profile
+  // Standard video profile
   Json::Value videoProfile;
-  videoProfile["Type"] = "Video";
   videoProfile["Container"] = "m3u8";
+  videoProfile["Type"] = "Video";
   videoProfile["AudioCodec"] = "aac,mp3,ac3,opus,flac,vorbis";
   videoProfile["VideoCodec"] = "h264,hevc,mpeg4,mpeg2video,vc1,av1";
   videoProfile["MaxAudioChannels"] = "6";
@@ -301,8 +300,8 @@ PVR_ERROR ChannelManager::GetChannelStreamProperties(const kodi::addon::PVRChann
   transcodingProfiles.append(audioProfile);
   
   Json::Value photoProfile;
-  photoProfile["Type"] = "Photo";
   photoProfile["Container"] = "jpeg";
+  photoProfile["Type"] = "Photo";
   transcodingProfiles.append(photoProfile);
   
   deviceProfile["TranscodingProfiles"] = transcodingProfiles;
@@ -311,7 +310,6 @@ PVR_ERROR ChannelManager::GetChannelStreamProperties(const kodi::addon::PVRChann
   Json::Value directPlayProfiles(Json::arrayValue);
   Json::Value videoDirectPlay;
   videoDirectPlay["Type"] = "Video";
-  videoDirectPlay["VideoCodec"] = "h264,hevc,mpeg4,mpeg2video,vc1,vp9,av1";
   directPlayProfiles.append(videoDirectPlay);
   
   Json::Value audioDirectPlay;
@@ -324,27 +322,11 @@ PVR_ERROR ChannelManager::GetChannelStreamProperties(const kodi::addon::PVRChann
   
   deviceProfile["DirectPlayProfiles"] = directPlayProfiles;
   
-  // Empty arrays for other required fields
+  // Empty arrays for required fields
   deviceProfile["ResponseProfiles"] = Json::Value(Json::arrayValue);
   deviceProfile["ContainerProfiles"] = Json::Value(Json::arrayValue);
   deviceProfile["CodecProfiles"] = Json::Value(Json::arrayValue);
-  
-  // SubtitleProfiles
-  Json::Value subtitleProfiles(Json::arrayValue);
-  std::vector<std::string> formats = {"srt", "ass", "sub", "ssa", "smi", "pgssub", "dvdsub", "pgs"};
-  for (const auto& format : formats)
-  {
-    Json::Value external;
-    external["Format"] = format;
-    external["Method"] = "External";
-    subtitleProfiles.append(external);
-    
-    Json::Value embed;
-    embed["Format"] = format;
-    embed["Method"] = "Embed";
-    subtitleProfiles.append(embed);
-  }
-  deviceProfile["SubtitleProfiles"] = subtitleProfiles;
+  deviceProfile["SubtitleProfiles"] = Json::Value(Json::arrayValue);
   
   // Build PlaybackInfo request
   Json::Value playbackInfoRequest;
