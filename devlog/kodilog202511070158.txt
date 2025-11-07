@@ -1,0 +1,445 @@
+﻿2025-11-07 02:54:05.606 T:26263    info <general>: -----------------------------------------------------------------------
+2025-11-07 02:54:05.606 T:26263    info <general>: Starting Kodi (21.2 (21.2.0) Git:20250201-cc4e1fedda). Platform: Android ARM 32-bit
+2025-11-07 02:54:05.606 T:26263    info <general>: Using Release Kodi x32
+2025-11-07 02:54:05.606 T:26263    info <general>: Kodi compiled 2025-02-01 by Clang 9.0.9 (https://android.googlesource.com/toolchain/llvm-project a2a1e703c0edb03ba29944e529ccbf457742737b) for Android ARM 32-bit API level 21 (API level 21)
+2025-11-07 02:54:05.607 T:26263    info <general>: Running on UGOOS SK1 with Android TV 11.0.0 API level 30, kernel: Linux ARM 32-bit version 5.4.210
+2025-11-07 02:54:05.607 T:26263    info <general>: FFmpeg version/source: 6.0.1-Kodi
+2025-11-07 02:54:05.607 T:26263    info <general>: Host CPU: ARMv8 Processor rev 1 (v8l), 5 cores available
+2025-11-07 02:54:05.607 T:26263    info <general>: Product: skybox, Device: skybox, Board: skybox - Manufacturer: UGOOS, Brand: UGOOS, Model: SK1, Hardware: amlogic
+2025-11-07 02:54:05.609 T:26277   debug <general>: CNetworkAndroid::onAvailable: The default network is now: 105
+2025-11-07 02:54:05.610 T:26263    info <general>: External storage path = /storage/emulated/0; status = ok; Permissions = MANAGE_EXTERNAL_STORAGE WRITE_EXTERNAL_STORAGE
+2025-11-07 02:54:05.613 T:26263    info <general>: ARM Features: Neon enabled
+2025-11-07 02:54:05.613 T:26263    info <general>: special://xbmc/ is mapped to: /data/user/0/org.xbmc.kodi/cache/apk/assets
+2025-11-07 02:54:05.613 T:26263    info <general>: special://xbmcbin/ is mapped to: /data/user/0/org.xbmc.kodi/cache/apk/assets
+2025-11-07 02:54:05.613 T:26263    info <general>: special://xbmcbinaddons/ is mapped to: /data/user/0/org.xbmc.kodi/cache/apk/assets/addons
+2025-11-07 02:54:05.613 T:26263    info <general>: special://masterprofile/ is mapped to: /storage/emulated/0/Android/data/org.xbmc.kodi/files/.kodi/userdata
+2025-11-07 02:54:05.613 T:26263    info <general>: special://envhome/ is mapped to: /storage/emulated/0/Android/data/org.xbmc.kodi/files
+2025-11-07 02:54:05.613 T:26263    info <general>: special://home/ is mapped to: /storage/emulated/0/Android/data/org.xbmc.kodi/files/.kodi
+2025-11-07 02:54:05.614 T:26263    info <general>: special://temp/ is mapped to: /storage/emulated/0/Android/data/org.xbmc.kodi/files/.kodi/temp
+2025-11-07 02:54:05.614 T:26263    info <general>: special://logpath/ is mapped to: /storage/emulated/0/Android/data/org.xbmc.kodi/files/.kodi/temp
+2025-11-07 02:54:05.614 T:26263    info <general>: Webserver extra whitelist paths: 
+2025-11-07 02:54:05.615 T:26263    info <general>: The executable running is: /data/app/~~SjDe9i4tL79t5mT6ef87SA==/org.xbmc.kodi-FAoB2qbuT5KyaV4jmMxV3g==/lib/arm/libkodi.so
+2025-11-07 02:54:05.736 T:26263    info <general>: Local hostname: 192.168.1.53
+2025-11-07 02:54:05.736 T:26263    info <general>: Log File is located: /storage/emulated/0/Android/data/org.xbmc.kodi/files/.kodi/temp/kodi.log
+2025-11-07 02:54:05.737 T:26263    info <general>: -----------------------------------------------------------------------
+2025-11-07 02:54:05.737 T:26263    info <general>: loading settings
+2025-11-07 02:54:05.738 T:26263    info <general>: special://profile/ is mapped to: special://masterprofile/profiles/dev/dev/
+2025-11-07 02:54:05.763 T:26263    info <general>: No settings file to load (special://xbmc/system/advancedsettings.xml)
+2025-11-07 02:54:05.764 T:26263    info <general>: Loaded settings file from special://masterprofile/advancedsettings.xml
+2025-11-07 02:54:05.767 T:26263    info <general>: Contents of special://masterprofile/advancedsettings.xml are...
+                                                   <advancedsettings>
+                                                     <network>
+                                                       <curlclienttimeout>10</curlclienttimeout>
+                                                       <curllowspeedtime>20</curllowspeedtime>
+                                                       <curlretries>2</curlretries>
+                                                     </network>
+                                                     <cache>
+                                                       <memorysize>642912085</memorysize>
+                                                       <buffermode>2</buffermode>
+                                                       <readfactor>20</readfactor>
+                                                     </cache>
+                                                   </advancedsettings>
+                                                   
+2025-11-07 02:54:05.767 T:26263 warning <CSettingsManager>: missing version attribute
+2025-11-07 02:54:05.769 T:26263    info <general>: Default Video Player: VideoPlayer
+2025-11-07 02:54:05.769 T:26263    info <general>: Default Audio Player: paplayer
+2025-11-07 02:54:05.769 T:26263    info <general>: Disabled debug logging due to GUI setting. Level 0.
+2025-11-07 02:54:05.769 T:26263    info <general>: Log level changed to "info"
+2025-11-07 02:54:05.770 T:26263    info <general>: CMediaSourceSettings: loading media sources from special://masterprofile/profiles/dev/dev/sources.xml
+2025-11-07 02:54:05.811 T:26263    info <general>: New Cache GUI Settings (replacement of cache in advancedsettings.xml) are:
+                                                     Buffer Mode: 4
+                                                     Memory Size: 20 MB
+                                                     Read Factor: 4.00 x 
+                                                     Chunk Size : 131072 bytes
+2025-11-07 02:54:05.812 T:26263    info <general>: creating subdirectories
+2025-11-07 02:54:05.812 T:26263    info <general>: userdata folder: special://masterprofile/profiles/dev/dev/
+2025-11-07 02:54:05.812 T:26263    info <general>: recording folder: 
+2025-11-07 02:54:05.812 T:26263    info <general>: screenshots folder: 
+2025-11-07 02:54:05.824 T:26263    info <general>: Running database version Addons33
+2025-11-07 02:54:05.933 T:26263    info <general>: CAddonMgr::FindAddons: One.repo v1.12 installed
+2025-11-07 02:54:05.933 T:26263    info <general>: CAddonMgr::FindAddons: audioencoder.kodi.builtin.aac v1.0.2 installed
+2025-11-07 02:54:05.934 T:26263    info <general>: CAddonMgr::FindAddons: audioencoder.kodi.builtin.wma v1.0.2 installed
+2025-11-07 02:54:05.934 T:26263    info <general>: CAddonMgr::FindAddons: game.controller.default v1.0.42 installed
+2025-11-07 02:54:05.934 T:26263    info <general>: CAddonMgr::FindAddons: game.controller.keyboard v1.1.43 installed
+2025-11-07 02:54:05.934 T:26263    info <general>: CAddonMgr::FindAddons: game.controller.mouse v1.0.26 installed
+2025-11-07 02:54:05.934 T:26263    info <general>: CAddonMgr::FindAddons: game.controller.ps.dualanalog v1.0.36 installed
+2025-11-07 02:54:05.935 T:26263    info <general>: CAddonMgr::FindAddons: game.controller.remote v1.0.31 installed
+2025-11-07 02:54:05.935 T:26263    info <general>: CAddonMgr::FindAddons: game.controller.snes v1.0.43 installed
+2025-11-07 02:54:05.935 T:26263    info <general>: CAddonMgr::FindAddons: inputstream.adaptive v21.5.16 installed
+2025-11-07 02:54:05.935 T:26263    info <general>: CAddonMgr::FindAddons: inputstream.ffmpegdirect v21.3.8 installed
+2025-11-07 02:54:05.935 T:26263    info <general>: CAddonMgr::FindAddons: inputstream.rtmp v21.1.2 installed
+2025-11-07 02:54:05.935 T:26263    info <general>: CAddonMgr::FindAddons: kodi.binary.global.audioengine v1.1.1 installed
+2025-11-07 02:54:05.936 T:26263    info <general>: CAddonMgr::FindAddons: kodi.binary.global.filesystem v1.1.8 installed
+2025-11-07 02:54:05.936 T:26263    info <general>: CAddonMgr::FindAddons: kodi.binary.global.general v1.0.5 installed
+2025-11-07 02:54:05.936 T:26263    info <general>: CAddonMgr::FindAddons: kodi.binary.global.gui v5.15.0 installed
+2025-11-07 02:54:05.936 T:26263    info <general>: CAddonMgr::FindAddons: kodi.binary.global.main v2.0.2 installed
+2025-11-07 02:54:05.936 T:26263    info <general>: CAddonMgr::FindAddons: kodi.binary.global.network v1.0.4 installed
+2025-11-07 02:54:05.937 T:26263    info <general>: CAddonMgr::FindAddons: kodi.binary.global.tools v1.0.4 installed
+2025-11-07 02:54:05.937 T:26263    info <general>: CAddonMgr::FindAddons: kodi.binary.instance.audiodecoder v4.0.0 installed
+2025-11-07 02:54:05.937 T:26263    info <general>: CAddonMgr::FindAddons: kodi.binary.instance.audioencoder v3.0.0 installed
+2025-11-07 02:54:05.937 T:26263    info <general>: CAddonMgr::FindAddons: kodi.binary.instance.game v3.0.2 installed
+2025-11-07 02:54:05.937 T:26263    info <general>: CAddonMgr::FindAddons: kodi.binary.instance.imagedecoder v3.0.1 installed
+2025-11-07 02:54:05.938 T:26263    info <general>: CAddonMgr::FindAddons: kodi.binary.instance.inputstream v3.3.0 installed
+2025-11-07 02:54:05.938 T:26263    info <general>: CAddonMgr::FindAddons: kodi.binary.instance.peripheral v3.0.2 installed
+2025-11-07 02:54:05.938 T:26263    info <general>: CAddonMgr::FindAddons: kodi.binary.instance.pvr v8.3.0 installed
+2025-11-07 02:54:05.938 T:26263    info <general>: CAddonMgr::FindAddons: kodi.binary.instance.screensaver v2.2.0 installed
+2025-11-07 02:54:05.938 T:26263    info <general>: CAddonMgr::FindAddons: kodi.binary.instance.vfs v3.0.1 installed
+2025-11-07 02:54:05.939 T:26263    info <general>: CAddonMgr::FindAddons: kodi.binary.instance.videocodec v2.1.0 installed
+2025-11-07 02:54:05.939 T:26263    info <general>: CAddonMgr::FindAddons: kodi.binary.instance.visualization v4.0.0 installed
+2025-11-07 02:54:05.939 T:26263    info <general>: CAddonMgr::FindAddons: kodi.resource v1.0.0 installed
+2025-11-07 02:54:05.939 T:26263    info <general>: CAddonMgr::FindAddons: metadata.album.universal v3.1.18 installed
+2025-11-07 02:54:05.939 T:26263    info <general>: CAddonMgr::FindAddons: metadata.artists.universal v4.3.20 installed
+2025-11-07 02:54:05.940 T:26263    info <general>: CAddonMgr::FindAddons: metadata.common.allmusic.com v3.2.2 installed
+2025-11-07 02:54:05.940 T:26263    info <general>: CAddonMgr::FindAddons: metadata.common.fanart.tv v3.6.4 installed
+2025-11-07 02:54:05.940 T:26263    info <general>: CAddonMgr::FindAddons: metadata.common.musicbrainz.org v2.2.4 installed
+2025-11-07 02:54:05.940 T:26263    info <general>: CAddonMgr::FindAddons: metadata.common.theaudiodb.com v2.0.3 installed
+2025-11-07 02:54:05.940 T:26263    info <general>: CAddonMgr::FindAddons: metadata.generic.albums v1.0.18 installed
+2025-11-07 02:54:05.941 T:26263    info <general>: CAddonMgr::FindAddons: metadata.generic.artists v1.0.18 installed
+2025-11-07 02:54:05.941 T:26263    info <general>: CAddonMgr::FindAddons: metadata.local v1.0.1 installed
+2025-11-07 02:54:05.941 T:26263    info <general>: CAddonMgr::FindAddons: metadata.themoviedb.org.python v3.1.3 installed
+2025-11-07 02:54:05.941 T:26263    info <general>: CAddonMgr::FindAddons: metadata.tvshows.themoviedb.org.python v1.7.4 installed
+2025-11-07 02:54:05.941 T:26263    info <general>: CAddonMgr::FindAddons: peripheral.joystick v21.1.23 installed
+2025-11-07 02:54:05.942 T:26263    info <general>: CAddonMgr::FindAddons: plugin.program.autocompletion v2.1.2 installed
+2025-11-07 02:54:05.942 T:26263    info <general>: CAddonMgr::FindAddons: plugin.video.fenlight v2.1.47 installed
+2025-11-07 02:54:05.942 T:26263    info <general>: CAddonMgr::FindAddons: plugin.video.jellyfin v1.1.1+py3 installed
+2025-11-07 02:54:05.942 T:26263    info <general>: CAddonMgr::FindAddons: plugin.video.stash v0.0.10 installed
+2025-11-07 02:54:05.942 T:26263    info <general>: CAddonMgr::FindAddons: plugin.video.themoviedb.helper v6.11.2 installed
+2025-11-07 02:54:05.943 T:26263    info <general>: CAddonMgr::FindAddons: pvr.iptvsimple v21.11.0 installed
+2025-11-07 02:54:05.943 T:26263    info <general>: CAddonMgr::FindAddons: pvr.jellyfin v0.1.0-test+116.3e9240e installed
+2025-11-07 02:54:05.943 T:26263    info <general>: CAddonMgr::FindAddons: repository.cocoscrapers v1.0.1 installed
+2025-11-07 02:54:05.943 T:26263    info <general>: CAddonMgr::FindAddons: repository.jellyfin.kodi v1.0.0 installed
+2025-11-07 02:54:05.944 T:26263    info <general>: CAddonMgr::FindAddons: repository.jellyfin.pvr v0.1.0-test+68.c6b4d5a installed
+2025-11-07 02:54:05.944 T:26263    info <general>: CAddonMgr::FindAddons: repository.jurialmunkey v3.5 installed
+2025-11-07 02:54:05.944 T:26263    info <general>: CAddonMgr::FindAddons: repository.kodigithublogs v1.0.0 installed
+2025-11-07 02:54:05.944 T:26263    info <general>: CAddonMgr::FindAddons: repository.peno64 v1.5 installed
+2025-11-07 02:54:05.944 T:26263    info <general>: CAddonMgr::FindAddons: repository.xbmc.org v3.4.0 installed
+2025-11-07 02:54:05.945 T:26263    info <general>: CAddonMgr::FindAddons: resource.font.robotocjksc v0.0.3 installed
+2025-11-07 02:54:05.945 T:26263    info <general>: CAddonMgr::FindAddons: resource.images.studios.coloured v0.0.23 installed
+2025-11-07 02:54:05.945 T:26263    info <general>: CAddonMgr::FindAddons: resource.images.weathericons.default v1.1.9 installed
+2025-11-07 02:54:05.945 T:26263    info <general>: CAddonMgr::FindAddons: resource.images.weathericons.white v0.0.6 installed
+2025-11-07 02:54:05.946 T:26263    info <general>: CAddonMgr::FindAddons: resource.language.en_gb v2.0.2 installed
+2025-11-07 02:54:05.946 T:26263    info <general>: CAddonMgr::FindAddons: resource.uisounds.kodi v1.0.1 installed
+2025-11-07 02:54:05.946 T:26263    info <general>: CAddonMgr::FindAddons: screensaver.arctic.mirage v1.9 installed
+2025-11-07 02:54:05.946 T:26263    info <general>: CAddonMgr::FindAddons: screensaver.xbmc.builtin.black v1.0.34 installed
+2025-11-07 02:54:05.946 T:26263    info <general>: CAddonMgr::FindAddons: screensaver.xbmc.builtin.dim v1.0.66 installed
+2025-11-07 02:54:05.947 T:26263    info <general>: CAddonMgr::FindAddons: script.ezmaintenanceplus v2023.01.09.0 installed
+2025-11-07 02:54:05.947 T:26263    info <general>: CAddonMgr::FindAddons: script.keymap v1.3.2 installed
+2025-11-07 02:54:05.947 T:26263    info <general>: CAddonMgr::FindAddons: script.kodi.loguploader v1.0.5 installed
+2025-11-07 02:54:05.947 T:26263    info <general>: CAddonMgr::FindAddons: script.kodigithublogs v0.2.8 installed
+2025-11-07 02:54:05.947 T:26263    info <general>: CAddonMgr::FindAddons: script.module.addon.signals v0.0.6+matrix.1 installed
+2025-11-07 02:54:05.947 T:26263    info <general>: CAddonMgr::FindAddons: script.module.autocompletion v2.1.1 installed
+2025-11-07 02:54:05.948 T:26263    info <general>: CAddonMgr::FindAddons: script.module.certifi v2023.5.7 installed
+2025-11-07 02:54:05.948 T:26263    info <general>: CAddonMgr::FindAddons: script.module.chardet v5.1.0 installed
+2025-11-07 02:54:05.948 T:26263    info <general>: CAddonMgr::FindAddons: script.module.cocoscrapers v1.0.39 installed
+2025-11-07 02:54:05.948 T:26263    info <general>: CAddonMgr::FindAddons: script.module.dateutil v2.8.2 installed
+2025-11-07 02:54:05.949 T:26263    info <general>: CAddonMgr::FindAddons: script.module.defusedxml v0.6.0+matrix.1 installed
+2025-11-07 02:54:05.949 T:26263    info <general>: CAddonMgr::FindAddons: script.module.dropbox v10.3.1+matrix.1 installed
+2025-11-07 02:54:05.949 T:26263    info <general>: CAddonMgr::FindAddons: script.module.future v1.0.0+matrix.1 installed
+2025-11-07 02:54:05.949 T:26263    info <general>: CAddonMgr::FindAddons: script.module.idna v3.10.0 installed
+2025-11-07 02:54:05.949 T:26263    info <general>: CAddonMgr::FindAddons: script.module.infotagger v0.0.8 installed
+2025-11-07 02:54:05.950 T:26263    info <general>: CAddonMgr::FindAddons: script.module.jurialmunkey v0.2.29 installed
+2025-11-07 02:54:05.950 T:26263    info <general>: CAddonMgr::FindAddons: script.module.kodi-six v0.1.3.1 installed
+2025-11-07 02:54:05.950 T:26263    info <general>: CAddonMgr::FindAddons: script.module.pil v5.1.0 installed
+2025-11-07 02:54:05.950 T:26263    info <general>: CAddonMgr::FindAddons: script.module.pycryptodome v3.4.3 installed
+2025-11-07 02:54:05.950 T:26263    info <general>: CAddonMgr::FindAddons: script.module.pyqrcode v1.2.1+matrix.4 installed
+2025-11-07 02:54:05.950 T:26263    info <general>: CAddonMgr::FindAddons: script.module.pysubs2 v1.5.0+matrix.1 installed
+2025-11-07 02:54:05.951 T:26263    info <general>: CAddonMgr::FindAddons: script.module.qrcode v6.1.0+matrix.3 installed
+2025-11-07 02:54:05.951 T:26263    info <general>: CAddonMgr::FindAddons: script.module.requests v2.31.0 installed
+2025-11-07 02:54:05.951 T:26263    info <general>: CAddonMgr::FindAddons: script.module.simpleeval v0.9.10 installed
+2025-11-07 02:54:05.951 T:26263    info <general>: CAddonMgr::FindAddons: script.module.six v1.16.0+matrix.1 installed
+2025-11-07 02:54:05.951 T:26263    info <general>: CAddonMgr::FindAddons: script.module.unidecode v1.3.6 installed
+2025-11-07 02:54:05.952 T:26263    info <general>: CAddonMgr::FindAddons: script.module.urllib3 v2.2.3 installed
+2025-11-07 02:54:05.952 T:26263    info <general>: CAddonMgr::FindAddons: script.module.websocket v1.6.4 installed
+2025-11-07 02:54:05.952 T:26263    info <general>: CAddonMgr::FindAddons: script.pystone.benchmark v1.1.8 installed
+2025-11-07 02:54:05.952 T:26263    info <general>: CAddonMgr::FindAddons: script.skinshortcuts v2.0.3 installed
+2025-11-07 02:54:05.952 T:26263    info <general>: CAddonMgr::FindAddons: script.skinvariables v2.1.34 installed
+2025-11-07 02:54:05.953 T:26263    info <general>: CAddonMgr::FindAddons: script.texturemaker v0.2.11 installed
+2025-11-07 02:54:05.953 T:26263    info <general>: CAddonMgr::FindAddons: script.wadeysay v0.0.11 installed
+2025-11-07 02:54:05.953 T:26263    info <general>: CAddonMgr::FindAddons: script.xbmcbackup v1.7.1 installed
+2025-11-07 02:54:05.953 T:26263    info <general>: CAddonMgr::FindAddons: service.subtitles.localsubtitle v1.12.5 installed
+2025-11-07 02:54:05.953 T:26263    info <general>: CAddonMgr::FindAddons: service.subtitles.opensubtitles_by_opensubtitles_dualsub v5.5.3 installed
+2025-11-07 02:54:05.954 T:26263    info <general>: CAddonMgr::FindAddons: service.upnext v1.1.9+matrix.1 installed
+2025-11-07 02:54:05.954 T:26263    info <general>: CAddonMgr::FindAddons: service.xbmc.versioncheck v0.5.30+matrix.1 installed
+2025-11-07 02:54:05.954 T:26263    info <general>: CAddonMgr::FindAddons: skin.arctic.fuse.2 v2.11.2 installed
+2025-11-07 02:54:05.954 T:26263    info <general>: CAddonMgr::FindAddons: skin.estuary v4.0.0 installed
+2025-11-07 02:54:05.954 T:26263    info <general>: CAddonMgr::FindAddons: webinterface.default v21.x-1.0.1 installed
+2025-11-07 02:54:05.955 T:26263    info <general>: CAddonMgr::FindAddons: xbmc.addon v21.2.0 installed
+2025-11-07 02:54:05.955 T:26263    info <general>: CAddonMgr::FindAddons: xbmc.core v0.1.0 installed
+2025-11-07 02:54:05.955 T:26263    info <general>: CAddonMgr::FindAddons: xbmc.gui v5.17.0 installed
+2025-11-07 02:54:05.955 T:26263    info <general>: CAddonMgr::FindAddons: xbmc.json v13.5.0 installed
+2025-11-07 02:54:05.955 T:26263    info <general>: CAddonMgr::FindAddons: xbmc.metadata v2.1.0 installed
+2025-11-07 02:54:05.956 T:26263    info <general>: CAddonMgr::FindAddons: xbmc.python v3.0.1 installed
+2025-11-07 02:54:05.956 T:26263    info <general>: CAddonMgr::FindAddons: xbmc.webinterface v1.0.0 installed
+2025-11-07 02:54:05.976 T:26263    info <general>: CKeyboardLayoutManager: loading keyboard layouts from special://xbmc/system/keyboardlayouts...
+2025-11-07 02:54:05.993 T:26263    info <general>: Load: loading filters from special://masterprofile/decoderfilter.xml
+2025-11-07 02:54:06.031 T:26263    info <general>: Mediacodec decoder: c2.android.aac.decoder
+2025-11-07 02:54:06.032 T:26263    info <general>: Mediacodec decoder: OMX.google.aac.decoder
+2025-11-07 02:54:06.032 T:26263    info <general>: Mediacodec decoder: c2.android.ac3.decoder
+2025-11-07 02:54:06.032 T:26263    info <general>: Mediacodec decoder: OMX.google.ac3.decoder
+2025-11-07 02:54:06.032 T:26263    info <general>: Mediacodec decoder: c2.android.amrnb.decoder
+2025-11-07 02:54:06.032 T:26263    info <general>: Mediacodec decoder: OMX.google.amrnb.decoder
+2025-11-07 02:54:06.032 T:26263    info <general>: Mediacodec decoder: c2.android.amrwb.decoder
+2025-11-07 02:54:06.032 T:26263    info <general>: Mediacodec decoder: OMX.google.amrwb.decoder
+2025-11-07 02:54:06.032 T:26263    info <general>: Mediacodec decoder: c2.android.flac.decoder
+2025-11-07 02:54:06.032 T:26263    info <general>: Mediacodec decoder: OMX.google.flac.decoder
+2025-11-07 02:54:06.032 T:26263    info <general>: Mediacodec decoder: c2.android.g711.alaw.decoder
+2025-11-07 02:54:06.032 T:26263    info <general>: Mediacodec decoder: OMX.google.g711.alaw.decoder
+2025-11-07 02:54:06.032 T:26263    info <general>: Mediacodec decoder: c2.android.g711.mlaw.decoder
+2025-11-07 02:54:06.033 T:26263    info <general>: Mediacodec decoder: OMX.google.g711.mlaw.decoder
+2025-11-07 02:54:06.033 T:26263    info <general>: Mediacodec decoder: c2.android.mp3.decoder
+2025-11-07 02:54:06.033 T:26263    info <general>: Mediacodec decoder: OMX.google.mp3.decoder
+2025-11-07 02:54:06.033 T:26263    info <general>: Mediacodec decoder: c2.android.opus.decoder
+2025-11-07 02:54:06.033 T:26263    info <general>: Mediacodec decoder: OMX.google.opus.decoder
+2025-11-07 02:54:06.033 T:26263    info <general>: Mediacodec decoder: c2.android.raw.decoder
+2025-11-07 02:54:06.033 T:26263    info <general>: Mediacodec decoder: OMX.google.raw.decoder
+2025-11-07 02:54:06.033 T:26263    info <general>: Mediacodec decoder: c2.android.vorbis.decoder
+2025-11-07 02:54:06.033 T:26263    info <general>: Mediacodec decoder: OMX.google.vorbis.decoder
+2025-11-07 02:54:06.033 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.vp9.decoder.awesome2
+2025-11-07 02:54:06.033 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.audio.decoder.ac4
+2025-11-07 02:54:06.033 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.audio.decoder.dts
+2025-11-07 02:54:06.033 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.audio.decoder.dtse
+2025-11-07 02:54:06.033 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.audio.decoder.dtshd
+2025-11-07 02:54:06.033 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.audio.decoder.eac3
+2025-11-07 02:54:06.033 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.audio.decoder.ffmpeg
+2025-11-07 02:54:06.034 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.audio.decoder.mp2
+2025-11-07 02:54:06.034 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.vp6a.decoder.sw
+2025-11-07 02:54:06.034 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.vp6f.decoder.sw
+2025-11-07 02:54:06.034 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.av1.decoder.awesome2
+2025-11-07 02:54:06.034 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.avc.decoder.awesome2
+2025-11-07 02:54:06.034 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.avs.decoder.awesome2
+2025-11-07 02:54:06.034 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.avs2.decoder.awesome2
+2025-11-07 02:54:06.034 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.avs3.decoder.awesome2
+2025-11-07 02:54:06.034 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.dolby-vision.dvhe.decoder.awesome2
+2025-11-07 02:54:06.034 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.dolby-vision.dvav.decoder.awesome2
+2025-11-07 02:54:06.034 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.dolby-vision.dav1.decoder.awesome2
+2025-11-07 02:54:06.034 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.h263.decoder.sw
+2025-11-07 02:54:06.034 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.hevc.decoder.awesome2
+2025-11-07 02:54:06.034 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.mjpeg.decoder.awesome2
+2025-11-07 02:54:06.034 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.mpeg2.decoder.awesome2
+2025-11-07 02:54:06.034 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.mpeg4.decoder.awesome2
+2025-11-07 02:54:06.035 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.rm10.decoder.sw
+2025-11-07 02:54:06.035 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.rm20.decoder.sw
+2025-11-07 02:54:06.035 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.rm30.decoder.sw
+2025-11-07 02:54:06.035 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.rm40.decoder.sw
+2025-11-07 02:54:06.035 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.vc1.decoder.awesome
+2025-11-07 02:54:06.035 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.vp8.decoder.sw
+2025-11-07 02:54:06.035 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.wmv3.decoder.sw
+2025-11-07 02:54:06.035 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.wmv1.decoder.sw
+2025-11-07 02:54:06.035 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.wmv2.decoder.sw
+2025-11-07 02:54:06.035 T:26263    info <general>: Mediacodec decoder: OMX.amlogic.wvc1.decoder.awesome
+2025-11-07 02:54:06.035 T:26263    info <general>: Mediacodec decoder: c2.android.h263.decoder
+2025-11-07 02:54:06.035 T:26263    info <general>: Mediacodec decoder: OMX.google.h263.decoder
+2025-11-07 02:54:06.035 T:26263    info <general>: Mediacodec decoder: c2.android.hevc.decoder
+2025-11-07 02:54:06.035 T:26263    info <general>: Mediacodec decoder: OMX.google.hevc.decoder
+2025-11-07 02:54:06.036 T:26263    info <general>: Mediacodec decoder: c2.android.mpeg4.decoder
+2025-11-07 02:54:06.036 T:26263    info <general>: Mediacodec decoder: OMX.google.mpeg4.decoder
+2025-11-07 02:54:06.036 T:26263    info <general>: Mediacodec decoder: c2.android.vp8.decoder
+2025-11-07 02:54:06.036 T:26263    info <general>: Mediacodec decoder: OMX.google.vp8.decoder
+2025-11-07 02:54:06.036 T:26263    info <general>: Mediacodec decoder: c2.android.vp9.decoder
+2025-11-07 02:54:06.036 T:26263    info <general>: Mediacodec decoder: OMX.google.vp9.decoder
+2025-11-07 02:54:06.036 T:26263    info <general>: Mediacodec decoder: OMX.google.h264.decoder
+2025-11-07 02:54:06.036 T:26263    info <general>: RetroPlayer[RENDER]: Registering renderer factory for OpenGLES
+2025-11-07 02:54:06.036 T:26263    info <general>: CAndroidUtils: window resolution: 3840x2160
+2025-11-07 02:54:06.037 T:26263    info <general>: CAndroidUtils: Current resolution: 3840x2160 3840x2160 @ 60.000004 - Full Screen
+2025-11-07 02:54:06.037 T:26263    info <general>: Skipped 1 duplicate messages..
+2025-11-07 02:54:06.037 T:26263    info <general>: EGL_VERSION = 1.4 Android META-EGL
+2025-11-07 02:54:06.037 T:26263    info <general>: EGL_VENDOR = Android
+2025-11-07 02:54:06.037 T:26263    info <general>: EGL_EXTENSIONS = EGL_KHR_get_all_proc_addresses EGL_ANDROID_presentation_time EGL_KHR_swap_buffers_with_damage EGL_ANDROID_get_native_client_buffer EGL_ANDROID_front_buffer_auto_refresh EGL_ANDROID_get_frame_timestamps EGL_EXT_surface_SMPTE2086_metadata EGL_EXT_surface_CTA861_3_metadata EGL_KHR_image EGL_KHR_image_base EGL_EXT_image_gl_colorspace EGL_KHR_gl_colorspace EGL_KHR_gl_texture_2D_image EGL_KHR_gl_texture_cubemap_image EGL_KHR_gl_renderbuffer_image EGL_KHR_fence_sync EGL_KHR_create_context EGL_KHR_config_attribs EGL_KHR_surfaceless_context EGL_EXT_create_context_robustness EGL_ANDROID_image_native_buffer EGL_KHR_wait_sync EGL_ANDROID_recordable EGL_KHR_partial_update EGL_EXT_pixel_format_float EGL_KHR_mutable_render_buffer EGL_EXT_yuv_surface EGL_IMG_context_priority EGL_KHR_no_config_context 
+2025-11-07 02:54:06.037 T:26263    info <general>: EGL_CLIENT_EXTENSIONS = EGL_EXT_client_extensions EGL_KHR_platform_android EGL_ANGLE_platform_angle EGL_ANDROID_GLES_layers
+2025-11-07 02:54:06.046 T:26263    info <general>: CApplication::CreateGUI - using the default windowing system
+2025-11-07 02:54:06.046 T:26263    info <general>: Checking resolution 16
+2025-11-07 02:54:06.046 T:26263    info <general>: CAndroidUtils: SetNativeResolution: 16: 3840x2160 3840x2160@60.000004
+2025-11-07 02:54:06.048 T:26263    info <general>: GL_VENDOR = ARM
+2025-11-07 02:54:06.048 T:26263    info <general>: GL_RENDERER = Mali-G57
+2025-11-07 02:54:06.048 T:26263    info <general>: GL_VERSION = OpenGL ES 3.2 v1.r37p0-wayland-drm-g57-eabihf-0cc184626-01.1f1a904bc34eff6e040b36b4b733f3df
+2025-11-07 02:54:06.048 T:26263    info <general>: GL_SHADING_LANGUAGE_VERSION = OpenGL ES GLSL ES 3.20
+2025-11-07 02:54:06.048 T:26263    info <general>: GL_EXTENSIONS = GL_EXT_debug_marker GL_ARM_rgba8 GL_ARM_mali_shader_binary GL_OES_depth24 GL_OES_depth_texture GL_OES_depth_texture_cube_map GL_OES_packed_depth_stencil GL_OES_rgb8_rgba8 GL_EXT_read_format_bgra GL_OES_compressed_paletted_texture GL_OES_compressed_ETC1_RGB8_texture GL_OES_standard_derivatives GL_OES_EGL_image GL_OES_EGL_image_external GL_OES_EGL_image_external_essl3 GL_OES_EGL_sync GL_OES_texture_npot GL_OES_vertex_half_float GL_OES_required_internalformat GL_OES_vertex_array_object GL_OES_mapbuffer GL_EXT_texture_format_BGRA8888 GL_EXT_texture_rg GL_EXT_texture_type_2_10_10_10_REV GL_OES_fbo_render_mipmap GL_OES_element_index_uint GL_EXT_shadow_samplers GL_OES_texture_compression_astc GL_KHR_texture_compression_astc_ldr GL_KHR_texture_compression_astc_hdr GL_KHR_texture_compression_astc_sliced_3d GL_EXT_texture_compression_astc_decode_mode GL_EXT_texture_compression_astc_decode_mode_rgb9e5 GL_KHR_debug GL_EXT_occlusion_query_boolean GL_EXT_disjoint_timer_query GL_EXT_blend_minmax GL_EXT_discard_framebuffer GL_OES_get_program_binary GL_OES_texture_3D GL_EXT_texture_storage GL_EXT_multisampled_render_to_texture GL_EXT_multisampled_render_to_texture2 GL_OES_surfaceless_context GL_OES_texture_stencil8 GL_EXT_shader_pixel_local_storage GL_ARM_shader_framebuffer_fetch GL_ARM_shader_framebuffer_fetch_depth_stencil GL_ARM_mali_program_binary GL_EXT_sRGB GL_EXT_sRGB_write_control GL_EXT_texture_sRGB_decode GL_EXT_texture_sRGB_R8 GL_EXT_texture_sRGB_RG8 GL_KHR_blend_equation_advanced GL_KHR_blend_equation_advanced_coherent GL_OES_texture_storage_multisample_2d_array GL_OES_shader_image_atomic GL_EXT_robustness GL_EXT_draw_buffers_indexed GL_OES_draw_buffers_indexed GL_EXT_texture_border_clamp GL_OES_texture_border_clamp GL_EXT_texture_cube_map_array GL_OES_texture_cube_map_array GL_OES_sample_variables GL_OES_sample_shading GL_OES_shader_multisample_interpolation GL_EXT_shader_io_blocks GL_OES_shader_io_blocks GL_EXT_tessellation_shader GL_OES_tessellation_shader GL_EXT_primitive_bounding_box GL_OES_primitive_bounding_box GL_EXT_geometry_shader GL_OES_geometry_shader GL_ANDROID_extension_pack_es31a GL_EXT_gpu_shader5 GL_OES_gpu_shader5 GL_EXT_texture_buffer GL_OES_texture_buffer GL_EXT_copy_image GL_OES_copy_image GL_EXT_shader_non_constant_global_initializers GL_EXT_color_buffer_half_float GL_EXT_unpack_subimage GL_EXT_color_buffer_float GL_EXT_float_blend GL_EXT_YUV_target GL_OVR_multiview GL_OVR_multiview2 GL_OVR_multiview_multisampled_render_to_texture GL_KHR_robustness GL_KHR_robust_buffer_access_behavior GL_EXT_draw_elements_base_vertex GL_OES_draw_elements_base_vertex GL_EXT_protected_textures GL_EXT_buffer_storage GL_EXT_external_buffer GL_EXT_EGL_image_array GL_EXT_texture_filter_anisotropic GL_OES_texture_float_linear GL_ARM_texture_unnormalized_coordinates GL_EXT_shader_framebuffer_fetch GL_EXT_clip_control 
+2025-11-07 02:54:06.069 T:26263    info <general>: CAndroidUtils: SetNativeResolution: 16: 3840x2160 3840x2160@60.000004
+2025-11-07 02:54:06.070 T:26263    info <general>: GLES: Maximum texture width: 16383
+2025-11-07 02:54:06.265 T:26263    info <general>: GLES: Enabling VSYNC
+2025-11-07 02:54:06.267 T:26263    info <general>: load keymapping
+2025-11-07 02:54:06.269 T:26263    info <general>: Loading special://xbmc/system/keymaps/appcommand.xml
+2025-11-07 02:54:06.270 T:26263    info <general>: Loading special://xbmc/system/keymaps/customcontroller.AppleRemote.xml
+2025-11-07 02:54:06.270 T:26263    info <general>: Loading special://xbmc/system/keymaps/customcontroller.Harmony.xml
+2025-11-07 02:54:06.271 T:26263    info <general>: Loading special://xbmc/system/keymaps/customcontroller.SiriRemote.xml
+2025-11-07 02:54:06.271 T:26263    info <general>: Loading special://xbmc/system/keymaps/gamepad.xml
+2025-11-07 02:54:06.272 T:26263    info <general>: Loading special://xbmc/system/keymaps/joystick.xml
+2025-11-07 02:54:06.273 T:26263    info <general>: Loading special://xbmc/system/keymaps/keyboard.xml
+2025-11-07 02:54:06.275 T:26263    info <general>: Loading special://xbmc/system/keymaps/mouse.xml
+2025-11-07 02:54:06.275 T:26263    info <general>: Loading special://xbmc/system/keymaps/remote.xml
+2025-11-07 02:54:06.276 T:26263    info <general>: Loading special://xbmc/system/keymaps/touchscreen.xml
+2025-11-07 02:54:06.277 T:26263    info <general>: Loading special://masterprofile/keymaps/gen.xml
+2025-11-07 02:54:06.278 T:26263    info <general>: GUI format 3840x2160, Display 3840x2160 @ 60.000004 - Full Screen
+2025-11-07 02:54:06.306 T:26283    info <general>: Float is supported
+2025-11-07 02:54:06.306 T:26283    info <general>: Multi channel Float is supported
+2025-11-07 02:54:06.333 T:26283    info <general>: Float is supported
+2025-11-07 02:54:06.333 T:26283    info <general>: Multi channel Float is supported
+2025-11-07 02:54:06.348 T:26283    info <general>: Found 1 Lists of Devices
+2025-11-07 02:54:06.348 T:26283    info <general>: Enumerated AUDIOTRACK devices:
+2025-11-07 02:54:06.348 T:26283    info <general>:     Device 1
+2025-11-07 02:54:06.348 T:26283    info <general>:         m_deviceName      : AudioTrack (RAW)
+2025-11-07 02:54:06.349 T:26283    info <general>:         m_displayName     : AudioTrack (RAW)
+2025-11-07 02:54:06.349 T:26283    info <general>:         m_displayNameExtra: Android IEC packer
+2025-11-07 02:54:06.349 T:26283    info <general>:         m_deviceType      : AE_DEVTYPE_HDMI
+2025-11-07 02:54:06.349 T:26283    info <general>:         m_channels        : FL, FR, FC, LFE, SL, SR, BL, BR, BC, BLOC, BROC
+2025-11-07 02:54:06.349 T:26283    info <general>:         m_sampleRates     : 32000,44100,48000,88200,96000,176400,192000,32000,44100,48000,88200,96000,176400,192000
+2025-11-07 02:54:06.349 T:26283    info <general>:         m_dataFormats     : AE_FMT_S16LE,AE_FMT_FLOAT,AE_FMT_RAW,AE_FMT_S16LE,AE_FMT_FLOAT,AE_FMT_RAW
+2025-11-07 02:54:06.349 T:26283    info <general>:         m_streamTypes     : No passthrough capabilities
+2025-11-07 02:54:06.349 T:26283 warning <general>: ValidateOutputDevices: audio output device setting has been updated from 'Default' to 'AUDIOTRACK:AudioTrack (RAW)|Android IEC packer'
+2025-11-07 02:54:06.349 T:26283 warning <general>: ValidateOutputDevices: passthrough output device setting has been updated from 'Default' to 'AUDIOTRACK:AudioTrack (RAW)|Android IEC packer'
+2025-11-07 02:54:06.349 T:26284    info <general>: CActiveAESink::OpenSink - initialize sink
+2025-11-07 02:54:06.349 T:26284    info <general>: Trying to open: samplerate: 44100, channelMask: 12, encoding: 4
+2025-11-07 02:54:06.350 T:26284    info <general>: Minimum size we need for stream: 14176 Bytes
+2025-11-07 02:54:06.350 T:26284    info <general>: Audiotrack buffer params are: period time = 40.181 ms, period size = 14176 bytes, num periods = 4
+2025-11-07 02:54:06.350 T:26284    info <general>: Created Audiotrackbuffer with playing time of 160.725624 ms min buffer size: 56704 bytes
+2025-11-07 02:54:06.355 T:26284    info <general>: CAESinkAUDIOTRACK::Initializing with: m_sampleRate: 44100 format: AE_FMT_FLOAT (AE) method: PCM stream-type: PCM-STREAM min_buffer_size: 56704 m_frames: 1772 m_frameSize: 8 channels: 2
+2025-11-07 02:54:06.356 T:26263    info <general>: CLangInfo: loading resource.language.en_gb language information...
+2025-11-07 02:54:06.358 T:26263    info <general>: global locale set to en_US.UTF-8
+2025-11-07 02:54:06.358 T:26263    info <general>: CLangInfo: loading resource.language.en_gb language strings...
+2025-11-07 02:54:06.413 T:26296    info <general>: Running database version Addons33
+2025-11-07 02:54:06.416 T:26296    info <general>: Running database version ViewModes6
+2025-11-07 02:54:06.418 T:26296    info <general>: Running database version Textures13
+2025-11-07 02:54:06.422 T:26296    info <general>: Running database version MyMusic83
+2025-11-07 02:54:06.429 T:26296    info <general>: Running database version MyVideos131
+2025-11-07 02:54:06.432 T:26296    info <general>: Running database version TV46
+2025-11-07 02:54:06.434 T:26296    info <general>: Running database version Epg16
+2025-11-07 02:54:06.487 T:26263    info <general>: Unloaded skin
+2025-11-07 02:54:06.487 T:26263    info <general>:   load skin from: /data/user/0/org.xbmc.kodi/cache/apk/assets/addons/skin.estuary/ (version: 4.0.0)
+2025-11-07 02:54:06.488 T:26263    info <general>:   load fonts for skin...
+2025-11-07 02:54:06.488 T:26263    info <general>: Loading skin includes from /data/user/0/org.xbmc.kodi/cache/apk/assets/addons/skin.estuary/xml/Includes.xml
+2025-11-07 02:54:06.530 T:26263    info <general>: LoadFontsFromFile: Loading <fontset> with name 'Default' from '/data/user/0/org.xbmc.kodi/cache/apk/assets/addons/skin.estuary/xml/Font.xml'
+2025-11-07 02:54:06.537 T:26263    info <general>: LoadTimers: Trying to load skin timers from /data/user/0/org.xbmc.kodi/cache/apk/assets/addons/skin.estuary/xml/Timers.xml
+2025-11-07 02:54:06.537 T:26263    info <general>:   load new skin...
+2025-11-07 02:54:06.537 T:26263    info <general>: Loading custom window XMLs from skin path /data/user/0/org.xbmc.kodi/cache/apk/assets/addons/skin.estuary/xml
+2025-11-07 02:54:06.545 T:26263    info <general>:   initialize new skin...
+2025-11-07 02:54:06.545 T:26263    info <general>: Loading skin file: DialogBusy.xml, load type: LOAD_ON_GUI_INIT
+2025-11-07 02:54:06.547 T:26263    info <general>: Skipped 1 duplicate messages..
+2025-11-07 02:54:06.547 T:26263    info <general>: Loading skin file: DialogNotification.xml, load type: LOAD_ON_GUI_INIT
+2025-11-07 02:54:06.547 T:26263    info <general>: Loading skin file: DialogVolumeBar.xml, load type: LOAD_ON_GUI_INIT
+2025-11-07 02:54:06.550 T:26263    info <general>: Loading skin file: DialogExtendedProgressBar.xml, load type: LOAD_ON_GUI_INIT
+2025-11-07 02:54:06.551 T:26263    info <general>: Loading skin file: Pointer.xml, load type: LOAD_ON_GUI_INIT
+2025-11-07 02:54:06.552 T:26263    info <general>: Loading skin file: DialogSeekBar.xml, load type: LOAD_ON_GUI_INIT
+2025-11-07 02:54:06.563 T:26263    info <general>: Loading skin file: Custom_1109_TopBarOverlay.xml, load type: LOAD_ON_GUI_INIT
+2025-11-07 02:54:06.571 T:26263    info <general>: Loading resource://resource.uisounds.kodi/sounds.xml
+2025-11-07 02:54:06.594 T:26263    info <general>:   skin loaded...
+2025-11-07 02:54:06.595 T:26263    info <general>: Loading skin file: Startup.xml, load type: LOAD_EVERY_TIME
+2025-11-07 02:54:06.595 T:26263    info <general>: Loading skin file: Home.xml, load type: KEEP_IN_MEMORY
+2025-11-07 02:54:06.688 T:26263 warning <general>: JSONRPC: Could not parse type "Setting.Details.SettingList"
+2025-11-07 02:54:06.689 T:26263    info <general>: JSONRPC: Adding type "Setting.Details.SettingList" to list of incomplete definitions (waiting for "Setting.Details.Setting")
+2025-11-07 02:54:06.689 T:26263    info <general>: JSONRPC: Resolving incomplete types/methods referencing Setting.Details.Setting
+2025-11-07 02:54:06.704 T:26263    info <general>: JSONRPC v13.5.0: Successfully initialized
+2025-11-07 02:54:06.708 T:26263    info <general>: CPeripheralBusAndroid: scanning for input devices...
+2025-11-07 02:54:06.720 T:26263    info <general>: CPeripheralBusAndroid: added input device
+2025-11-07 02:54:06.722 T:26263    info <general>: Skipped 1 duplicate messages..
+2025-11-07 02:54:06.722 T:26263    info <general>: Loading controller layout: /data/user/0/org.xbmc.kodi/cache/apk/assets/addons/game.controller.default/resources/layout.xml
+2025-11-07 02:54:06.726 T:26263    info <general>: Loading controller layout: /storage/emulated/0/Android/data/org.xbmc.kodi/files/.kodi/addons/game.controller.ps.dualanalog/resources/layout.xml
+2025-11-07 02:54:06.739 T:26263    info <general>: Loading controller layout: /data/user/0/org.xbmc.kodi/cache/apk/assets/addons/game.controller.mouse/resources/layout.xml
+2025-11-07 02:54:06.779 T:26263    info <general>: Loading controller layout: /storage/emulated/0/Android/data/org.xbmc.kodi/files/.kodi/addons/game.controller.remote/resources/layout.xml
+2025-11-07 02:54:06.799 T:26263    info <general>: Register - new joystick device registered on android->android/inputdevice/8: virtual-search (18D1:0100)
+2025-11-07 02:54:06.828 T:26263    info <general>: Register - new joystick device registered on android->android/inputdevice/9: virtual-search (18D1:0100)
+2025-11-07 02:54:06.828 T:26263    info <general>: Register - new keyboard device registered on application->keyboard: Keyboard (0000:0000)
+2025-11-07 02:54:06.828 T:26263    info <general>: Register - new mouse device registered on application->mouse: Mouse (0000:0000)
+2025-11-07 02:54:06.829 T:26263    info <general>: Loading player core factory settings from special://xbmc/system/playercorefactory.xml.
+2025-11-07 02:54:06.829 T:26263    info <general>: Loaded playercorefactory configuration
+2025-11-07 02:54:06.829 T:26263    info <general>: Loading player core factory settings from special://masterprofile/playercorefactory.xml.
+2025-11-07 02:54:06.830 T:26263    info <general>: special://masterprofile/playercorefactory.xml does not exist. Skipping.
+2025-11-07 02:54:06.830 T:26263    info <general>: removing tempfiles
+2025-11-07 02:54:06.834 T:26297    info <general>: UpdateClients: Creating PVR client: addonId=pvr.jellyfin, instanceId=0, clientId=2
+2025-11-07 02:54:06.837 T:26297    info <general>: AddOnLog: pvr.jellyfin: Jellyfin PVR Client starting...
+2025-11-07 02:54:06.838 T:26297    info <general>: AddOnLog: pvr.jellyfin: Using API key from settings (length: 32)
+2025-11-07 02:54:06.838 T:26297    info <general>: AddOnLog: pvr.jellyfin: Connecting to server: http://192.168.1.180:8096
+2025-11-07 02:54:06.838 T:26297    info <general>: AddOnLog: pvr.jellyfin: API key loaded: 4a16...aa04
+2025-11-07 02:54:06.838 T:26297    info <general>: AddOnLog: pvr.jellyfin: Initializing Jellyfin client...
+2025-11-07 02:54:06.839 T:26297    info <general>: AddOnLog: pvr.jellyfin: Validating access token for user: 895d06a72b774b71a2070b10fcfffd0b
+2025-11-07 02:54:06.853 T:26263    info <general>: initialize done
+2025-11-07 02:54:06.854 T:26263    info <general>: Running the application...
+2025-11-07 02:54:06.861 T:26297    info <general>: AddOnLog: pvr.jellyfin: Token is valid
+2025-11-07 02:54:06.861 T:26297    info <general>: AddOnLog: pvr.jellyfin: Existing credentials are valid
+2025-11-07 02:54:06.861 T:26297    info <general>: AddOnLog: pvr.jellyfin: Connecting to Jellyfin server at http://192.168.1.180:8096
+2025-11-07 02:54:06.865 T:26263    info <general>: starting zeroconf publishing
+2025-11-07 02:54:06.866 T:26307    info <general>: ES: Starting UDP Event server on port 9777
+2025-11-07 02:54:06.866 T:26307    info <general>: UDP: Listening on port 9777 (ipv6 : true)
+2025-11-07 02:54:06.866 T:26263    info <general>: JSONRPC Server: Successfully initialized
+2025-11-07 02:54:06.867 T:26297    info <general>: AddOnLog: pvr.jellyfin: Connected to Jellyfin server version 10.11.1
+2025-11-07 02:54:06.867 T:26297    info <general>: AddOnLog: pvr.jellyfin: Loading channels from Jellyfin...
+2025-11-07 02:54:06.868 T:26263    info <CWebserver[8080]>: Started
+2025-11-07 02:54:06.868 T:26263    info <general>: CWSDiscoveryListenerUDP::Start - Started
+2025-11-07 02:54:06.969 T:26297    info <general>: ADDON: Dll Destroyed - Jellyfin PVR Client
+2025-11-07 02:54:06.969 T:26297   error <general>: Process error processing job 
+2025-11-07 02:54:07.604 T:26306    info <general>: ZeroconfAndroid: Kodi (192.168.1.53). now registered and active
+2025-11-07 02:54:18.541 T:26263    info <general>: Skipped 3 duplicate messages..
+2025-11-07 02:54:18.541 T:26263    info <general>: Loading controller layout: /data/user/0/org.xbmc.kodi/cache/apk/assets/addons/game.controller.keyboard/resources/layout.xml
+2025-11-07 02:54:19.961 T:26263    info <general>: Loading skin file: Settings.xml, load type: KEEP_IN_MEMORY
+2025-11-07 02:54:21.869 T:26263    info <general>: Loading skin file: AddonBrowser.xml, load type: KEEP_IN_MEMORY
+2025-11-07 02:54:29.567 T:26263    info <general>: Loading skin file: DialogContextMenu.xml, load type: KEEP_IN_MEMORY
+2025-11-07 02:54:39.785 T:26297    info <general>: UpdateClients: Creating PVR client: addonId=pvr.jellyfin, instanceId=0, clientId=2
+2025-11-07 02:54:39.788 T:26297    info <general>: AddOnLog: pvr.jellyfin: Jellyfin PVR Client starting...
+2025-11-07 02:54:39.789 T:26297    info <general>: AddOnLog: pvr.jellyfin: Using API key from settings (length: 32)
+2025-11-07 02:54:39.789 T:26297    info <general>: AddOnLog: pvr.jellyfin: Connecting to server: http://192.168.1.180:8096
+2025-11-07 02:54:39.789 T:26297    info <general>: AddOnLog: pvr.jellyfin: API key loaded: 4a16...aa04
+2025-11-07 02:54:39.789 T:26297    info <general>: AddOnLog: pvr.jellyfin: Initializing Jellyfin client...
+2025-11-07 02:54:39.789 T:26297    info <general>: AddOnLog: pvr.jellyfin: Validating access token for user: 895d06a72b774b71a2070b10fcfffd0b
+2025-11-07 02:54:39.808 T:26297    info <general>: AddOnLog: pvr.jellyfin: Token is valid
+2025-11-07 02:54:39.808 T:26297    info <general>: AddOnLog: pvr.jellyfin: Existing credentials are valid
+2025-11-07 02:54:39.808 T:26297    info <general>: AddOnLog: pvr.jellyfin: Connecting to Jellyfin server at http://192.168.1.180:8096
+2025-11-07 02:54:39.813 T:26297    info <general>: AddOnLog: pvr.jellyfin: Connected to Jellyfin server version 10.11.1
+2025-11-07 02:54:39.813 T:26297    info <general>: AddOnLog: pvr.jellyfin: Loading channels from Jellyfin...
+2025-11-07 02:54:39.945 T:26297   error <general>: Process error processing job 
+2025-11-07 02:55:04.449 T:26263    info <general>: Loading skin file: DialogSelect.xml, load type: KEEP_IN_MEMORY
+2025-11-07 02:55:09.015 T:26382    info <general>: KodiGithubLogs: Building log payload (level=debug, include_old=True, exclude_startup=False)
+2025-11-07 02:55:09.015 T:26382    info <general>: KodiGithubLogs: Checking log path: special://logpath/kodi.log -> /storage/emulated/0/Android/data/org.xbmc.kodi/files/.kodi/temp/kodi.log
+2025-11-07 02:55:09.016 T:26382    info <general>: KodiGithubLogs: Read 46697 bytes from /storage/emulated/0/Android/data/org.xbmc.kodi/files/.kodi/temp/kodi.log
+2025-11-07 02:55:09.016 T:26382    info <general>: KodiGithubLogs: Checking log path: special://logpath/kodi.old -> /storage/emulated/0/Android/data/org.xbmc.kodi/files/.kodi/temp/kodi.old
+2025-11-07 02:55:09.016 T:26382 warning <general>: KodiGithubLogs: Log file does not exist: /storage/emulated/0/Android/data/org.xbmc.kodi/files/.kodi/temp/kodi.old
+2025-11-07 02:55:09.016 T:26382    info <general>: KodiGithubLogs: Total log text length: 46695
+2025-11-07 02:55:09.017 T:26382    info <general>: KodiGithubLogs: Uploading to northernpowerhouse/pvr.jellyfin/devlog/kodilog202511070155.txt
+2025-11-07 02:55:10.319 T:26382    info <general>: KodiGithubLogs: Upload successful
+2025-11-07 02:55:10.326 T:26263    info <general>: Loading skin file: DialogConfirm.xml, load type: KEEP_IN_MEMORY
+2025-11-07 02:55:44.496 T:26382    info <general>: KodiGithubLogs: Building log payload (level=debug, include_old=True, exclude_startup=False)
+2025-11-07 02:55:44.496 T:26382    info <general>: KodiGithubLogs: Checking log path: special://logpath/kodi.log -> /storage/emulated/0/Android/data/org.xbmc.kodi/files/.kodi/temp/kodi.log
+2025-11-07 02:55:44.496 T:26382    info <general>: KodiGithubLogs: Read 47984 bytes from /storage/emulated/0/Android/data/org.xbmc.kodi/files/.kodi/temp/kodi.log
+2025-11-07 02:55:44.497 T:26382    info <general>: KodiGithubLogs: Checking log path: special://logpath/kodi.old -> /storage/emulated/0/Android/data/org.xbmc.kodi/files/.kodi/temp/kodi.old
+2025-11-07 02:55:44.497 T:26382 warning <general>: KodiGithubLogs: Log file does not exist: /storage/emulated/0/Android/data/org.xbmc.kodi/files/.kodi/temp/kodi.old
+2025-11-07 02:55:44.497 T:26382    info <general>: KodiGithubLogs: Total log text length: 47982
+2025-11-07 02:55:44.498 T:26382    info <general>: KodiGithubLogs: Uploading to northernpowerhouse/pvr.jellyfin/devlog/kodilog202511070155.txt
+2025-11-07 02:55:45.918 T:26382    info <general>: KodiGithubLogs: Upload successful
+2025-11-07 02:57:17.522 T:26284    info <general>: CActiveAESink::OpenSink - initialize sink
+2025-11-07 02:57:17.522 T:26284    info <general>: Trying to open: samplerate: 44100, channelMask: 12, encoding: 4
+2025-11-07 02:57:17.524 T:26284    info <general>: Minimum size we need for stream: 14176 Bytes
+2025-11-07 02:57:17.524 T:26284    info <general>: Audiotrack buffer params are: period time = 40.181 ms, period size = 14176 bytes, num periods = 4
+2025-11-07 02:57:17.525 T:26284    info <general>: Created Audiotrackbuffer with playing time of 160.725624 ms min buffer size: 56704 bytes
+2025-11-07 02:57:17.534 T:26284    info <general>: CAESinkAUDIOTRACK::Initializing with: m_sampleRate: 44100 format: AE_FMT_FLOAT (AE) method: PCM stream-type: PCM-STREAM min_buffer_size: 56704 m_frames: 1772 m_frameSize: 8 channels: 2
+2025-11-07 02:57:31.616 T:26405    info <general>: ADDON: Dll Destroyed - Jellyfin PVR Client
+2025-11-07 02:57:31.963 T:26395    info <general>: CAddonMgr::FindAddon: pvr.jellyfin v0.1.0-test+120.b2c47a0 installed
+2025-11-07 02:57:31.968 T:26407    info <general>: UpdateClients: Creating PVR client: addonId=pvr.jellyfin, instanceId=0, clientId=2
+2025-11-07 02:57:32.007 T:26407    info <general>: AddOnLog: pvr.jellyfin: Jellyfin PVR Client starting...
+2025-11-07 02:57:32.008 T:26407    info <general>: AddOnLog: pvr.jellyfin: Using API key from settings (length: 32)
+2025-11-07 02:57:32.008 T:26407    info <general>: AddOnLog: pvr.jellyfin: Connecting to server: http://192.168.1.180:8096
+2025-11-07 02:57:32.008 T:26407    info <general>: AddOnLog: pvr.jellyfin: API key loaded: 4a16...aa04
+2025-11-07 02:57:32.009 T:26407    info <general>: AddOnLog: pvr.jellyfin: Initializing Jellyfin client...
+2025-11-07 02:57:32.009 T:26407    info <general>: AddOnLog: pvr.jellyfin: Validating access token for user: 895d06a72b774b71a2070b10fcfffd0b
+2025-11-07 02:57:32.023 T:26407    info <general>: AddOnLog: pvr.jellyfin: Token is valid
+2025-11-07 02:57:32.023 T:26407    info <general>: AddOnLog: pvr.jellyfin: Existing credentials are valid
+2025-11-07 02:57:32.024 T:26407    info <general>: AddOnLog: pvr.jellyfin: Connecting to Jellyfin server at http://192.168.1.180:8096
+2025-11-07 02:57:32.030 T:26407    info <general>: AddOnLog: pvr.jellyfin: Connected to Jellyfin server version 10.11.1
+2025-11-07 02:57:32.030 T:26407    info <general>: AddOnLog: pvr.jellyfin: Loading channels from Jellyfin...
+2025-11-07 02:57:32.149 T:26407    info <general>: ADDON: Dll Destroyed - Jellyfin PVR Client
+2025-11-07 02:57:32.149 T:26407   error <general>: Process error processing job 
+2025-11-07 02:57:32.361 T:26263 warning <general>: CGUIMediaWindow::OnMessage - updating in progress
+2025-11-07 02:57:35.360 T:26263    info <general>: Loading skin file: DialogAddonInfo.xml, load type: KEEP_IN_MEMORY
+2025-11-07 02:57:37.497 T:26263    info <general>: Loading skin file: DialogAddonSettings.xml, load type: KEEP_IN_MEMORY
+2025-11-07 02:57:48.023 T:26407    info <general>: UpdateClients: Creating PVR client: addonId=pvr.jellyfin, instanceId=0, clientId=2
+2025-11-07 02:57:48.026 T:26407    info <general>: AddOnLog: pvr.jellyfin: Jellyfin PVR Client starting...
+2025-11-07 02:57:48.028 T:26407    info <general>: AddOnLog: pvr.jellyfin: Using API key from settings (length: 32)
+2025-11-07 02:57:48.028 T:26407    info <general>: AddOnLog: pvr.jellyfin: Connecting to server: http://192.168.1.180:8096
+2025-11-07 02:57:48.028 T:26407    info <general>: AddOnLog: pvr.jellyfin: API key loaded: 4a16...aa04
+2025-11-07 02:57:48.028 T:26407    info <general>: AddOnLog: pvr.jellyfin: Initializing Jellyfin client...
+2025-11-07 02:57:48.029 T:26407    info <general>: AddOnLog: pvr.jellyfin: Validating access token for user: 895d06a72b774b71a2070b10fcfffd0b
+2025-11-07 02:57:48.035 T:26407    info <general>: AddOnLog: pvr.jellyfin: Token is valid
+2025-11-07 02:57:48.035 T:26407    info <general>: AddOnLog: pvr.jellyfin: Existing credentials are valid
+2025-11-07 02:57:48.035 T:26407    info <general>: AddOnLog: pvr.jellyfin: Connecting to Jellyfin server at http://192.168.1.180:8096
+2025-11-07 02:57:48.041 T:26407    info <general>: AddOnLog: pvr.jellyfin: Connected to Jellyfin server version 10.11.1
+2025-11-07 02:57:48.041 T:26407    info <general>: AddOnLog: pvr.jellyfin: Loading channels from Jellyfin...
+2025-11-07 02:57:48.180 T:26407   error <general>: Process error processing job 
+2025-11-07 02:58:00.528 T:26423    info <general>: KodiGithubLogs: Building log payload (level=debug, include_old=True, exclude_startup=False)
+2025-11-07 02:58:00.528 T:26423    info <general>: KodiGithubLogs: Checking log path: special://logpath/kodi.log -> /storage/emulated/0/Android/data/org.xbmc.kodi/files/.kodi/temp/kodi.log
