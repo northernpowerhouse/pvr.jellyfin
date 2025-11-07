@@ -352,6 +352,12 @@ PVR_ERROR ChannelManager::GetChannelStreamProperties(const kodi::addon::PVRChann
   playbackInfoRequest["DeviceProfile"] = deviceProfile;
   playbackInfoRequest["AutoOpenLiveStream"] = true;
   
+  // Debug: Log the request JSON
+  Json::StreamWriterBuilder writerBuilder;
+  writerBuilder["indentation"] = "";
+  std::string requestJson = Json::writeString(writerBuilder, playbackInfoRequest);
+  Logger::Log(ADDON_LOG_DEBUG, "PlaybackInfo request JSON length: %zu bytes", requestJson.length());
+  
   // POST /Items/{id}/PlaybackInfo
   std::string playbackInfoUrl = "/Items/" + channelId + "/PlaybackInfo";
   Json::Value playbackInfo;
@@ -359,6 +365,7 @@ PVR_ERROR ChannelManager::GetChannelStreamProperties(const kodi::addon::PVRChann
   if (!m_connection->SendPostRequest(playbackInfoUrl, playbackInfoRequest, playbackInfo))
   {
     Logger::Log(ADDON_LOG_ERROR, "Failed to get PlaybackInfo for channel: %s", channelId.c_str());
+    Logger::Log(ADDON_LOG_ERROR, "Request was: %s", requestJson.c_str());
     return PVR_ERROR_SERVER_ERROR;
   }
   
