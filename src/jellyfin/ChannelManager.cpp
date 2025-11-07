@@ -268,9 +268,17 @@ PVR_ERROR ChannelManager::GetChannelStreamProperties(const kodi::addon::PVRChann
   std::ostringstream playbackEndpoint;
   playbackEndpoint << "/Items/" << channelId << "/PlaybackInfo";
   
+  // Build device profile for live TV
+  Json::Value deviceProfile;
+  deviceProfile["Name"] = "Kodi";
+  deviceProfile["MaxStreamingBitrate"] = 120000000;
+  deviceProfile["MaxStaticBitrate"] = 100000000;
+  deviceProfile["MusicStreamingTranscodingBitrate"] = 384000;
+  
   Json::Value playbackRequest;
   playbackRequest["UserId"] = m_userId;
   playbackRequest["AutoOpenLiveStream"] = true;
+  playbackRequest["DeviceProfile"] = deviceProfile;
   
   Json::Value playbackResponse;
   if (!m_connection->SendPostRequest(playbackEndpoint.str(), playbackRequest, playbackResponse))
