@@ -310,6 +310,9 @@ PVR_ERROR ChannelManager::GetChannelStreamProperties(const kodi::addon::PVRChann
   Json::Value directPlayProfiles(Json::arrayValue);
   Json::Value videoDirectPlay;
   videoDirectPlay["Type"] = "Video";
+  videoDirectPlay["Container"] = "";  // Empty container means all
+  videoDirectPlay["VideoCodec"] = "h264,hevc,mpeg4,mpeg2video,vc1,vp9,av1";
+  videoDirectPlay["AudioCodec"] = "aac,mp3,ac3,eac3,flac,alac,vorbis,opus";
   directPlayProfiles.append(videoDirectPlay);
   
   Json::Value audioDirectPlay;
