@@ -164,6 +164,34 @@ bool JellyfinClient::Connect()
     Logger::Log(ADDON_LOG_INFO, "Connected to Jellyfin server version %s", m_serverVersion.c_str());
   }
   
+  // When using API key authentication, get the current user ID if not already set
+  if (!m_apiKey.empty() && m_userId.empty())
+  {
+    Logger::Log(ADDON_LOG_INFO, "Fetching current user info for API key authentication");
+    Json::Value userResponse;
+    if (m_connection->SendRequest("/Users/Me", userResponse))
+    {
+      if (userResponse.isMember("Id"))
+      {
+        m_userId = userResponse["Id"].asString();
+        Logger::Log(ADDON_LOG_INFO, "Retrieved user ID: %s", m_userId.c_str());
+        
+        // Save user ID to settings for future use
+        kodi::addon::SetSettingString("user_id", m_userId);
+      }
+      else
+      {
+        Logger::Log(ADDON_LOG_ERROR, "User response missing Id field");
+        return false;
+      }
+    }
+    else
+    {
+      Logger::Log(ADDON_LOG_ERROR, "Failed to get current user info with API key");
+      return false;
+    }
+  }
+  
   // Initialize managers
   m_channelManager = std::make_unique<ChannelManager>(m_connection.get(), m_userId);
   m_epgManager = std::make_unique<EPGManager>(m_connection.get(), m_userId);
