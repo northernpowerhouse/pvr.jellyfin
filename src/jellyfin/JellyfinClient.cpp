@@ -88,16 +88,23 @@ bool JellyfinClient::AuthenticateWithQuickConnect()
     return false;
   }
   
-  // Show progress dialog with code
-  std::ostringstream message;
-  message << "Go to your Jellyfin server settings\n"
-          << "Navigate to Quick Connect\n\n"
-          << "Enter this code: " << code << "\n\n"
-          << "Waiting for authorization...";
+  // First show the code in a prominent OK dialog
+  std::ostringstream codeMessage;
+  codeMessage << "Your Quick Connect code is:\n\n"
+              << "[B][COLOR yellow]" << code << "[/COLOR][/B]\n\n"
+              << "Go to Jellyfin Dashboard > Quick Connect\n"
+              << "and enter this code.\n\n"
+              << "Click OK to continue waiting for authorization...";
   
+  kodi::gui::dialogs::OK::ShowAndGetInput("Quick Connect Code", codeMessage.str());
+  
+  Logger::Log(ADDON_LOG_INFO, "Quick Connect code: %s", code.c_str());
+  
+  // Show progress dialog while waiting
   kodi::gui::dialogs::CProgress* progress = new kodi::gui::dialogs::CProgress();
-  progress->SetHeading("Quick Connect");
-  progress->SetLine(1, message.str());
+  progress->SetHeading("Quick Connect - Waiting...");
+  progress->SetLine(1, "Waiting for you to authorize on Jellyfin...");
+  progress->SetLine(2, "Code: " + code);
   
   // Poll for authentication (every 3 seconds for up to 5 minutes)
   std::string userId, accessToken;
