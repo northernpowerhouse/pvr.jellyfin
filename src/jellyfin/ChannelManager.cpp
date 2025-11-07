@@ -363,6 +363,7 @@ PVR_ERROR ChannelManager::GetChannelStreamProperties(const kodi::addon::PVRChann
   Json::Value mediaSource = playbackInfo["MediaSources"][0];
   std::string liveStreamId = mediaSource.get("LiveStreamId", "").asString();
   std::string mediaSourceId = mediaSource.get("Id", channelId).asString();
+  std::string streamPath = mediaSource.get("Path", "").asString();
   
   if (liveStreamId.empty())
   {
@@ -372,19 +373,61 @@ PVR_ERROR ChannelManager::GetChannelStreamProperties(const kodi::addon::PVRChann
   
   Logger::Log(ADDON_LOG_INFO, "Got LiveStreamId: %s, MediaSourceId: %s", liveStreamId.c_str(), mediaSourceId.c_str());
   
-  // Build stream URL using live.m3u8 (for live TV) with parameters from PlaybackInfo
-  std::ostringstream streamUrl;
-  streamUrl << m_connection->GetServerUrl() 
-            << "/videos/" << channelId 
-            << "/live.m3u8?LiveStreamId=" << liveStreamId
-            << "&MediaSourceId=" << mediaSourceId
-            << "&api_key=" << m_connection->GetApiKey();
-  
-  Logger::Log(ADDON_LOG_INFO, "Stream URL: %s", streamUrl.str().c_str());
+  // Build stream URL - prefer Path from MediaSources if provided
+  std::string streamUrl;
+  if (!streamPath.empty())
+  {
+    // Server provided a direct path (e.g., http://172.23.0.2:8096/LiveTv/LiveStreamFiles/{guid}/stream.ts)
+    Logger::Log(ADDON_LOG_INFO, "Using server-provided stream path: %s", streamPath.c_str());
+    
+    // Replace the server URL in the path with our configured server URL
+    // (server might return internal Docker IP like 172.23.0.2)
+    std::string serverUrl = m_connection->GetServerUrl();
+    
+    // Find the path part after the server URL
+    size_t pathStart = streamPath.find("/LiveTv");
+    if (pathStart == std::string::npos)
+    {
+      pathStart = streamPath.find("/Videos");
+    }
+    
+    if (pathStart != std::string::npos)
+    {
+      // Extract just the path and append to our server URL
+      std::string pathOnly = streamPath.substr(pathStart);
+      streamUrl = serverUrl + pathOnly;
+      
+      // Add API key if not already in the path
+      if (streamUrl.find("api_key=") == std::string::npos)
+      {
+        streamUrl += (streamUrl.find('?') != std::string::npos ? "&" : "?");
+        streamUrl += "api_key=" + m_connection->GetApiKey();
+      }
+      
+      Logger::Log(ADDON_LOG_INFO, "Adjusted stream URL: %s", streamUrl.c_str());
+    }
+    else
+    {
+      // Path doesn't match expected format, use as-is
+      streamUrl = streamPath;
+    }
+  }
+  else
+  {
+    // Fallback: Build URL using live.m3u8 with parameters
+    std::ostringstream urlBuilder;
+    urlBuilder << m_connection->GetServerUrl() 
+              << "/videos/" << channelId 
+              << "/live.m3u8?LiveStreamId=" << liveStreamId
+              << "&MediaSourceId=" << mediaSourceId
+              << "&api_key=" << m_connection->GetApiKey();
+    streamUrl = urlBuilder.str();
+    Logger::Log(ADDON_LOG_INFO, "Built stream URL: %s", streamUrl.c_str());
+  }
   
   kodi::addon::PVRStreamProperty prop;
   prop.SetName(PVR_STREAM_PROPERTY_STREAMURL);
-  prop.SetValue(streamUrl.str());
+  prop.SetValue(streamUrl);
   properties.push_back(prop);
   
   prop.SetName(PVR_STREAM_PROPERTY_ISREALTIMESTREAM);
