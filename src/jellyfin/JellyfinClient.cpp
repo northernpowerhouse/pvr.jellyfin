@@ -237,8 +237,18 @@ PVR_ERROR JellyfinClient::GetChannelGroupMembers(const kodi::addon::PVRChannelGr
 PVR_ERROR JellyfinClient::GetEPGForChannel(int channelUid, time_t start, time_t end,
                                            kodi::addon::PVREPGTagsResultSet& results)
 {
-  if (m_epgManager)
-    return m_epgManager->GetEPGForChannel(channelUid, start, end, results);
+  if (m_epgManager && m_channelManager)
+  {
+    // Get Jellyfin channel ID from UID
+    std::string jellyfinChannelId = m_channelManager->GetChannelIdFromUid(channelUid);
+    if (jellyfinChannelId.empty())
+    {
+      Logger::Log(ADDON_LOG_WARNING, "Could not find Jellyfin channel ID for UID: %d", channelUid);
+      return PVR_ERROR_NO_ERROR; // Return success but with no entries
+    }
+    
+    return m_epgManager->GetEPGForChannel(channelUid, start, end, results, jellyfinChannelId);
+  }
   return PVR_ERROR_SERVER_ERROR;
 }
 
