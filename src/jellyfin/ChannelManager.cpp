@@ -264,16 +264,15 @@ PVR_ERROR ChannelManager::GetChannelStreamProperties(const kodi::addon::PVRChann
   Logger::Log(ADDON_LOG_INFO, "Opening live stream for channel: %s", channelId.c_str());
   
   // Step 1: Open the live stream to get LiveStreamId
+  // Using query parameters instead of POST body
   std::ostringstream openEndpoint;
-  openEndpoint << "/LiveTv/LiveStreams/Open";
-  
-  Json::Value openRequest;
-  openRequest["UserId"] = m_userId;
-  openRequest["ItemId"] = channelId;
-  openRequest["OpenToken"] = channelId; // Use channel ID as token
+  openEndpoint << "/LiveTv/LiveStreams/Open"
+               << "?UserId=" << m_userId
+               << "&ItemId=" << channelId
+               << "&OpenToken=" << channelId;
   
   Json::Value openResponse;
-  if (!m_connection->SendPostRequest(openEndpoint.str(), openRequest, openResponse))
+  if (!m_connection->SendRequest(openEndpoint.str(), openResponse))
   {
     Logger::Log(ADDON_LOG_ERROR, "Failed to open live stream for channel: %s", channelId.c_str());
     return PVR_ERROR_FAILED;
