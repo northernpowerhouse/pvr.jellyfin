@@ -13,12 +13,13 @@ bool AuthManager::AuthenticateByPassword(const std::string& username, const std:
 {
   Logger::Log(ADDON_LOG_INFO, "Attempting password authentication for user: %s", username.c_str());
   
+  // Jellyfin API uses lowercase field names: "username" and "Pw"
   Json::Value requestData;
-  requestData["Username"] = username;
+  requestData["username"] = username;
   requestData["Pw"] = password;
   
   // Log the request (without password for security)
-  Logger::Log(ADDON_LOG_DEBUG, "Auth request - Username: %s, Endpoint: /Users/AuthenticateByName", username.c_str());
+  Logger::Log(ADDON_LOG_DEBUG, "Auth request - username: %s, Endpoint: /Users/AuthenticateByName", username.c_str());
   
   Json::Value response;
   if (!m_connection->SendPostRequest("/Users/AuthenticateByName", requestData, response))
