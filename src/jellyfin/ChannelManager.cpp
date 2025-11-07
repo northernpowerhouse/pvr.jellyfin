@@ -31,15 +31,42 @@ bool ChannelManager::LoadChannels()
   if (response.isMember("Items") && response["Items"].isArray())
   {
     const Json::Value& items = response["Items"];
+    Logger::Log(ADDON_LOG_INFO, "Processing %d channel items", items.size());
+    
     for (unsigned int i = 0; i < items.size(); i++)
     {
       const Json::Value& item = items[i];
       
+      // Validate required fields
+      if (!item.isMember("Id") || !item.isMember("Name"))
+      {
+        Logger::Log(ADDON_LOG_WARNING, "Channel item %d missing required fields, skipping", i);
+        continue;
+      }
+      
       JellyfinChannel channel;
       channel.id = item["Id"].asString();
       channel.name = item["Name"].asString();
-      channel.number = item.get("ChannelNumber", i + 1).asInt();
-      channel.isRadio = item.get("Type", "TvChannel").asString() == "RadioChannel";
+      
+      // Use ChannelNumber if available, otherwise use position
+      if (item.isMember("ChannelNumber"))
+      {
+        channel.number = item["ChannelNumber"].asInt();
+      }
+      else
+      {
+        channel.number = i + 1;
+      }
+      
+      // Check channel type
+      if (item.isMember("Type"))
+      {
+        channel.isRadio = item["Type"].asString() == "RadioChannel";
+      }
+      else
+      {
+        channel.isRadio = false;
+      }
       
       if (item.isMember("ImageTags") && item["ImageTags"].isMember("Primary"))
       {
@@ -52,6 +79,9 @@ bool ChannelManager::LoadChannels()
       std::hash<std::string> hasher;
       int uid = static_cast<int>(hasher(channel.id) & 0x7FFFFFFF);
       m_uidToChannelId[uid] = channel.id;
+      
+      Logger::Log(ADDON_LOG_DEBUG, "Loaded channel: %s (ID: %s, Number: %d, UID: %d)", 
+                  channel.name.c_str(), channel.id.c_str(), channel.number, uid);
     }
   }
   
