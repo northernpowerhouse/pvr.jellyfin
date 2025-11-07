@@ -121,6 +121,13 @@ bool ChannelManager::LoadChannels()
       {
         const Json::Value& item = items[i];
         
+        // Validate required fields
+        if (!item.isMember("Id") || !item.isMember("Name"))
+        {
+          Logger::Log(ADDON_LOG_WARNING, "Channel group item %d missing required fields, skipping", i);
+          continue;
+        }
+        
         JellyfinChannelGroup group;
         group.id = item["Id"].asString();
         group.name = item["Name"].asString();

@@ -34,6 +34,13 @@ bool RecordingManager::LoadRecordings()
     {
       const Json::Value& item = items[i];
       
+      // Validate required fields
+      if (!item.isMember("Id"))
+      {
+        Logger::Log(ADDON_LOG_WARNING, "Recording item %d missing Id field, skipping", i);
+        continue;
+      }
+      
       JellyfinRecording recording;
       recording.id = item["Id"].asString();
       recording.title = item.get("Name", "").asString();
@@ -83,6 +90,13 @@ bool RecordingManager::LoadTimers()
     for (unsigned int i = 0; i < items.size(); i++)
     {
       const Json::Value& item = items[i];
+      
+      // Validate required fields
+      if (!item.isMember("Id"))
+      {
+        Logger::Log(ADDON_LOG_WARNING, "Timer item %d missing Id field, skipping", i);
+        continue;
+      }
       
       JellyfinTimer timer;
       timer.id = item["Id"].asString();

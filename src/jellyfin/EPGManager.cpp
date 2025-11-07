@@ -37,17 +37,20 @@ PVR_ERROR EPGManager::GetEPGForChannel(int channelUid, time_t start, time_t end,
     {
       const Json::Value& item = items[i];
       
-      // Extract channel info - we need to match against our channelUid
-      if (!item.isMember("ChannelId"))
+      // Validate required fields
+      if (!item.isMember("Id") || !item.isMember("ChannelId"))
+      {
+        Logger::Log(ADDON_LOG_WARNING, "EPG item %d missing required fields, skipping", i);
         continue;
+      }
       
       std::string channelId = item["ChannelId"].asString();
+      std::string itemId = item["Id"].asString();
       // TODO: Map channelId to channelUid and filter
       
       kodi::addon::PVREPGTag tag;
       
       // Generate unique broadcast ID from hash
-      std::string itemId = item["Id"].asString();
       std::hash<std::string> hasher;
       unsigned int broadcastId = static_cast<unsigned int>(hasher(itemId));
       
