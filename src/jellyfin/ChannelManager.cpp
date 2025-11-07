@@ -263,59 +263,142 @@ PVR_ERROR ChannelManager::GetChannelStreamProperties(const kodi::addon::PVRChann
   
   Logger::Log(ADDON_LOG_INFO, "Opening live stream for channel: %s", channelId.c_str());
   
-  // Step 1: Get PlaybackInfo which auto-opens the live stream
-  // This is the correct Jellyfin API method used by the official addon
-  std::ostringstream playbackEndpoint;
-  playbackEndpoint << "/Items/" << channelId << "/PlaybackInfo";
-  
-  // Build device profile for live TV
+  // Build DeviceProfile for live TV (based on jellyfin-kodi addon)
   Json::Value deviceProfile;
   deviceProfile["Name"] = "Kodi";
+  deviceProfile["MaxStaticBitrate"] = 120000000;  // 120 Mbps
   deviceProfile["MaxStreamingBitrate"] = 120000000;
-  deviceProfile["MaxStaticBitrate"] = 100000000;
-  deviceProfile["MusicStreamingTranscodingBitrate"] = 384000;
+  deviceProfile["MusicStreamingTranscodingBitrate"] = 1280000;
+  deviceProfile["TimelineOffsetSeconds"] = 5;
   
-  Json::Value playbackRequest;
-  playbackRequest["UserId"] = m_userId;
-  playbackRequest["AutoOpenLiveStream"] = true;
-  playbackRequest["DeviceProfile"] = deviceProfile;
+  // TranscodingProfiles
+  Json::Value transcodingProfiles(Json::arrayValue);
   
-  Json::Value playbackResponse;
-  if (!m_connection->SendPostRequest(playbackEndpoint.str(), playbackRequest, playbackResponse))
+  // Live TV transcoding profile (must be first for TvChannel type)
+  Json::Value liveTvProfile;
+  liveTvProfile["Container"] = "ts";
+  liveTvProfile["Type"] = "Video";
+  liveTvProfile["AudioCodec"] = "mp3,aac";
+  liveTvProfile["VideoCodec"] = "h264";
+  liveTvProfile["Context"] = "Streaming";
+  liveTvProfile["Protocol"] = "hls";
+  liveTvProfile["MaxAudioChannels"] = "2";
+  liveTvProfile["MinSegments"] = "1";
+  liveTvProfile["BreakOnNonKeyFrames"] = true;
+  transcodingProfiles.append(liveTvProfile);
+  
+  // Standard video transcoding profile
+  Json::Value videoProfile;
+  videoProfile["Type"] = "Video";
+  videoProfile["Container"] = "m3u8";
+  videoProfile["AudioCodec"] = "aac,mp3,ac3,opus,flac,vorbis";
+  videoProfile["VideoCodec"] = "h264,hevc,mpeg4,mpeg2video,vc1,av1";
+  videoProfile["MaxAudioChannels"] = "6";
+  transcodingProfiles.append(videoProfile);
+  
+  Json::Value audioProfile;
+  audioProfile["Type"] = "Audio";
+  transcodingProfiles.append(audioProfile);
+  
+  Json::Value photoProfile;
+  photoProfile["Type"] = "Photo";
+  photoProfile["Container"] = "jpeg";
+  transcodingProfiles.append(photoProfile);
+  
+  deviceProfile["TranscodingProfiles"] = transcodingProfiles;
+  
+  // DirectPlayProfiles
+  Json::Value directPlayProfiles(Json::arrayValue);
+  Json::Value videoDirectPlay;
+  videoDirectPlay["Type"] = "Video";
+  videoDirectPlay["VideoCodec"] = "h264,hevc,mpeg4,mpeg2video,vc1,vp9,av1";
+  directPlayProfiles.append(videoDirectPlay);
+  
+  Json::Value audioDirectPlay;
+  audioDirectPlay["Type"] = "Audio";
+  directPlayProfiles.append(audioDirectPlay);
+  
+  Json::Value photoDirectPlay;
+  photoDirectPlay["Type"] = "Photo";
+  directPlayProfiles.append(photoDirectPlay);
+  
+  deviceProfile["DirectPlayProfiles"] = directPlayProfiles;
+  
+  // Empty arrays for other required fields
+  deviceProfile["ResponseProfiles"] = Json::Value(Json::arrayValue);
+  deviceProfile["ContainerProfiles"] = Json::Value(Json::arrayValue);
+  deviceProfile["CodecProfiles"] = Json::Value(Json::arrayValue);
+  
+  // SubtitleProfiles
+  Json::Value subtitleProfiles(Json::arrayValue);
+  std::vector<std::string> formats = {"srt", "ass", "sub", "ssa", "smi", "pgssub", "dvdsub", "pgs"};
+  for (const auto& format : formats)
   {
-    Logger::Log(ADDON_LOG_ERROR, "Failed to get playback info for channel: %s", channelId.c_str());
-    return PVR_ERROR_FAILED;
+    Json::Value external;
+    external["Format"] = format;
+    external["Method"] = "External";
+    subtitleProfiles.append(external);
+    
+    Json::Value embed;
+    embed["Format"] = format;
+    embed["Method"] = "Embed";
+    subtitleProfiles.append(embed);
+  }
+  deviceProfile["SubtitleProfiles"] = subtitleProfiles;
+  
+  // Build PlaybackInfo request
+  Json::Value playbackInfoRequest;
+  playbackInfoRequest["UserId"] = m_connection->GetUserId();
+  playbackInfoRequest["DeviceProfile"] = deviceProfile;
+  playbackInfoRequest["AutoOpenLiveStream"] = true;
+  
+  // POST /Items/{id}/PlaybackInfo
+  std::string playbackInfoUrl = "/Items/" + channelId + "/PlaybackInfo";
+  std::string responseJson = m_connection->PerformHttpPost(playbackInfoUrl, playbackInfoRequest);
+  
+  if (responseJson.empty())
+  {
+    Logger::Log(ADDON_LOG_ERROR, "Failed to get PlaybackInfo for channel: %s", channelId.c_str());
+    return PVR_ERROR_SERVER_ERROR;
   }
   
-  // Extract MediaSource which contains the stream information
-  if (!playbackResponse.isMember("MediaSources") || !playbackResponse["MediaSources"].isArray() || playbackResponse["MediaSources"].empty())
+  // Parse response
+  Json::Value playbackInfo;
+  Json::CharReaderBuilder reader;
+  std::string errs;
+  std::istringstream stream(responseJson);
+  if (!Json::parseFromStream(reader, stream, &playbackInfo, &errs))
   {
-    Logger::Log(ADDON_LOG_ERROR, "No MediaSources returned for channel: %s", channelId.c_str());
-    return PVR_ERROR_FAILED;
+    Logger::Log(ADDON_LOG_ERROR, "Failed to parse PlaybackInfo response: %s", errs.c_str());
+    return PVR_ERROR_SERVER_ERROR;
   }
   
-  Json::Value mediaSource = playbackResponse["MediaSources"][0];
-  
-  // Get the LiveStreamId if available
-  std::string liveStreamId;
-  if (mediaSource.isMember("LiveStreamId") && mediaSource["LiveStreamId"].isString())
+  // Extract MediaSources[0] with LiveStreamId and MediaSourceId
+  if (!playbackInfo.isMember("MediaSources") || !playbackInfo["MediaSources"].isArray() || playbackInfo["MediaSources"].size() == 0)
   {
-    liveStreamId = mediaSource["LiveStreamId"].asString();
-    Logger::Log(ADDON_LOG_INFO, "Got LiveStreamId: %s for channel: %s", liveStreamId.c_str(), channelId.c_str());
+    Logger::Log(ADDON_LOG_ERROR, "No MediaSources in PlaybackInfo response");
+    return PVR_ERROR_SERVER_ERROR;
   }
   
-  // Step 2: Build playback URL
+  Json::Value mediaSource = playbackInfo["MediaSources"][0];
+  std::string liveStreamId = mediaSource.get("LiveStreamId", "").asString();
+  std::string mediaSourceId = mediaSource.get("Id", channelId).asString();
+  
+  if (liveStreamId.empty())
+  {
+    Logger::Log(ADDON_LOG_ERROR, "No LiveStreamId in MediaSources response");
+    return PVR_ERROR_SERVER_ERROR;
+  }
+  
+  Logger::Log(ADDON_LOG_INFO, "Got LiveStreamId: %s, MediaSourceId: %s", liveStreamId.c_str(), mediaSourceId.c_str());
+  
+  // Build stream URL using live.m3u8 (for live TV) with parameters from PlaybackInfo
   std::ostringstream streamUrl;
   streamUrl << m_connection->GetServerUrl() 
-            << "/Videos/" << channelId 
-            << "/stream?static=true&MediaSourceId=" << mediaSource["Id"].asString();
-  
-  if (!liveStreamId.empty())
-  {
-    streamUrl << "&LiveStreamId=" << liveStreamId;
-  }
-  
-  streamUrl << "&api_key=" << m_connection->GetApiKey();
+            << "/videos/" << channelId 
+            << "/live.m3u8?LiveStreamId=" << liveStreamId
+            << "&MediaSourceId=" << mediaSourceId
+            << "&api_key=" << m_connection->GetApiKey();
   
   Logger::Log(ADDON_LOG_INFO, "Stream URL: %s", streamUrl.str().c_str());
   
