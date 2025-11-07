@@ -261,10 +261,42 @@ PVR_ERROR ChannelManager::GetChannelStreamProperties(const kodi::addon::PVRChann
     return PVR_ERROR_INVALID_PARAMETERS;
   }
   
+  Logger::Log(ADDON_LOG_INFO, "Opening live stream for channel: %s", channelId.c_str());
+  
+  // Step 1: Open the live stream to get LiveStreamId
+  std::ostringstream openEndpoint;
+  openEndpoint << "/LiveTv/LiveStreams/Open";
+  
+  Json::Value openRequest;
+  openRequest["UserId"] = m_userId;
+  openRequest["ItemId"] = channelId;
+  openRequest["OpenToken"] = channelId; // Use channel ID as token
+  
+  Json::Value openResponse;
+  if (!m_connection->SendPostRequest(openEndpoint.str(), openRequest, openResponse))
+  {
+    Logger::Log(ADDON_LOG_ERROR, "Failed to open live stream for channel: %s", channelId.c_str());
+    return PVR_ERROR_FAILED;
+  }
+  
+  // Extract LiveStreamId from response
+  if (!openResponse.isMember("Id"))
+  {
+    Logger::Log(ADDON_LOG_ERROR, "No LiveStreamId returned for channel: %s", channelId.c_str());
+    return PVR_ERROR_FAILED;
+  }
+  
+  std::string liveStreamId = openResponse["Id"].asString();
+  Logger::Log(ADDON_LOG_INFO, "Got LiveStreamId: %s for channel: %s", liveStreamId.c_str(), channelId.c_str());
+  
+  // Step 2: Build playback URL using the LiveStreamId
   std::ostringstream streamUrl;
   streamUrl << m_connection->GetServerUrl() 
-            << "/LiveTv/LiveStreamFiles/" << channelId 
-            << "/stream.m3u8?api_key=" << m_connection->GetApiKey();
+            << "/Videos/" << channelId 
+            << "/live.m3u8?LiveStreamId=" << liveStreamId
+            << "&api_key=" << m_connection->GetApiKey();
+  
+  Logger::Log(ADDON_LOG_INFO, "Stream URL: %s", streamUrl.str().c_str());
   
   kodi::addon::PVRStreamProperty prop;
   prop.SetName(PVR_STREAM_PROPERTY_STREAMURL);
@@ -273,6 +305,10 @@ PVR_ERROR ChannelManager::GetChannelStreamProperties(const kodi::addon::PVRChann
   
   prop.SetName(PVR_STREAM_PROPERTY_ISREALTIMESTREAM);
   prop.SetValue("true");
+  properties.push_back(prop);
+  
+  prop.SetName(PVR_STREAM_PROPERTY_MIMETYPE);
+  prop.SetValue("application/x-mpegURL");
   properties.push_back(prop);
   
   return PVR_ERROR_NO_ERROR;
