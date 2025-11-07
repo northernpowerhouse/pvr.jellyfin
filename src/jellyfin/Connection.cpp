@@ -93,6 +93,23 @@ std::string Connection::PerformHttpGet(const std::string& url)
   // Jellyfin 10.10+ compatible authentication header
   std::ostringstream authHeader;
   authHeader << "MediaBrowser Client=\"Kodi PVR\", Device=\"Kodi\", DeviceId=\"kodi-pvr-jellyfin\", Version=\"1.0.0\", Token=\"" << m_apiKey << "\"";
+  
+  // Log auth header for debugging (with token preview)
+  std::string headerStr = authHeader.str();
+  std::string tokenPreview = "none";
+  if (!m_apiKey.empty())
+  {
+    if (m_apiKey.length() > 8)
+    {
+      tokenPreview = m_apiKey.substr(0, 4) + "..." + m_apiKey.substr(m_apiKey.length() - 4);
+    }
+    else
+    {
+      tokenPreview = "****";
+    }
+  }
+  Logger::Log(ADDON_LOG_DEBUG, "HTTP GET %s with Token: %s", url.c_str(), tokenPreview.c_str());
+  
   file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "X-Emby-Authorization", authHeader.str().c_str());
   
   if (!file.CURLOpen(ADDON_READ_NO_CACHE))

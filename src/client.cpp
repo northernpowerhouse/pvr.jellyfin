@@ -127,6 +127,14 @@ bool CJellyfinPVRClient::LoadSettings()
   if (m_apiKey.empty())
   {
     m_apiKey = kodi::addon::GetSettingString("api_key", "");
+    if (!m_apiKey.empty())
+    {
+      Logger::Log(ADDON_LOG_INFO, "Using API key from settings (length: %d)", m_apiKey.length());
+    }
+  }
+  else
+  {
+    Logger::Log(ADDON_LOG_INFO, "Using access token from settings (length: %d)", m_apiKey.length());
   }
 
   if (m_serverUrl.empty())
@@ -136,6 +144,25 @@ bool CJellyfinPVRClient::LoadSettings()
   }
 
   Logger::Log(ADDON_LOG_INFO, "Connecting to server: %s", m_serverUrl.c_str());
+  
+  if (!m_apiKey.empty())
+  {
+    // Log first and last 4 characters of API key for verification
+    std::string keyPreview;
+    if (m_apiKey.length() > 8)
+    {
+      keyPreview = m_apiKey.substr(0, 4) + "..." + m_apiKey.substr(m_apiKey.length() - 4);
+    }
+    else
+    {
+      keyPreview = "****";
+    }
+    Logger::Log(ADDON_LOG_INFO, "API key loaded: %s", keyPreview.c_str());
+  }
+  else
+  {
+    Logger::Log(ADDON_LOG_INFO, "No API key or access token configured");
+  }
 
   // API key/access token is optional at this stage - will be obtained during authentication
   return true;
