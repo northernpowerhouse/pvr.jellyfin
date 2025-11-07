@@ -1,4 +1,4 @@
-#include "ChannelManager.h"
+include "ChannelManager.h"
 #include "Connection.h"
 #include "../utilities/Logger.h"
 #include <json/json.h>
@@ -263,12 +263,13 @@ PVR_ERROR ChannelManager::GetChannelStreamProperties(const kodi::addon::PVRChann
   
   Logger::Log(ADDON_LOG_INFO, "Opening live stream for channel: %s", channelId.c_str());
   
-  // Build DeviceProfile for live TV (simplified minimal profile)
+  // Build DeviceProfile for live TV (matching jellyfin-kodi addon structure)
   Json::Value deviceProfile;
   deviceProfile["Name"] = "Kodi";
   deviceProfile["MaxStreamingBitrate"] = 120000000;
   deviceProfile["MaxStaticBitrate"] = 120000000;
   deviceProfile["MusicStreamingTranscodingBitrate"] = 1280000;
+  deviceProfile["TimelineOffsetSeconds"] = 5;
   
   // TranscodingProfiles
   Json::Value transcodingProfiles(Json::arrayValue);
@@ -306,13 +307,11 @@ PVR_ERROR ChannelManager::GetChannelStreamProperties(const kodi::addon::PVRChann
   
   deviceProfile["TranscodingProfiles"] = transcodingProfiles;
   
-  // DirectPlayProfiles
+  // DirectPlayProfiles (match jellyfin-kodi addon structure)
   Json::Value directPlayProfiles(Json::arrayValue);
   Json::Value videoDirectPlay;
   videoDirectPlay["Type"] = "Video";
-  videoDirectPlay["Container"] = "";  // Empty container means all
   videoDirectPlay["VideoCodec"] = "h264,hevc,mpeg4,mpeg2video,vc1,vp9,av1";
-  videoDirectPlay["AudioCodec"] = "aac,mp3,ac3,eac3,flac,alac,vorbis,opus";
   directPlayProfiles.append(videoDirectPlay);
   
   Json::Value audioDirectPlay;
