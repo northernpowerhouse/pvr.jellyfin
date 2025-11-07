@@ -1,4 +1,4 @@
-#in "ChannelManager.h"
+#include "ChannelManager.h"
 #include "Connection.h"
 #include "../utilities/Logger.h"
 #include <json/json.h>
