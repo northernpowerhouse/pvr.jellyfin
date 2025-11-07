@@ -59,6 +59,7 @@ CJellyfinPVRClient::CJellyfinPVRClient(const kodi::addon::IInstanceInfo& instanc
       }
       else if (authMethod == 1) // Quick Connect
       {
+        Logger::Log(ADDON_LOG_INFO, "Auth method is Quick Connect, starting Quick Connect flow...");
         if (m_jellyfinClient->AuthenticateWithQuickConnect())
         {
           Logger::Log(ADDON_LOG_INFO, "Successfully authenticated with Quick Connect");

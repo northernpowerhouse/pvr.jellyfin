@@ -83,12 +83,20 @@ bool JellyfinClient::AuthenticateWithQuickConnect()
   std::string code;
   if (!m_authManager->StartQuickConnect(code))
   {
+    Logger::Log(ADDON_LOG_ERROR, "Failed to start Quick Connect");
     kodi::gui::dialogs::OK::ShowAndGetInput("Quick Connect Failed", 
                                             "Could not start Quick Connect.\nPlease try again.");
     return false;
   }
   
+  // Log the code prominently (not debug level, use INFO)
+  Logger::Log(ADDON_LOG_INFO, "========================================");
+  Logger::Log(ADDON_LOG_INFO, "QUICK CONNECT CODE: %s", code.c_str());
+  Logger::Log(ADDON_LOG_INFO, "========================================");
+  
   // First show the code in a prominent OK dialog
+  Logger::Log(ADDON_LOG_INFO, "Attempting to show Quick Connect dialog...");
+  
   std::ostringstream codeMessage;
   codeMessage << "Your Quick Connect code is:\n\n"
               << "[B][COLOR yellow]" << code << "[/COLOR][/B]\n\n"
@@ -98,7 +106,7 @@ bool JellyfinClient::AuthenticateWithQuickConnect()
   
   kodi::gui::dialogs::OK::ShowAndGetInput("Quick Connect Code", codeMessage.str());
   
-  Logger::Log(ADDON_LOG_INFO, "Quick Connect code: %s", code.c_str());
+  Logger::Log(ADDON_LOG_INFO, "Quick Connect dialog shown, waiting for authorization...");
   
   // Show progress dialog while waiting
   kodi::gui::dialogs::CProgress* progress = new kodi::gui::dialogs::CProgress();
