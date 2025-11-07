@@ -164,32 +164,12 @@ bool JellyfinClient::Connect()
     Logger::Log(ADDON_LOG_INFO, "Connected to Jellyfin server version %s", m_serverVersion.c_str());
   }
   
-  // When using API key authentication, get the current user ID if not already set
+  // When using API key authentication, user ID must be provided in settings
+  // API keys cannot access /Users/Me endpoint, so we require manual configuration
   if (!m_apiKey.empty() && m_userId.empty())
   {
-    Logger::Log(ADDON_LOG_INFO, "Fetching current user info for API key authentication");
-    Json::Value userResponse;
-    if (m_connection->SendRequest("/Users/Me", userResponse))
-    {
-      if (userResponse.isMember("Id"))
-      {
-        m_userId = userResponse["Id"].asString();
-        Logger::Log(ADDON_LOG_INFO, "Retrieved user ID: %s", m_userId.c_str());
-        
-        // Save user ID to settings for future use
-        kodi::addon::SetSettingString("user_id", m_userId);
-      }
-      else
-      {
-        Logger::Log(ADDON_LOG_ERROR, "User response missing Id field");
-        return false;
-      }
-    }
-    else
-    {
-      Logger::Log(ADDON_LOG_ERROR, "Failed to get current user info with API key");
-      return false;
-    }
+    Logger::Log(ADDON_LOG_ERROR, "User ID is required when using API key authentication. Please configure it in addon settings.");
+    return false;
   }
   
   // Initialize managers

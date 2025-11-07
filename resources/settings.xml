@@ -8,7 +8,7 @@
     <setting id="username" label="30024" type="text" default="" />
     <setting id="password" label="30025" type="text" option="hidden" default="" />
     <setting id="api_key" label="30003" type="text" option="hidden" default="" />
-    <setting id="user_id" label="30002" type="text" default="" visible="false" enable="false" />
+    <setting id="user_id" label="30002" type="text" default="" />
     <setting id="access_token" label="30026" type="text" option="hidden" default="" visible="false" enable="false" />
   </category>
   <category label="30010">
