@@ -184,22 +184,14 @@ std::string Connection::PerformHttpPost(const std::string& url, const std::strin
     Logger::Log(ADDON_LOG_DEBUG, "Auth header (no token)");
   }
   
-  // CRITICAL: Kodi's CURL postdata option only sends 24 bytes for some unknown reason
-  // Try passing data as std::string instead of c_str() - create a copy to ensure it's not modified
-  std::string postDataCopy = data;
+  // CRITICAL BUG WORKAROUND: Kodi's CURL "postdata" option truncates at 24 bytes
+  // Our string has all 32 bytes correct, but only 24 reach the server
+  // Try using "post" instead of "postdata" - different CURL option
   
-  // Log the raw bytes to see if there's something weird
-  Logger::Log(ADDON_LOG_DEBUG, "POST data bytes: length=%zu", postDataCopy.size());
-  for (size_t i = 0; i < postDataCopy.size() && i < 40; i++) {
-    Logger::Log(ADDON_LOG_DEBUG, "  [%zu] = 0x%02x (%d) '%c'", i, 
-                (unsigned char)postDataCopy[i], (unsigned char)postDataCopy[i],
-                (postDataCopy[i] >= 32 && postDataCopy[i] < 127) ? postDataCopy[i] : '?');
-  }
+  Logger::Log(ADDON_LOG_DEBUG, "Setting POST body: %s", data.c_str());
   
-  file.CURLAddOption(ADDON_CURL_OPTION_PROTOCOL, "postdata", postDataCopy.c_str());
-  
-  Logger::Log(ADDON_LOG_DEBUG, "POST data passed to CURL: length=%zu, c_str_length=%zu", 
-              postDataCopy.length(), strlen(postDataCopy.c_str()));
+  // Try "post" option instead of "postdata"
+  file.CURLAddOption(ADDON_CURL_OPTION_PROTOCOL, "post", data.c_str());
   
   bool openSuccess = file.CURLOpen(ADDON_READ_NO_CACHE);
   
