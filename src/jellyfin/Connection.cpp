@@ -169,6 +169,9 @@ std::string Connection::PerformHttpPost(const std::string& url, const std::strin
   // Let CURL calculate Content-Length automatically from postdata
   file.CURLAddOption(ADDON_CURL_OPTION_PROTOCOL, "postdata", data.c_str());
   
+  Logger::Log(ADDON_LOG_DEBUG, "POST data passed to CURL: length=%zu, c_str_length=%zu", 
+              data.length(), strlen(data.c_str()));
+  
   bool openSuccess = file.CURLOpen(ADDON_READ_NO_CACHE);
   
   // Try to read response regardless of openSuccess, as error responses may still have body
