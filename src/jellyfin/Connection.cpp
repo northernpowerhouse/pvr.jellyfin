@@ -60,7 +60,12 @@ bool Connection::SendPostRequest(const std::string& endpoint, const Json::Value&
   if (endpoint == "/Users/AuthenticateByName" && data.isMember("Username") && data.isMember("Pw"))
   {
     // Build authentication JSON manually with correct key order
-    jsonData = "{\"Username\":\"" + data["Username"].asString() + "\",\"Pw\":\"" + data["Pw"].asString() + "\"}";
+    // Use single quotes in C++ string literal, then replace with double quotes to avoid escaping mess
+    std::string username = data["Username"].asString();
+    std::string password = data["Pw"].asString();
+    
+    // Build JSON without backslashes - just normal quote characters
+    jsonData = R"({"Username":")" + username + R"(","Pw":")" + password + R"("})";
     Logger::Log(ADDON_LOG_DEBUG, "Manual auth JSON (%zu bytes): %s", jsonData.length(), jsonData.c_str());
   }
   else
