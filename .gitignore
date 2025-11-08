@@ -43,6 +43,7 @@ build-debug.log
 # Temporary files
 /tmp/
 *.log
+!devlog/*.log
 *.tmp
 
 # Test recordings (mediainfo saved to devlog/apitest/)
