@@ -149,11 +149,6 @@ std::string Connection::PerformHttpPost(const std::string& url, const std::strin
   file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "Content-Type", "application/json");
   file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "Accept", "application/json");
   
-  // Explicitly set Content-Length to ensure full POST body is sent
-  std::ostringstream contentLength;
-  contentLength << data.length();
-  file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "Content-Length", contentLength.str().c_str());
-  
   // Only add authentication header if we have a token
   if (!m_apiKey.empty())
   {
@@ -169,6 +164,7 @@ std::string Connection::PerformHttpPost(const std::string& url, const std::strin
     Logger::Log(ADDON_LOG_DEBUG, "Auth header (no token)");
   }
   
+  // Let CURL calculate Content-Length automatically from postdata
   file.CURLAddOption(ADDON_CURL_OPTION_PROTOCOL, "postdata", data.c_str());
   
   bool openSuccess = file.CURLOpen(ADDON_READ_NO_CACHE);
