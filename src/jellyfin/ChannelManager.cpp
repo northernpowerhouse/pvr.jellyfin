@@ -263,48 +263,11 @@ PVR_ERROR ChannelManager::GetChannelStreamProperties(const kodi::addon::PVRChann
   
   Logger::Log(ADDON_LOG_INFO, "Opening live stream for channel: %s", channelId.c_str());
   
-  // Try simpler approach first: GET the channel's MediaSources directly
-  // This works with plugins like Jellyfin.Xtream that use IDirectStreamProvider
-  std::string mediaSourcesUrl = "/Items/" + channelId;
-  Json::Value channelInfo;
+  // Skip the direct GET attempt - go straight to PlaybackInfo with AutoOpenLiveStream
+  // This is the correct approach for Jellyfin.Xtream plugin
+  Logger::Log(ADDON_LOG_DEBUG, "Using PlaybackInfo with AutoOpenLiveStream for Xtream compatibility");
   
-  if (!m_connection->SendRequest(mediaSourcesUrl, channelInfo))
-  {
-    Logger::Log(ADDON_LOG_ERROR, "Failed to get channel info for: %s", channelId.c_str());
-    return PVR_ERROR_SERVER_ERROR;
-  }
-  
-  // Check if MediaSources are directly available
-  if (channelInfo.isMember("MediaSources") && channelInfo["MediaSources"].isArray() && channelInfo["MediaSources"].size() > 0)
-  {
-    Logger::Log(ADDON_LOG_INFO, "Channel has direct MediaSources available");
-    Json::Value mediaSource = channelInfo["MediaSources"][0];
-    std::string streamPath = mediaSource.get("Path", "").asString();
-    
-    if (!streamPath.empty())
-    {
-      Logger::Log(ADDON_LOG_INFO, "Using direct stream path: %s", streamPath.c_str());
-      
-      kodi::addon::PVRStreamProperty prop;
-      prop.SetName(PVR_STREAM_PROPERTY_STREAMURL);
-      prop.SetValue(streamPath);
-      properties.push_back(prop);
-      
-      prop.SetName(PVR_STREAM_PROPERTY_ISREALTIMESTREAM);
-      prop.SetValue("true");
-      properties.push_back(prop);
-      
-      prop.SetName(PVR_STREAM_PROPERTY_MIMETYPE);
-      prop.SetValue("video/mp2t");
-      properties.push_back(prop);
-      
-      return PVR_ERROR_NO_ERROR;
-    }
-  }
-  
-  Logger::Log(ADDON_LOG_INFO, "No direct MediaSources, trying PlaybackInfo endpoint");
-  
-  // Fallback: Build DeviceProfile for live TV (matching jellyfin-kodi addon structure)
+  // Build DeviceProfile for live TV (matching jellyfin-kodi addon structure)
   Json::Value deviceProfile;
   deviceProfile["Name"] = "Kodi";
   deviceProfile["MaxStreamingBitrate"] = 120000000;
