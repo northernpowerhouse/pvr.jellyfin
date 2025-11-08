@@ -23,8 +23,8 @@ bool AuthManager::AuthenticateByPassword(const std::string& username, const std:
   Json::StreamWriterBuilder builder;
   builder["indentation"] = "";
   std::string requestJson = Json::writeString(builder, requestData);
-  Logger::Log(ADDON_LOG_DEBUG, "Auth request JSON: %s", requestJson.c_str());
-  Logger::Log(ADDON_LOG_DEBUG, "Auth request - username: %s, Endpoint: /Users/AuthenticateByName", username.c_str());
+  Logger::Log(ADDON_LOG_INFO, "Auth request JSON: %s", requestJson.c_str());
+  Logger::Log(ADDON_LOG_INFO, "Auth request - username: %s, Endpoint: /Users/AuthenticateByName", username.c_str());
   
   Json::Value response;
   if (!m_connection->SendPostRequest("/Users/AuthenticateByName", requestData, response))
