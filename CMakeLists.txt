@@ -4,6 +4,11 @@ project(pvr.jellyfin)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Override version with our VERSION file
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/VERSION" ADDON_VERSION)
+string(STRIP "${ADDON_VERSION}" ADDON_VERSION)
+message(STATUS "Using version from VERSION file: ${ADDON_VERSION}")
+
 # Check if building standalone (e.g., for Android CI)
 if(DEFINED KODI_INCLUDE_DIR AND NOT KODI_FOUND)
   message(STATUS "Building in standalone mode with provided KODI_INCLUDE_DIR: ${KODI_INCLUDE_DIR}")

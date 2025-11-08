@@ -70,9 +70,12 @@ jobs:
             -v $(pwd):/workspace \
             -w /workspace \
             -e ADDON_SRC_PREFIX=/workspace \
+            -e OVERRIDE_BUILD_VERSION=${{ env.VERSION }} \
             kodi-android-builder:latest \
             bash -c "
               cd /workspace/xbmc &&
+              echo 'addon.xml.in - before build:' &&
+              head -5 /workspace/${{ env.app_id }}/addon.xml.in &&
               make -C tools/depends/target/binary-addons ADDONS='${{ env.app_id }}' \
                 ADDON_SRC_PREFIX=/workspace \
                 PREFIX=/opt/xbmc-depends \
@@ -95,8 +98,14 @@ jobs:
           TEMP_DIR=$(mktemp -d)
           unzip -q "$ADDON_ZIP" -d "$TEMP_DIR"
           
+          echo "Original addon.xml version:"
+          grep 'version=' "$TEMP_DIR/${{ env.app_id }}/addon.xml" | head -1
+          
           # Update addon.xml with our VERSION
-          sed -i "s/version=\"[^\"]*\"/version=\"${VERSION}\"/" "$TEMP_DIR/${{ env.app_id }}/addon.xml"
+          sed -i 's/version="[^"]*"/version="'"${VERSION}"'"/' "$TEMP_DIR/${{ env.app_id }}/addon.xml"
+          
+          echo "Updated addon.xml version:"
+          grep 'version=' "$TEMP_DIR/${{ env.app_id }}/addon.xml" | head -1
           
           # Repackage with our version number
           cd "$TEMP_DIR"
