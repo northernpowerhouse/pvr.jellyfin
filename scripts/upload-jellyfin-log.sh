@@ -44,9 +44,12 @@ if ! [[ "$DATE" =~ ^[0-9]{8}$ ]]; then
     exit 1
 fi
 
+# Get current time for unique filename
+TIMESTAMP=$(date +%Y%m%d%H%M)
+
 # Source and destination paths
 SOURCE_LOG="/docker/jellyfinpr/log/log_${DATE}.log"
-DEST_NAME="jellyfinlog_${DATE}.log"
+DEST_NAME="jellyfinlog_${TIMESTAMP}.log"
 DEST_DIR="$PROJECT_DIR/devlog"
 DEST_PATH="$DEST_DIR/$DEST_NAME"
 
@@ -56,6 +59,7 @@ echo "  Jellyfin Log Upload Script"
 echo "================================================================"
 echo ""
 print_info "Date: $DATE"
+print_info "Timestamp: $TIMESTAMP"
 print_info "Source: $SOURCE_LOG"
 print_info "Destination: devlog/$DEST_NAME"
 echo ""
@@ -86,7 +90,7 @@ git add "$DEST_PATH"
 
 # Commit
 print_info "Committing to repository..."
-if git commit -m "Add Jellyfin log for $DATE"; then
+if git commit -m "Add Jellyfin log for $DATE at $(date +%H:%M)"; then
     print_success "Log committed"
     
     # Push to GitHub
