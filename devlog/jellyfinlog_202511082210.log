@@ -246,3 +246,7 @@ ORDER BY \"b0\".\"SortName\", \"b0\".\"Id\", \"b1\".\"Id\", \"b1\".\"ItemId\", \
 [2025-11-08 21:10:05.124 +00:00] [INF] [8] System.Net.Http.HttpClient.Default.ClientHandler: Received HTTP response headers after 794.7223ms - 200
 [2025-11-08 21:10:05.124 +00:00] [INF] [8] System.Net.Http.HttpClient.Default.LogicalHandler: End processing HTTP request after 799.1275ms - 200
 [2025-11-08 21:10:05.259 +00:00] [INF] [8] Emby.Server.Implementations.ScheduledTasks.TaskManager: "Update Plugins" Completed after 0 minute(s) and 0 seconds
+[2025-11-08 21:10:34.257 +00:00] [INF] [19] Microsoft.AspNetCore.Hosting.Diagnostics: Request starting "HTTP/1.1" "GET" "http"://"localhost:8096""""/health""" - null null
+[2025-11-08 21:10:34.259 +00:00] [INF] [19] Microsoft.AspNetCore.Routing.EndpointMiddleware: Executing endpoint '"Health checks"'
+[2025-11-08 21:10:34.261 +00:00] [INF] [11] Microsoft.AspNetCore.Routing.EndpointMiddleware: Executed endpoint '"Health checks"'
+[2025-11-08 21:10:34.261 +00:00] [INF] [11] Microsoft.AspNetCore.Hosting.Diagnostics: Request finished "HTTP/1.1" "GET" "http"://"localhost:8096""""/health""" - 200 null "text/plain" 4.3917ms
