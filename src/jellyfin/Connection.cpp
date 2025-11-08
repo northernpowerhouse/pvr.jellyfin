@@ -2,6 +2,7 @@
 #include "../utilities/Logger.h"
 #include <kodi/Filesystem.h>
 #include <sstream>
+#include "../utilities/Utilities.h"
 
 Connection::Connection(const std::string& serverUrl, const std::string& apiKey)
   : m_serverUrl(serverUrl)
