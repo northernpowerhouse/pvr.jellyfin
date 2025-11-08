@@ -179,11 +179,15 @@ std::string Connection::PerformHttpPost(const std::string& url, const std::strin
     Logger::Log(ADDON_LOG_DEBUG, "Auth header (no token)");
   }
   
-  // Let CURL calculate Content-Length automatically from postdata
+  // Set Content-Length explicitly BEFORE setting postdata
+  std::string contentLength = std::to_string(data.length());
+  file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "Content-Length", contentLength.c_str());
+  
+  // Now set the post data
   file.CURLAddOption(ADDON_CURL_OPTION_PROTOCOL, "postdata", data.c_str());
   
-  Logger::Log(ADDON_LOG_DEBUG, "POST data passed to CURL: length=%zu, c_str_length=%zu", 
-              data.length(), strlen(data.c_str()));
+  Logger::Log(ADDON_LOG_DEBUG, "POST data passed to CURL: length=%zu, c_str_length=%zu, Content-Length header=%s", 
+              data.length(), strlen(data.c_str()), contentLength.c_str());
   
   bool openSuccess = file.CURLOpen(ADDON_READ_NO_CACHE);
   
