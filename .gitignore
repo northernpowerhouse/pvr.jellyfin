@@ -44,3 +44,6 @@ build-debug.log
 /tmp/
 *.log
 *.tmp
+
+# Test recordings (mediainfo saved to devlog/apitest/)
+devlog/apitest/recordings_*/

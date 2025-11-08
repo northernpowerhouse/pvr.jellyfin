@@ -575,15 +575,25 @@ EOF
                     # Run mediainfo if available
                     if command -v mediainfo &> /dev/null; then
                         log_info "Running mediainfo analysis..."
-                        mediainfo "$OUTPUT_FILE" > "${RECORDINGS_DIR}/${CHANNEL_NAME}_${TIMESTAMP}.mediainfo.txt"
                         
-                        # Extract key info
+                        # Save full mediainfo output to apilogs folder with channel name
+                        MEDIAINFO_FILE="${OUTPUT_DIR}/mediainfo_${CHANNEL_NAME}_${TIMESTAMP}.txt"
+                        mediainfo "$OUTPUT_FILE" > "$MEDIAINFO_FILE"
+                        log_success "Mediainfo saved to: mediainfo_${CHANNEL_NAME}_${TIMESTAMP}.txt"
+                        
+                        # Extract and display key info
                         log_info "Stream details:"
                         echo "Video: $(mediainfo --Inform='Video;%Format% %Width%x%Height% %FrameRate%fps %BitRate/String%' "$OUTPUT_FILE")" | tee -a "$LOG_FILE"
                         echo "Audio: $(mediainfo --Inform='Audio;%Format% %Channel(s)%ch %SamplingRate/String% %BitRate/String%' "$OUTPUT_FILE")" | tee -a "$LOG_FILE"
+                        
+                        # Delete recording file to avoid pushing to GitHub
+                        log_info "Deleting recording file..."
+                        rm -f "$OUTPUT_FILE"
                     else
                         log_info "mediainfo not installed, skipping analysis"
                         log_info "Install with: brew install mediainfo (macOS) or apt install mediainfo (Linux)"
+                        log_info "Deleting recording file..."
+                        rm -f "$OUTPUT_FILE"
                     fi
                 else
                     log_error "Recording failed or empty file"
@@ -604,7 +614,14 @@ EOF
         log ""
     done
     
-    log_info "Recordings saved to: $RECORDINGS_DIR"
+    # Clean up empty recordings directory
+    if [ -d "$RECORDINGS_DIR" ] && [ -z "$(ls -A "$RECORDINGS_DIR")" ]; then
+        log_info "Cleaning up empty recordings directory..."
+        rmdir "$RECORDINGS_DIR"
+    fi
+    
+    log_success "Mediainfo outputs saved to: $OUTPUT_DIR/mediainfo_*.txt"
+    log_info "Recording files were deleted to avoid pushing to GitHub"
 else
     log_info "Recording disabled (ENABLE_RECORDING=false)"
 fi
