@@ -267,69 +267,28 @@ PVR_ERROR ChannelManager::GetChannelStreamProperties(const kodi::addon::PVRChann
   // This is the correct approach for Jellyfin.Xtream plugin
   Logger::Log(ADDON_LOG_DEBUG, "Using PlaybackInfo with AutoOpenLiveStream for Xtream compatibility");
   
-  // Build DeviceProfile for live TV (matching jellyfin-kodi addon structure)
+  // Build DeviceProfile for live TV
+  // We want Jellyfin to provide the raw stream (via Xtream plugin restream)
+  // Kodi will handle all decoding and downmixing with better performance
   Json::Value deviceProfile;
   deviceProfile["Name"] = "Kodi";
   deviceProfile["MaxStreamingBitrate"] = 120000000;
   deviceProfile["MaxStaticBitrate"] = 120000000;
-  deviceProfile["MusicStreamingTranscodingBitrate"] = 1280000;
-  deviceProfile["TimelineOffsetSeconds"] = 5;
   
-  // TranscodingProfiles
-  Json::Value transcodingProfiles(Json::arrayValue);
-  
-  // Live TV transcoding profile (HLS for live streams)
-  Json::Value liveTvProfile;
-  liveTvProfile["Container"] = "ts";
-  liveTvProfile["Type"] = "Video";
-  liveTvProfile["AudioCodec"] = "mp3,aac";
-  liveTvProfile["VideoCodec"] = "h264";
-  liveTvProfile["Context"] = "Streaming";
-  liveTvProfile["Protocol"] = "hls";
-  liveTvProfile["MaxAudioChannels"] = 2;  // Integer, not string
-  liveTvProfile["MinSegments"] = 1;       // Integer, not string
-  liveTvProfile["BreakOnNonKeyFrames"] = true;
-  transcodingProfiles.append(liveTvProfile);
-  
-  // Standard video profile
-  Json::Value videoProfile;
-  videoProfile["Container"] = "m3u8";
-  videoProfile["Type"] = "Video";
-  videoProfile["AudioCodec"] = "aac,mp3,ac3,opus,flac,vorbis";
-  videoProfile["VideoCodec"] = "h264,hevc,mpeg4,mpeg2video,vc1,av1";
-  videoProfile["MaxAudioChannels"] = 6;  // Integer, not string
-  transcodingProfiles.append(videoProfile);
-  
-  Json::Value audioProfile;
-  audioProfile["Type"] = "Audio";
-  transcodingProfiles.append(audioProfile);
-  
-  Json::Value photoProfile;
-  photoProfile["Container"] = "jpeg";
-  photoProfile["Type"] = "Photo";
-  transcodingProfiles.append(photoProfile);
-  
-  deviceProfile["TranscodingProfiles"] = transcodingProfiles;
-  
-  // DirectPlayProfiles (match jellyfin-kodi addon structure)
+  // DirectPlayProfiles - accept everything, let Kodi handle it
   Json::Value directPlayProfiles(Json::arrayValue);
   Json::Value videoDirectPlay;
   videoDirectPlay["Type"] = "Video";
-  videoDirectPlay["VideoCodec"] = "h264,hevc,mpeg4,mpeg2video,vc1,vp9,av1";
   directPlayProfiles.append(videoDirectPlay);
   
   Json::Value audioDirectPlay;
   audioDirectPlay["Type"] = "Audio";
   directPlayProfiles.append(audioDirectPlay);
   
-  Json::Value photoDirectPlay;
-  photoDirectPlay["Type"] = "Photo";
-  directPlayProfiles.append(photoDirectPlay);
-  
   deviceProfile["DirectPlayProfiles"] = directPlayProfiles;
   
-  // Empty arrays for required fields
-  deviceProfile["ResponseProfiles"] = Json::Value(Json::arrayValue);
+  // Empty/minimal transcoding profiles - we don't want transcoding
+  deviceProfile["TranscodingProfiles"] = Json::Value(Json::arrayValue);
   deviceProfile["ContainerProfiles"] = Json::Value(Json::arrayValue);
   deviceProfile["CodecProfiles"] = Json::Value(Json::arrayValue);
   deviceProfile["SubtitleProfiles"] = Json::Value(Json::arrayValue);
