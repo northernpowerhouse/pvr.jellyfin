@@ -24,8 +24,8 @@ fi
 
 source "$CONFIG_FILE"
 
-# Create output directory
-OUTPUT_DIR="/workspaces/pvr.jellyfin/devlog/apitest"
+# Create output directory (relative to script location)
+OUTPUT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)/devlog/apitest"
 mkdir -p "$OUTPUT_DIR"
 TIMESTAMP=$(date +%Y%m%d%H%M)
 LOG_FILE="${OUTPUT_DIR}/${TIMESTAMP}.log"
