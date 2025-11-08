@@ -179,15 +179,14 @@ std::string Connection::PerformHttpPost(const std::string& url, const std::strin
     Logger::Log(ADDON_LOG_DEBUG, "Auth header (no token)");
   }
   
-  // Set Content-Length explicitly BEFORE setting postdata
-  std::string contentLength = std::to_string(data.length());
-  file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "Content-Length", contentLength.c_str());
-  
-  // Now set the post data
+  // CRITICAL FIX: postdata with c_str() only sends 24 bytes for some reason
+  // Try using postfieldsize to tell CURL the exact size before setting postdata
+  std::string sizeStr = std::to_string(data.length());
+  file.CURLAddOption(ADDON_CURL_OPTION_PROTOCOL, "postfieldsize", sizeStr.c_str());
   file.CURLAddOption(ADDON_CURL_OPTION_PROTOCOL, "postdata", data.c_str());
   
-  Logger::Log(ADDON_LOG_DEBUG, "POST data passed to CURL: length=%zu, c_str_length=%zu, Content-Length header=%s", 
-              data.length(), strlen(data.c_str()), contentLength.c_str());
+  Logger::Log(ADDON_LOG_DEBUG, "POST data passed to CURL: length=%zu, c_str_length=%zu, postfieldsize=%s", 
+              data.length(), strlen(data.c_str()), sizeStr.c_str());
   
   bool openSuccess = file.CURLOpen(ADDON_READ_NO_CACHE);
   
