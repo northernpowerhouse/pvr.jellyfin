@@ -184,14 +184,19 @@ std::string Connection::PerformHttpPost(const std::string& url, const std::strin
     Logger::Log(ADDON_LOG_DEBUG, "Auth header (no token)");
   }
   
-  // CRITICAL BUG WORKAROUND: Kodi's CURL "postdata" option truncates at 24 bytes
-  // Our string has all 32 bytes correct, but only 24 reach the server
-  // Try using "post" instead of "postdata" - different CURL option
+  // SOLUTION: Kodi's "postdata" protocol option requires Base64 encoding!
+  // Found in xbmc/filesystem/CurlFile.cpp line 919-923:
+  //   else if (name == "postdata")
+  //   {
+  //     m_postdata = Base64::Decode(value);
+  //     m_postdataset = true;
+  //   }
+  // Documentation confirms: "Set the post body (value needs to be base64 encoded)"
   
-  Logger::Log(ADDON_LOG_DEBUG, "Setting POST body: %s", data.c_str());
+  std::string base64Data = Utilities::Base64Encode(data);
+  Logger::Log(ADDON_LOG_DEBUG, "POST data: %zu bytes, base64: %zu bytes", data.length(), base64Data.length());
   
-  // Try "post" option instead of "postdata"
-  file.CURLAddOption(ADDON_CURL_OPTION_PROTOCOL, "post", data.c_str());
+  file.CURLAddOption(ADDON_CURL_OPTION_PROTOCOL, "postdata", base64Data.c_str());
   
   bool openSuccess = file.CURLOpen(ADDON_READ_NO_CACHE);
   
