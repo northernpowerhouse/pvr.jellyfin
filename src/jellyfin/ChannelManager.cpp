@@ -268,7 +268,7 @@ PVR_ERROR ChannelManager::GetChannelStreamProperties(const kodi::addon::PVRChann
   std::string mediaSourcesUrl = "/Items/" + channelId;
   Json::Value channelInfo;
   
-  if (!m_connection->SendGetRequest(mediaSourcesUrl, channelInfo))
+  if (!m_connection->SendRequest(mediaSourcesUrl, channelInfo))
   {
     Logger::Log(ADDON_LOG_ERROR, "Failed to get channel info for: %s", channelId.c_str());
     return PVR_ERROR_SERVER_ERROR;
