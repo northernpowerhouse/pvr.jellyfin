@@ -158,15 +158,9 @@ std::string Connection::PerformHttpPost(const std::string& url, const std::strin
   
   file.CURLAddOption(ADDON_CURL_OPTION_PROTOCOL, "postdata", data.c_str());
   
-  if (!file.CURLOpen(ADDON_READ_NO_CACHE))
-  {
-    Logger::Log(ADDON_LOG_ERROR, "HTTP POST failed for URL: %s", url.c_str());
-    Logger::Log(ADDON_LOG_ERROR, "POST request body was: %s", data.c_str());
-    Logger::Log(ADDON_LOG_ERROR, "X-Emby-Authorization header: %s", 
-                m_apiKey.empty() ? "MediaBrowser Client=\"Kodi PVR\", Device=\"Kodi\", DeviceId=\"kodi-pvr-jellyfin\", Version=\"1.0.0\"" : "(with token)");
-    return "";
-  }
+  bool openSuccess = file.CURLOpen(ADDON_READ_NO_CACHE);
   
+  // Try to read response regardless of openSuccess, as error responses may still have body
   std::string response;
   char buffer[1024];
   ssize_t bytesRead;
@@ -175,6 +169,23 @@ std::string Connection::PerformHttpPost(const std::string& url, const std::strin
     response.append(buffer, bytesRead);
   }
   file.Close();
+  
+  if (!openSuccess)
+  {
+    Logger::Log(ADDON_LOG_ERROR, "HTTP POST failed for URL: %s", url.c_str());
+    Logger::Log(ADDON_LOG_ERROR, "POST request body was: %s", data.c_str());
+    Logger::Log(ADDON_LOG_ERROR, "X-Emby-Authorization header: %s", 
+                m_apiKey.empty() ? "MediaBrowser Client=\"Kodi PVR\", Device=\"Kodi\", DeviceId=\"kodi-pvr-jellyfin\", Version=\"1.0.0\"" : "(with token)");
+    if (!response.empty())
+    {
+      Logger::Log(ADDON_LOG_ERROR, "HTTP error response body: %s", response.c_str());
+    }
+    else
+    {
+      Logger::Log(ADDON_LOG_ERROR, "No response body available");
+    }
+    return "";
+  }
   
   Logger::Log(ADDON_LOG_DEBUG, "HTTP POST response (%zu bytes): %.500s", response.length(), response.c_str());
   
