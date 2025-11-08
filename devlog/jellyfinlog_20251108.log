@@ -267,3 +267,7 @@ ClaimsAuthorizationRequirement:Claim.Type=http://schemas.microsoft.com/ws/2008/0
 [2025-11-08 20:42:49.669 +00:00] [INF] [6] Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker: Executed action "Jellyfin.Api.Controllers.UserController.AuthenticateUserByName (Jellyfin.Api)" in 23.5797ms
 [2025-11-08 20:42:49.669 +00:00] [INF] [6] Microsoft.AspNetCore.Routing.EndpointMiddleware: Executed endpoint '"Jellyfin.Api.Controllers.UserController.AuthenticateUserByName (Jellyfin.Api)"'
 [2025-11-08 20:42:49.669 +00:00] [INF] [6] Microsoft.AspNetCore.Hosting.Diagnostics: Request finished "HTTP/1.1" "POST" "http"://"192.168.1.180:8096""""/Users/AuthenticateByName""" - 400 null "application/json; charset=utf-8" 36.4051ms
+[2025-11-08 20:43:12.937 +00:00] [INF] [6] Microsoft.AspNetCore.Hosting.Diagnostics: Request starting "HTTP/1.1" "GET" "http"://"localhost:8096""""/health""" - null null
+[2025-11-08 20:43:12.937 +00:00] [INF] [6] Microsoft.AspNetCore.Routing.EndpointMiddleware: Executing endpoint '"Health checks"'
+[2025-11-08 20:43:12.938 +00:00] [INF] [22] Microsoft.AspNetCore.Routing.EndpointMiddleware: Executed endpoint '"Health checks"'
+[2025-11-08 20:43:12.939 +00:00] [INF] [22] Microsoft.AspNetCore.Hosting.Diagnostics: Request finished "HTTP/1.1" "GET" "http"://"localhost:8096""""/health""" - 200 null "text/plain" 1.8419ms
