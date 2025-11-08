@@ -58,11 +58,13 @@ bool Connection::SendPostRequest(const std::string& endpoint, const Json::Value&
   builder["indentation"] = "";
   std::string jsonData = Json::writeString(builder, data);
   
-  // Remove any trailing newline that jsoncpp might add
-  if (!jsonData.empty() && jsonData.back() == '\n')
+  // Remove any trailing whitespace (newline, etc) that jsoncpp might add
+  while (!jsonData.empty() && (jsonData.back() == '\n' || jsonData.back() == '\r' || jsonData.back() == ' ' || jsonData.back() == '\t'))
   {
     jsonData.pop_back();
   }
+  
+  Logger::Log(ADDON_LOG_DEBUG, "JSON after cleanup (%zu bytes): %s", jsonData.length(), jsonData.c_str());
   
   std::string responseStr = PerformHttpPost(url, jsonData);
   
