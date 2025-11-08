@@ -286,8 +286,8 @@ PVR_ERROR ChannelManager::GetChannelStreamProperties(const kodi::addon::PVRChann
   liveTvProfile["VideoCodec"] = "h264";
   liveTvProfile["Context"] = "Streaming";
   liveTvProfile["Protocol"] = "hls";
-  liveTvProfile["MaxAudioChannels"] = "2";
-  liveTvProfile["MinSegments"] = "1";
+  liveTvProfile["MaxAudioChannels"] = 2;  // Integer, not string
+  liveTvProfile["MinSegments"] = 1;       // Integer, not string
   liveTvProfile["BreakOnNonKeyFrames"] = true;
   transcodingProfiles.append(liveTvProfile);
   
@@ -297,7 +297,7 @@ PVR_ERROR ChannelManager::GetChannelStreamProperties(const kodi::addon::PVRChann
   videoProfile["Type"] = "Video";
   videoProfile["AudioCodec"] = "aac,mp3,ac3,opus,flac,vorbis";
   videoProfile["VideoCodec"] = "h264,hevc,mpeg4,mpeg2video,vc1,av1";
-  videoProfile["MaxAudioChannels"] = "6";
+  videoProfile["MaxAudioChannels"] = 6;  // Integer, not string
   transcodingProfiles.append(videoProfile);
   
   Json::Value audioProfile;
