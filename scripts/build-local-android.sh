@@ -142,24 +142,34 @@ update_repo() {
     fi
 }
 
-# Function to get version from git
+# Function to get version from VERSION file
 get_version() {
     cd "$PROJECT_DIR"
     
-    # Try to get version from latest tag
+    # Read version from VERSION file
+    if [ -f "$PROJECT_DIR/VERSION" ]; then
+        local version=$(cat "$PROJECT_DIR/VERSION" | tr -d '[:space:]')
+        if [ -n "$version" ]; then
+            print_info "Using version: $version" >&2
+            echo "$version"
+            return 0
+        fi
+    fi
+    
+    # Fallback: Try to get version from latest tag
     local version=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
     
     if [ -z "$version" ]; then
         # No tags, use date-based version
         version="0.1.0-dev.$(date +%Y%m%d.%H%M%S)"
-        print_warning "No git tags found, using generated version: $version" >&2
+        print_warning "No VERSION file or git tags found, using generated version: $version" >&2
     else
         # Add commit count if not on a tag
         local commits_ahead=$(git rev-list ${version}..HEAD --count)
         if [ "$commits_ahead" -gt 0 ]; then
             version="${version}+${commits_ahead}.$(git rev-parse --short HEAD)"
         fi
-        print_info "Using version: $version" >&2
+        print_warning "VERSION file not found, using git-based version: $version" >&2
     fi
     
     # Strip leading 'v' if present (Kodi doesn't allow 'v' in version numbers)
@@ -728,6 +738,40 @@ main() {
         fi
     fi
     
+    # Increment version for next build (only if build succeeded and VERSION file exists)
+    if [ $BUILD_FAILED -eq 0 ] && [ -f "$PROJECT_DIR/VERSION" ]; then
+        print_info "Incrementing version for next build..."
+        
+        # Read current version
+        CURRENT_VERSION=$(cat "$PROJECT_DIR/VERSION" | tr -d '[:space:]')
+        
+        # Parse version components
+        IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
+        
+        # Increment patch version
+        PATCH=$((PATCH + 1))
+        NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+        
+        # Write new version
+        echo "$NEW_VERSION" > "$PROJECT_DIR/VERSION"
+        
+        print_info "Version updated: $CURRENT_VERSION → $NEW_VERSION"
+        
+        # Commit and push the version update
+        git add "$PROJECT_DIR/VERSION"
+        if git commit -m "Bump version to $NEW_VERSION"; then
+            print_success "Version incremented and committed"
+            
+            if git push; then
+                print_success "Version update pushed to GitHub"
+            else
+                print_warning "Failed to push version update (non-fatal)"
+            fi
+        else
+            print_info "No changes to commit (VERSION already at $NEW_VERSION)"
+        fi
+    fi
+    
     echo ""
     echo "================================================================"
     
@@ -755,6 +799,8 @@ main() {
         fi
         echo ""
         print_success "GitHub release created/updated for version: $VERSION"
+        echo ""
+        print_info "Next build will use version: $NEW_VERSION"
         echo ""
         print_info "To install in Kodi:"
         echo "  1. Download repository.jellyfin.pvr-${VERSION}.zip from the release"
