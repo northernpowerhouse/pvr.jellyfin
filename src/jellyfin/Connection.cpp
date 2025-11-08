@@ -58,6 +58,12 @@ bool Connection::SendPostRequest(const std::string& endpoint, const Json::Value&
   builder["indentation"] = "";
   std::string jsonData = Json::writeString(builder, data);
   
+  // Remove any trailing newline that jsoncpp might add
+  if (!jsonData.empty() && jsonData.back() == '\n')
+  {
+    jsonData.pop_back();
+  }
+  
   std::string responseStr = PerformHttpPost(url, jsonData);
   
   if (responseStr.empty())
