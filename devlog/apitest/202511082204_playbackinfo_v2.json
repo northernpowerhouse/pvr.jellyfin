@@ -1,0 +1,35 @@
+{
+  "MediaSources": [
+    {
+      "Protocol": "File",
+      "Id": "9eb7bf0fcb803b706bff593ee8d8b18a",
+      "Type": "Default",
+      "Name": "BBC One FHD",
+      "IsRemote": false,
+      "ReadAtNativeFramerate": false,
+      "IgnoreDts": false,
+      "IgnoreIndex": false,
+      "GenPtsInput": false,
+      "SupportsTranscoding": true,
+      "SupportsDirectStream": false,
+      "SupportsDirectPlay": false,
+      "IsInfiniteStream": true,
+      "UseMostCompatibleTranscodingProfile": false,
+      "RequiresOpening": true,
+      "OpenToken": "e2329f4997b378e64ccf8fa396deb76e_LiveTvChannel_9eb7bf0fcb803b706bff593ee8d8b18a_9eb7bf0fcb803b706bff593ee8d8b18a",
+      "RequiresClosing": false,
+      "BufferMs": 1500,
+      "RequiresLooping": false,
+      "SupportsProbing": true,
+      "MediaStreams": [],
+      "MediaAttachments": [],
+      "Formats": [],
+      "RequiredHttpHeaders": {},
+      "TranscodingUrl": "/videos/9eb7bf0f-cb80-3b70-6bff-593ee8d8b18a/master.m3u8?&DeviceId=test-device-12345&MediaSourceId=9eb7bf0fcb803b706bff593ee8d8b18a&VideoCodec=h264&AudioCodec=aac&VideoBitrate=119808000&AudioBitrate=192000&SegmentContainer=ts&BreakOnNonKeyFrames=False&PlaySessionId=e05643bac410486d8bb5d3a4e435eb1c&ApiKey=b8cea675a254492fbee0aec1877912bd&RequireAvc=false&EnableAudioVbrEncoding=true&TranscodeReasons=ContainerNotSupported,VideoCodecNotSupported",
+      "TranscodingSubProtocol": "hls",
+      "TranscodingContainer": "ts",
+      "HasSegments": false
+    }
+  ],
+  "PlaySessionId": "e05643bac410486d8bb5d3a4e435eb1c"
+}
