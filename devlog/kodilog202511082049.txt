@@ -1627,3 +1627,50 @@
 2025-11-08 21:49:38.537 T:32690   debug <general>: ------ Window Deinit (DialogSelect.xml) ------
 2025-11-08 21:49:38.541 T:32750    info <general>: KodiGithubLogs: Building log payload (level=debug, include_old=True, exclude_startup=False)
 2025-11-08 21:49:38.541 T:32750    info <general>: KodiGithubLogs: Checking log path: special://logpath/kodi.log -> /storage/emulated/0/Android/data/org.xbmc.kodi/files/.kodi/temp/kodi.log
+2025-11-08 21:49:38.542 T:32750    info <general>: KodiGithubLogs: Read 197233 bytes from /storage/emulated/0/Android/data/org.xbmc.kodi/files/.kodi/temp/kodi.log
+2025-11-08 21:49:38.543 T:32750    info <general>: KodiGithubLogs: Checking log path: special://logpath/kodi.old -> /storage/emulated/0/Android/data/org.xbmc.kodi/files/.kodi/temp/kodi.old
+2025-11-08 21:49:38.543 T:32750 warning <general>: KodiGithubLogs: Log file does not exist: /storage/emulated/0/Android/data/org.xbmc.kodi/files/.kodi/temp/kodi.old
+2025-11-08 21:49:38.543 T:32750    info <general>: KodiGithubLogs: Total log text length: 197188
+2025-11-08 21:49:38.547 T:32750    info <general>: KodiGithubLogs: Uploading to northernpowerhouse/pvr.jellyfin/devlog/kodilog202511082049.txt
+2025-11-08 21:49:40.138 T:32750    info <general>: KodiGithubLogs: Upload successful
+2025-11-08 21:49:40.144 T:32690   debug <general>: ------ Window Init (DialogConfirm.xml) ------
+2025-11-08 21:49:41.737 T:32689   debug <general>: CAndroidKey: key down (dev: -1; src: 33554433; code: 23 (AKEYCODE_DPAD_CENTER); repeat: 0; flags: 0x8; alt: no; shift: no; sym: no)
+2025-11-08 21:49:41.794 T:32690   debug <general>: Keyboard: scancode: 0x17, sym: 0x0d (enter), unicode: 0x00, modifier: 0x0
+2025-11-08 21:49:41.872 T:32689   debug <general>: CAndroidKey: key up (dev: -1; src: 33554433; code: 23 (AKEYCODE_DPAD_CENTER); repeat: 0; flags: 0x8; alt: no; shift: no; sym: no)
+2025-11-08 21:49:41.899 T:32690   debug <general>: Keyboard: scancode: 0x17, sym: 0x0d (enter), unicode: 0x00, modifier: 0x0
+2025-11-08 21:49:41.899 T:32690   debug <general>: HandleKey: return (0xf00d) pressed, window 12002, action is Select
+2025-11-08 21:49:42.141 T:32690   debug <general>: ------ Window Deinit (DialogConfirm.xml) ------
+2025-11-08 21:49:42.154 T:32690   debug <general>: ------ Window Init (DialogSelect.xml) ------
+2025-11-08 21:49:42.526 T:32689   debug <general>: CAndroidKey: key down (dev: -1; src: 33554433; code: 21 (AKEYCODE_DPAD_LEFT); repeat: 0; flags: 0x8; alt: no; shift: no; sym: no)
+2025-11-08 21:49:42.550 T:32690   debug <general>: Keyboard: scancode: 0x15, sym: 0x114 (left), unicode: 0x00, modifier: 0x0
+2025-11-08 21:49:42.550 T:32690   debug <general>: HandleKey: left (0xf082) pressed, window 12000, action is Left
+2025-11-08 21:49:42.623 T:32689   debug <general>: CAndroidKey: key up (dev: -1; src: 33554433; code: 21 (AKEYCODE_DPAD_LEFT); repeat: 0; flags: 0x8; alt: no; shift: no; sym: no)
+2025-11-08 21:49:42.642 T:32690   debug <general>: Keyboard: scancode: 0x15, sym: 0x114 (left), unicode: 0x00, modifier: 0x0
+2025-11-08 21:49:42.798 T:32689   debug <general>: CAndroidKey: key down (dev: -1; src: 33554433; code: 21 (AKEYCODE_DPAD_LEFT); repeat: 0; flags: 0x8; alt: no; shift: no; sym: no)
+2025-11-08 21:49:42.820 T:32690   debug <general>: Keyboard: scancode: 0x15, sym: 0x114 (left), unicode: 0x00, modifier: 0x0
+2025-11-08 21:49:42.821 T:32690   debug <general>: HandleKey: left (0xf082) pressed, window 12000, action is Left
+2025-11-08 21:49:42.925 T:32689   debug <general>: CAndroidKey: key up (dev: -1; src: 33554433; code: 21 (AKEYCODE_DPAD_LEFT); repeat: 0; flags: 0x8; alt: no; shift: no; sym: no)
+2025-11-08 21:49:42.954 T:32690   debug <general>: Keyboard: scancode: 0x15, sym: 0x114 (left), unicode: 0x00, modifier: 0x0
+2025-11-08 21:49:43.940 T:32689   debug <general>: CAndroidKey: key down (dev: -1; src: 33554433; code: 20 (AKEYCODE_DPAD_DOWN); repeat: 0; flags: 0x8; alt: no; shift: no; sym: no)
+2025-11-08 21:49:43.994 T:32690   debug <general>: Keyboard: scancode: 0x14, sym: 0x112 (down), unicode: 0x00, modifier: 0x0
+2025-11-08 21:49:43.994 T:32690   debug <general>: HandleKey: down (0xf081) pressed, window 12000, action is Down
+2025-11-08 21:49:44.035 T:32689   debug <general>: CAndroidKey: key up (dev: -1; src: 33554433; code: 20 (AKEYCODE_DPAD_DOWN); repeat: 0; flags: 0x8; alt: no; shift: no; sym: no)
+2025-11-08 21:49:44.094 T:32690   debug <general>: Keyboard: scancode: 0x14, sym: 0x112 (down), unicode: 0x00, modifier: 0x0
+2025-11-08 21:49:44.311 T:32689   debug <general>: CAndroidKey: key down (dev: -1; src: 33554433; code: 20 (AKEYCODE_DPAD_DOWN); repeat: 0; flags: 0x8; alt: no; shift: no; sym: no)
+2025-11-08 21:49:44.338 T:32690   debug <general>: Keyboard: scancode: 0x14, sym: 0x112 (down), unicode: 0x00, modifier: 0x0
+2025-11-08 21:49:44.338 T:32690   debug <general>: HandleKey: down (0xf081) pressed, window 12000, action is Down
+2025-11-08 21:49:44.413 T:32689   debug <general>: CAndroidKey: key up (dev: -1; src: 33554433; code: 20 (AKEYCODE_DPAD_DOWN); repeat: 0; flags: 0x8; alt: no; shift: no; sym: no)
+2025-11-08 21:49:44.462 T:32690   debug <general>: Keyboard: scancode: 0x14, sym: 0x112 (down), unicode: 0x00, modifier: 0x0
+2025-11-08 21:49:44.803 T:32689   debug <general>: CAndroidKey: key down (dev: -1; src: 33554433; code: 20 (AKEYCODE_DPAD_DOWN); repeat: 0; flags: 0x8; alt: no; shift: no; sym: no)
+2025-11-08 21:49:44.850 T:32690   debug <general>: Keyboard: scancode: 0x14, sym: 0x112 (down), unicode: 0x00, modifier: 0x0
+2025-11-08 21:49:44.851 T:32690   debug <general>: HandleKey: down (0xf081) pressed, window 12000, action is Down
+2025-11-08 21:49:44.903 T:32689   debug <general>: CAndroidKey: key up (dev: -1; src: 33554433; code: 20 (AKEYCODE_DPAD_DOWN); repeat: 0; flags: 0x8; alt: no; shift: no; sym: no)
+2025-11-08 21:49:44.960 T:32690   debug <general>: Keyboard: scancode: 0x14, sym: 0x112 (down), unicode: 0x00, modifier: 0x0
+2025-11-08 21:49:45.358 T:32689   debug <general>: CAndroidKey: key down (dev: -1; src: 33554433; code: 23 (AKEYCODE_DPAD_CENTER); repeat: 0; flags: 0x8; alt: no; shift: no; sym: no)
+2025-11-08 21:49:45.383 T:32690   debug <general>: Keyboard: scancode: 0x17, sym: 0x0d (enter), unicode: 0x00, modifier: 0x0
+2025-11-08 21:49:45.475 T:32689   debug <general>: CAndroidKey: key up (dev: -1; src: 33554433; code: 23 (AKEYCODE_DPAD_CENTER); repeat: 0; flags: 0x8; alt: no; shift: no; sym: no)
+2025-11-08 21:49:45.502 T:32690   debug <general>: Keyboard: scancode: 0x17, sym: 0x0d (enter), unicode: 0x00, modifier: 0x0
+2025-11-08 21:49:45.502 T:32690   debug <general>: HandleKey: return (0xf00d) pressed, window 12000, action is Select
+2025-11-08 21:49:45.763 T:32690   debug <general>: ------ Window Deinit (DialogSelect.xml) ------
+2025-11-08 21:49:45.770 T:32750    info <general>: KodiGithubLogs: Building log payload (level=debug, include_old=True, exclude_startup=False)
+2025-11-08 21:49:45.771 T:32750    info <general>: KodiGithubLogs: Checking log path: special://logpath/kodi.log -> /storage/emulated/0/Android/data/org.xbmc.kodi/files/.kodi/temp/kodi.log
