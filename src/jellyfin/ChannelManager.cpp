@@ -342,9 +342,10 @@ PVR_ERROR ChannelManager::GetChannelStreamProperties(const kodi::addon::PVRChann
   
   // Debug: Log the request JSON
   Json::StreamWriterBuilder writerBuilder;
-  writerBuilder["indentation"] = "";
+  writerBuilder["indentation"] = "  ";  // Pretty print for debugging
   std::string requestJson = Json::writeString(writerBuilder, playbackInfoRequest);
   Logger::Log(ADDON_LOG_DEBUG, "PlaybackInfo request JSON length: %zu bytes", requestJson.length());
+  Logger::Log(ADDON_LOG_DEBUG, "PlaybackInfo request (first 500 chars): %.500s", requestJson.c_str());
   
   // POST /Items/{id}/PlaybackInfo
   std::string playbackInfoUrl = "/Items/" + channelId + "/PlaybackInfo";
