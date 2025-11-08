@@ -1,0 +1,33 @@
+{
+  "MediaSources": [
+    {
+      "Protocol": "File",
+      "Id": "5a374cd1fe02b7347ee65b74590e119b",
+      "Type": "Default",
+      "Name": "BBC Two FHD",
+      "IsRemote": false,
+      "ReadAtNativeFramerate": false,
+      "IgnoreDts": false,
+      "IgnoreIndex": false,
+      "GenPtsInput": false,
+      "SupportsTranscoding": false,
+      "SupportsDirectStream": false,
+      "SupportsDirectPlay": false,
+      "IsInfiniteStream": true,
+      "UseMostCompatibleTranscodingProfile": false,
+      "RequiresOpening": true,
+      "OpenToken": "e2329f4997b378e64ccf8fa396deb76e_LiveTvChannel_5a374cd1fe02b7347ee65b74590e119b_5a374cd1fe02b7347ee65b74590e119b",
+      "RequiresClosing": false,
+      "BufferMs": 1500,
+      "RequiresLooping": false,
+      "SupportsProbing": true,
+      "MediaStreams": [],
+      "MediaAttachments": [],
+      "Formats": [],
+      "RequiredHttpHeaders": {},
+      "TranscodingSubProtocol": "http",
+      "HasSegments": false
+    }
+  ],
+  "PlaySessionId": "c51bae7e1ea543a18ae943129e910297"
+}
