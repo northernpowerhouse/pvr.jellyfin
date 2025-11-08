@@ -45,7 +45,9 @@ jobs:
           if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
             VERSION="${GITHUB_REF#refs/tags/v}"
           else
-            VERSION="0.0.${GITHUB_RUN_NUMBER}"
+            # Read version from VERSION file
+            VERSION=$(cat ${{ env.app_id }}/VERSION)
+            echo "Read VERSION from file: $VERSION"
           fi
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "Selected VERSION=$VERSION"
@@ -88,7 +90,20 @@ jobs:
             exit 1
           fi
           echo "Found addon package: $ADDON_ZIP"
-          cp "$ADDON_ZIP" "${{ github.workspace }}/${{ env.app_id }}-${VERSION}.zip"
+          
+          # Extract the zip to rename with our version
+          TEMP_DIR=$(mktemp -d)
+          unzip -q "$ADDON_ZIP" -d "$TEMP_DIR"
+          
+          # Update addon.xml with our VERSION
+          sed -i "s/version=\"[^\"]*\"/version=\"${VERSION}\"/" "$TEMP_DIR/${{ env.app_id }}/addon.xml"
+          
+          # Repackage with our version number
+          cd "$TEMP_DIR"
+          zip -q -r "${{ github.workspace }}/${{ env.app_id }}-${VERSION}.zip" "${{ env.app_id }}"
+          cd "${{ github.workspace }}"
+          rm -rf "$TEMP_DIR"
+          
           ls -lh "${{ github.workspace }}/${{ env.app_id }}-${VERSION}.zip"
 
       - name: Create repository package
@@ -99,6 +114,17 @@ jobs:
           ./scripts/package_repo.sh "${VERSION}"
           mv "repository.jellyfin.pvr-${VERSION}.zip" "${{ github.workspace }}/"
           ls -lh "${{ github.workspace }}/repository.jellyfin.pvr-${VERSION}.zip"
+
+      - name: Increment version for next build
+        run: |
+          cd ${{ env.app_id }}
+          chmod +x scripts/increment_version.sh
+          ./scripts/increment_version.sh
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add VERSION
+          git commit -m "Bump version after successful build v${{ env.VERSION }}"
+          git push
 
       - name: Create release and upload artifacts
         uses: softprops/action-gh-release@v1
