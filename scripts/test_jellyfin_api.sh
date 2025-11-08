@@ -440,3 +440,29 @@ log_info "Analyze the JSON files to find the working API approach!"
 echo ""
 echo -e "${GREEN}Testing complete!${NC}"
 echo "Results in: $OUTPUT_DIR"
+
+# Commit and push results to GitHub
+log_section "Pushing results to GitHub"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+cd "$REPO_ROOT"
+
+if git rev-parse --git-dir > /dev/null 2>&1; then
+    log_info "Adding test results to git..."
+    git add devlog/apitest/
+    
+    if git diff --cached --quiet; then
+        log_info "No new files to commit"
+    else
+        log_info "Committing test results..."
+        git commit -m "Add API test results - ${TIMESTAMP}"
+        
+        log_info "Pushing to GitHub..."
+        if git push origin main; then
+            log_success "Results pushed to GitHub successfully!"
+        else
+            log_error "Failed to push to GitHub. You may need to push manually."
+        fi
+    fi
+else
+    log_error "Not a git repository. Results saved locally only."
+fi
