@@ -375,7 +375,7 @@ PVR_ERROR ChannelManager::GetChannelStreamProperties(const kodi::addon::PVRChann
   Json::Value playbackInfoRequest;
   playbackInfoRequest["UserId"] = m_userId;
   playbackInfoRequest["DeviceProfile"] = deviceProfile;
-  playbackInfoRequest["AutoOpenLiveStream"] = true;
+  playbackInfoRequest["AutoOpenLiveStream"] = true;  // KEY: This triggers Xtream plugin to open the stream
   
   // Debug: Log the request JSON
   Json::StreamWriterBuilder writerBuilder;
