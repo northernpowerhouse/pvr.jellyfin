@@ -164,10 +164,31 @@ get_device_profile_minimal() {
 EOF
 }
 
+get_device_profile_passthrough() {
+    cat <<'EOF'
+{
+  "Name": "Kodi",
+  "MaxStreamingBitrate": 120000000,
+  "MaxStaticBitrate": 120000000,
+  "DirectPlayProfiles": [
+    {"Type": "Video"},
+    {"Type": "Audio"}
+  ],
+  "TranscodingProfiles": [],
+  "ContainerProfiles": [],
+  "CodecProfiles": [],
+  "SubtitleProfiles": []
+}
+EOF
+}
+
 # Start testing
 log_section "Jellyfin Live TV API Test - $TIMESTAMP"
 log "Server: $SERVER_URL"
-log "Channel ID: $CHANNEL_ID"
+
+# Parse channel IDs
+IFS=',' read -ra CHANNEL_ARRAY <<< "$CHANNEL_IDS"
+log "Testing ${#CHANNEL_ARRAY[@]} channel(s): ${CHANNEL_IDS}"
 
 # Test 1: Authenticate with username/password
 log_section "TEST 1: Authenticate with Username/Password"
@@ -201,6 +222,11 @@ X_EMBY_AUTH_API="X-Emby-Authorization: MediaBrowser Client=\"$CLIENT_NAME\", Dev
 
 # Test 2: Get channel info
 log_section "TEST 2: GET /Items/{ChannelId} - Get Channel Info"
+
+# Just test the first channel with both auth methods
+CHANNEL_ID="${CHANNEL_ARRAY[0]}"
+log_info "Testing first channel: $CHANNEL_ID"
+
 for auth_type in "TOKEN" "APIKEY"; do
     log_info "Testing with $auth_type"
     if [ "$auth_type" = "TOKEN" ]; then
@@ -234,7 +260,7 @@ done
 # Test 3: PlaybackInfo with different DeviceProfiles
 log_section "TEST 3: POST /Items/{ChannelId}/PlaybackInfo - Standard Method"
 
-for profile_type in "v1" "v2" "minimal" "none"; do
+for profile_type in "v1" "v2" "minimal" "passthrough" "none"; do
     log_info "Testing with DeviceProfile: $profile_type"
     
     case $profile_type in
@@ -246,6 +272,9 @@ for profile_type in "v1" "v2" "minimal" "none"; do
             ;;
         "minimal")
             device_profile=$(get_device_profile_minimal)
+            ;;
+        "passthrough")
+            device_profile=$(get_device_profile_passthrough)
             ;;
         "none")
             device_profile="{}"
@@ -481,6 +510,103 @@ if [ "$http_code" = "200" ]; then
 else
     log_error "Failed to get user items (HTTP $http_code)"
     save_response "user_items_error" "$response"
+fi
+
+# Test 11: Record and analyze streams for each channel
+if [ "$ENABLE_RECORDING" = "true" ]; then
+    log_section "TEST 11: Record and Analyze Streams"
+    
+    # Create recordings directory
+    RECORDINGS_DIR="${OUTPUT_DIR}/recordings_${TIMESTAMP}"
+    mkdir -p "$RECORDINGS_DIR"
+    
+    for CHANNEL_ID in "${CHANNEL_ARRAY[@]}"; do
+        log_info "Processing channel: $CHANNEL_ID"
+        
+        # Get channel name first
+        result=$(api_request "GET" "/Items/$CHANNEL_ID" "" "$X_EMBY_AUTH")
+        http_code=$(echo "$result" | cut -d'|' -f1)
+        response=$(echo "$result" | cut -d'|' -f2-)
+        
+        if [ "$http_code" = "200" ]; then
+            CHANNEL_NAME=$(echo "$response" | jq -r '.Name // "Unknown"' | tr ' ' '_' | tr '/' '-')
+            log_info "Channel name: $CHANNEL_NAME"
+        else
+            CHANNEL_NAME="channel_${CHANNEL_ID:0:8}"
+        fi
+        
+        # Open live stream with passthrough profile
+        log_info "Opening live stream for $CHANNEL_NAME..."
+        
+        playback_body=$(cat <<EOF
+{
+  "UserId": "$CURRENT_USER_ID",
+  "AutoOpenLiveStream": true,
+  "MaxStreamingBitrate": 120000000,
+  "DeviceProfile": $(get_device_profile_passthrough)
+}
+EOF
+)
+        
+        result=$(api_request "POST" "/Items/$CHANNEL_ID/PlaybackInfo" "$playback_body" "$X_EMBY_AUTH")
+        http_code=$(echo "$result" | cut -d'|' -f1)
+        response=$(echo "$result" | cut -d'|' -f2-)
+        
+        if [ "$http_code" = "200" ]; then
+            stream_path=$(echo "$response" | jq -r '.MediaSources[0].Path // empty')
+            live_stream_id=$(echo "$response" | jq -r '.MediaSources[0].LiveStreamId // empty')
+            
+            if [ -n "$stream_path" ]; then
+                # Replace Docker IP with actual server
+                stream_url=$(echo "$stream_path" | sed "s|http://[0-9.]*:8096|${SERVER_URL}|")
+                
+                log_success "Got stream URL: $stream_url"
+                
+                # Record stream
+                OUTPUT_FILE="${RECORDINGS_DIR}/${CHANNEL_NAME}_${TIMESTAMP}.ts"
+                log_info "Recording $RECORD_DURATION seconds to: $OUTPUT_FILE"
+                
+                timeout $RECORD_DURATION curl -s "$stream_url" -o "$OUTPUT_FILE" 2>&1 | head -n 5
+                
+                if [ -f "$OUTPUT_FILE" ] && [ -s "$OUTPUT_FILE" ]; then
+                    FILE_SIZE=$(stat -f%z "$OUTPUT_FILE" 2>/dev/null || stat -c%s "$OUTPUT_FILE" 2>/dev/null)
+                    log_success "Recorded ${FILE_SIZE} bytes"
+                    
+                    # Run mediainfo if available
+                    if command -v mediainfo &> /dev/null; then
+                        log_info "Running mediainfo analysis..."
+                        mediainfo "$OUTPUT_FILE" > "${RECORDINGS_DIR}/${CHANNEL_NAME}_${TIMESTAMP}.mediainfo.txt"
+                        
+                        # Extract key info
+                        log_info "Stream details:"
+                        echo "Video: $(mediainfo --Inform='Video;%Format% %Width%x%Height% %FrameRate%fps %BitRate/String%' "$OUTPUT_FILE")" | tee -a "$LOG_FILE"
+                        echo "Audio: $(mediainfo --Inform='Audio;%Format% %Channel(s)%ch %SamplingRate/String% %BitRate/String%' "$OUTPUT_FILE")" | tee -a "$LOG_FILE"
+                    else
+                        log_info "mediainfo not installed, skipping analysis"
+                        log_info "Install with: brew install mediainfo (macOS) or apt install mediainfo (Linux)"
+                    fi
+                else
+                    log_error "Recording failed or empty file"
+                fi
+                
+                # Close the stream
+                if [ -n "$live_stream_id" ]; then
+                    log_info "Closing stream..."
+                    api_request "POST" "/LiveTv/LiveStreams/Close" "{\"LiveStreamId\": \"$live_stream_id\"}" "$X_EMBY_AUTH" > /dev/null
+                fi
+            else
+                log_error "No stream path in response"
+            fi
+        else
+            log_error "Failed to open stream (HTTP $http_code)"
+        fi
+        
+        log ""
+    done
+    
+    log_info "Recordings saved to: $RECORDINGS_DIR"
+else
+    log_info "Recording disabled (ENABLE_RECORDING=false)"
 fi
 
 # Summary
