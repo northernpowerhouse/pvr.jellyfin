@@ -135,13 +135,18 @@ std::string Connection::PerformHttpGet(const std::string& url)
 std::string Connection::PerformHttpPost(const std::string& url, const std::string& data)
 {
   Logger::Log(ADDON_LOG_DEBUG, "HTTP POST to: %s", url.c_str());
-  Logger::Log(ADDON_LOG_DEBUG, "POST data: %s", data.c_str());
+  Logger::Log(ADDON_LOG_DEBUG, "POST data (%zu bytes): %s", data.length(), data.c_str());
   
   kodi::vfs::CFile file;
   file.CURLCreate(url);
   file.CURLAddOption(ADDON_CURL_OPTION_PROTOCOL, "acceptencoding", "gzip");
   file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "Content-Type", "application/json");
   file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "Accept", "application/json");
+  
+  // Explicitly set Content-Length to ensure full POST body is sent
+  std::ostringstream contentLength;
+  contentLength << data.length();
+  file.CURLAddOption(ADDON_CURL_OPTION_HEADER, "Content-Length", contentLength.str().c_str());
   
   // Only add authentication header if we have a token
   if (!m_apiKey.empty())
