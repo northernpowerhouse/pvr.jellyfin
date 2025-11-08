@@ -53,7 +53,9 @@ bool Connection::SendPostRequest(const std::string& endpoint, const Json::Value&
 {
   std::string url = BuildUrl(endpoint);
   
+  // Use compact JSON (no indentation) for POST requests
   Json::StreamWriterBuilder builder;
+  builder["indentation"] = "";
   std::string jsonData = Json::writeString(builder, data);
   
   std::string responseStr = PerformHttpPost(url, jsonData);
