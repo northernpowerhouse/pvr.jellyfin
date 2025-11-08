@@ -53,18 +53,31 @@ bool Connection::SendPostRequest(const std::string& endpoint, const Json::Value&
 {
   std::string url = BuildUrl(endpoint);
   
-  // Use compact JSON (no indentation) for POST requests
-  Json::StreamWriterBuilder builder;
-  builder["indentation"] = "";
-  std::string jsonData = Json::writeString(builder, data);
-  
-  // Remove any trailing whitespace (newline, etc) that jsoncpp might add
-  while (!jsonData.empty() && (jsonData.back() == '\n' || jsonData.back() == '\r' || jsonData.back() == ' ' || jsonData.back() == '\t'))
+  // CRITICAL: Build JSON manually to preserve key order (jsoncpp sorts alphabetically)
+  // Test script uses {"Username":"joe","Pw":"ydshxm"} which works
+  // jsoncpp generates {"Pw":"ydshxm","Username":"joe"} which fails
+  std::string jsonData;
+  if (endpoint == "/Users/AuthenticateByName" && data.isMember("Username") && data.isMember("Pw"))
   {
-    jsonData.pop_back();
+    // Build authentication JSON manually with correct key order
+    jsonData = "{\"Username\":\"" + data["Username"].asString() + "\",\"Pw\":\"" + data["Pw"].asString() + "\"}";
+    Logger::Log(ADDON_LOG_DEBUG, "Manual auth JSON (%zu bytes): %s", jsonData.length(), jsonData.c_str());
   }
-  
-  Logger::Log(ADDON_LOG_DEBUG, "JSON after cleanup (%zu bytes): %s", jsonData.length(), jsonData.c_str());
+  else
+  {
+    // Use jsoncpp for other endpoints
+    Json::StreamWriterBuilder builder;
+    builder["indentation"] = "";
+    jsonData = Json::writeString(builder, data);
+    
+    // Remove any trailing whitespace
+    while (!jsonData.empty() && (jsonData.back() == '\n' || jsonData.back() == '\r' || jsonData.back() == ' ' || jsonData.back() == '\t'))
+    {
+      jsonData.pop_back();
+    }
+    
+    Logger::Log(ADDON_LOG_DEBUG, "JSON after cleanup (%zu bytes): %s", jsonData.length(), jsonData.c_str());
+  }
   
   std::string responseStr = PerformHttpPost(url, jsonData);
   

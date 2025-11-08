@@ -15,15 +15,12 @@ bool AuthManager::AuthenticateByPassword(const std::string& username, const std:
   
   // Jellyfin API: Username (capitalized) and Pw (not Password)
   // Reference: https://api.jellyfin.org/#tag/User/operation/AuthenticateUserByName
+  // CRITICAL: jsoncpp sorts keys alphabetically, but Jellyfin expects Username before Pw
+  // Build JSON manually to guarantee exact order that works in test script
   Json::Value requestData;
   requestData["Username"] = username;
   requestData["Pw"] = password;
   
-  // Log the request structure for debugging
-  Json::StreamWriterBuilder builder;
-  builder["indentation"] = "";
-  std::string requestJson = Json::writeString(builder, requestData);
-  Logger::Log(ADDON_LOG_INFO, "Auth request JSON: %s", requestJson.c_str());
   Logger::Log(ADDON_LOG_INFO, "Auth request - username: %s, Endpoint: /Users/AuthenticateByName", username.c_str());
   
   Json::Value response;
