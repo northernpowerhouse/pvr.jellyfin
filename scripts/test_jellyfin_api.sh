@@ -366,6 +366,65 @@ EOF
     fi
 done
 
+# Test 6b: Try opening with OpenToken from PlaybackInfo
+log_section "TEST 6b: POST /LiveTv/LiveStreams/Open with OpenToken"
+log_info "First, get PlaybackInfo with AutoOpenLiveStream=true"
+
+playback_body=$(cat <<EOF
+{
+  "UserId": "$CURRENT_USER_ID",
+  "AutoOpenLiveStream": true,
+  "MaxStreamingBitrate": 120000000,
+  "DeviceProfile": $(get_device_profile_v1)
+}
+EOF
+)
+
+result=$(api_request "POST" "/Items/$CHANNEL_ID/PlaybackInfo" "$playback_body" "$X_EMBY_AUTH")
+http_code=$(echo "$result" | cut -d'|' -f1)
+response=$(echo "$result" | cut -d'|' -f2-)
+
+if [ "$http_code" = "200" ]; then
+    log_success "PlaybackInfo retrieved (HTTP $http_code)"
+    save_response "playbackinfo_with_autoopen" "$response"
+    
+    # Extract OpenToken and check if stream was auto-opened
+    open_token=$(echo "$response" | jq -r '.MediaSources[0].OpenToken // empty')
+    media_source_id=$(echo "$response" | jq -r '.MediaSources[0].Id // empty')
+    stream_path=$(echo "$response" | jq -r '.MediaSources[0].Path // empty')
+    live_stream_id=$(echo "$response" | jq -r '.MediaSources[0].LiveStreamId // empty')
+    
+    if [ -n "$live_stream_id" ]; then
+        log_success "AutoOpenLiveStream worked! LiveStreamId: $live_stream_id"
+        if [ -n "$stream_path" ]; then
+            log_success "Stream Path: $stream_path"
+        fi
+    elif [ -n "$open_token" ]; then
+        log_info "Got OpenToken: ${open_token:0:40}..."
+        log_info "Trying to open with OpenToken..."
+        
+        result=$(api_request "POST" "/LiveTv/LiveStreams/Open?OpenToken=$open_token" "" "$X_EMBY_AUTH")
+        http_code=$(echo "$result" | cut -d'|' -f1)
+        response=$(echo "$result" | cut -d'|' -f2-)
+        
+        if [ "$http_code" = "200" ]; then
+            log_success "Opened with OpenToken (HTTP $http_code)"
+            save_response "livestream_open_with_token" "$response"
+            stream_path=$(echo "$response" | jq -r '.MediaSource.Path // empty')
+            if [ -n "$stream_path" ]; then
+                log_success "Stream Path: $stream_path"
+            fi
+        else
+            log_error "Failed to open with OpenToken (HTTP $http_code)"
+            save_response "livestream_open_token_error" "$response"
+        fi
+    else
+        log_error "No OpenToken or LiveStreamId in response"
+    fi
+else
+    log_error "PlaybackInfo with AutoOpenLiveStream failed (HTTP $http_code)"
+fi
+
 # Test 8: Try direct stream file endpoint (if we found a stream ID)
 log_section "TEST 8: Explore LiveStreamFiles Endpoint"
 log_info "This endpoint is used by Jellyfin.Xtream plugin"
